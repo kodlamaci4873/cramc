@@ -1,0 +1,228 @@
+name: CRAMC - Windows + Linux builds
+
+on:
+  # Default-branch pushes produce downloadable Actions artifacts.
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+
+  # Allows a build to be started manually from the Actions tab.
+  workflow_dispatch:
+
+  # Publishing a Release from GitHub's web interface also starts a build.
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Build Windows EXE
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller psutil
+
+      - name: Run application self-test (without opening the GUI)
+        shell: pwsh
+        run: |
+          python cramc.py --selftest
+          if ($LASTEXITCODE -ne 0) {
+            throw "CRAMC Windows self-test failed with exit code $LASTEXITCODE"
+          }
+
+      - name: Build single-file Windows application (request Administrator)
+        shell: pwsh
+        run: |
+          python -m PyInstaller `
+            --noconfirm `
+            --clean `
+            --onefile `
+            --windowed `
+            --name CRAMC-Windows `
+            --uac-admin `
+            --collect-all psutil `
+            cramc.py
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "PyInstaller failed with exit code $LASTEXITCODE"
+          }
+
+          if (-not (Test-Path 'dist/CRAMC-Windows.exe')) {
+            throw 'CRAMC-Windows.exe was not created.'
+          }
+
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: CRAMC-Windows
+          path: dist/CRAMC-Windows.exe
+          if-no-files-found: error
+          retention-days: 30
+
+  build-linux:
+    name: Build Linux AppImage
+    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+
+      # Use Ubuntu's system Python so python3-tk and tkinter belong to the
+      # same interpreter. The virtual environment inherits those system libs.
+      - name: Install Linux and Tk build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            python3 python3-tk python3-venv python3-dev \
+            wget file patchelf
+
+      - name: Create build environment and install PyInstaller
+        run: |
+          python3 -m venv --system-site-packages .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install pyinstaller psutil
+          .venv/bin/python -c "import tkinter; print('Tk', tkinter.TkVersion)"
+
+      - name: Run application self-test
+        run: .venv/bin/python cramc.py --selftest
+
+      - name: Build single-file Linux executable
+        run: |
+          .venv/bin/python -m PyInstaller \
+            --noconfirm \
+            --clean \
+            --onefile \
+            --windowed \
+            --name CRAMC-Linux \
+            --collect-all psutil \
+            cramc.py
+          test -s dist/CRAMC-Linux
+
+      - name: Assemble AppDir
+        run: |
+          APPDIR="$GITHUB_WORKSPACE/CRAMC.AppDir"
+          mkdir -p "$APPDIR/usr/bin" \
+                   "$APPDIR/usr/share/icons/hicolor/256x256/apps"
+
+          cp dist/CRAMC-Linux "$APPDIR/usr/bin/CRAMC-Linux"
+
+          # The application draws its own logo; export the same logo as PNG
+          # for the AppImage launcher icon.
+          .venv/bin/python - <<'PY'
+          import cramc
+          from pathlib import Path
+          icon = cramc.generate_logo_png(256)
+          Path('CRAMC.AppDir/cramc.png').write_bytes(icon)
+          Path('CRAMC.AppDir/usr/share/icons/hicolor/256x256/apps/cramc.png').write_bytes(icon)
+          PY
+
+          cat > "$APPDIR/AppRun" <<'APPRUN'
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "$0")")"
+          exec "$HERE/usr/bin/CRAMC-Linux" "$@"
+          APPRUN
+          chmod +x "$APPDIR/AppRun"
+
+          cat > "$APPDIR/cramc.desktop" <<'DESKTOP'
+          [Desktop Entry]
+          Type=Application
+          Name=ComputerRAMCleaner
+          Comment=RAM monitoring and cache cleaning utility
+          Exec=AppRun
+          Icon=cramc
+          Terminal=false
+          Categories=System;Utility;
+          DESKTOP
+
+      - name: Build AppImage
+        run: |
+          wget -q \
+            https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage \
+            -O appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+          # Extract-and-run avoids requiring FUSE on the GitHub runner.
+          ARCH=x86_64 \
+            VERSION="${GITHUB_REF_NAME}" \
+            APPIMAGE_EXTRACT_AND_RUN=1 \
+            ./appimagetool-x86_64.AppImage \
+              "$GITHUB_WORKSPACE/CRAMC.AppDir" \
+              "$GITHUB_WORKSPACE/CRAMC-Linux.AppImage"
+
+          chmod +x CRAMC-Linux.AppImage
+          test -s CRAMC-Linux.AppImage
+          file CRAMC-Linux.AppImage
+
+      - name: Upload Linux AppImage
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: CRAMC-Linux-AppImage
+          path: CRAMC-Linux.AppImage
+          if-no-files-found: error
+          retention-days: 30
+
+  publish-release:
+    name: Attach builds to GitHub Release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - build-windows
+      - build-linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Windows and Linux build artifacts
+        uses: actions/download-artifact@v8.0.2
+        with:
+          pattern: CRAMC-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Check release files
+        run: |
+          test -s release-assets/CRAMC-Windows.exe
+          test -s release-assets/CRAMC-Linux.AppImage
+          ls -lh release-assets
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          if gh release view "$TAG_NAME" --repo "$REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" \
+              release-assets/CRAMC-Windows.exe \
+              release-assets/CRAMC-Linux.AppImage \
+              --clobber \
+              --repo "$REPOSITORY"
+          else
+            gh release create "$TAG_NAME" \
+              release-assets/CRAMC-Windows.exe \
+              release-assets/CRAMC-Linux.AppImage \
+              --title "ComputerRAMCleaner $TAG_NAME" \
+              --generate-notes \
+              --verify-tag \
+              --repo "$REPOSITORY"
+          fi
