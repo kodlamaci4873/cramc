@@ -687,9 +687,9 @@
             <h3>Başlangıç</h3>
             <p class="tier-copy">Temel RAM izleme ve manuel temizlik işlemleri için pratik alt seviye.</p>
             <ul class="tier-specs">
-              <li><span>RAM</span><strong>2 GB</strong></li>
+              <li><span>RAM</span><strong>8 GB</strong></li>
               <li><span>İşlemci</span><strong>2 mantıksal çekirdek</strong></li>
-              <li><span>Boş disk alanı</span><strong>200 MB</strong></li>
+              <li><span>CRAMC için boş alan</span><strong>200 MB</strong></li>
               <li><span>Sistem</span><strong>64-bit Windows / Linux</strong></li>
             </ul>
           </article>
@@ -701,7 +701,7 @@
             <ul class="tier-specs">
               <li><span>RAM</span><strong>4 GB</strong></li>
               <li><span>İşlemci</span><strong>4 mantıksal çekirdek</strong></li>
-              <li><span>Boş disk alanı</span><strong>300 MB</strong></li>
+              <li><span>CRAMC için boş alan</span><strong>300 MB</strong></li>
               <li><span>Sistem</span><strong>64-bit Windows / Linux</strong></li>
             </ul>
           </article>
@@ -711,9 +711,9 @@
             <h3>Geniş alan</h3>
             <p class="tier-copy">Çok sayıda uygulama açıkken daha geniş sistem kaynağı payı isteyenler için.</p>
             <ul class="tier-specs">
-              <li><span>RAM</span><strong>8 GB veya üzeri</strong></li>
+              <li><span>RAM</span><strong>16 GB veya üzeri</strong></li>
               <li><span>İşlemci</span><strong>6+ mantıksal çekirdek</strong></li>
-              <li><span>Boş disk alanı</span><strong>500 MB</strong></li>
+              <li><span>CRAMC için boş alan</span><strong>500 MB</strong></li>
               <li><span>Sistem</span><strong>64-bit Windows / Linux</strong></li>
             </ul>
           </article>
@@ -993,7 +993,7 @@
       const status = document.getElementById('hardwareStatus');
       const title = document.getElementById('hardwareStatusTitle');
       const detail = document.getElementById('hardwareStatusText');
-      const lowRam = ram !== null && ram < 2;
+      const lowRam = ram !== null && ram < 4;
       const lowCores = cores !== null && cores < 2;
 
       if (!os.supported) {
@@ -1002,8 +1002,8 @@
         detail.textContent = 'CRAMC Lite tarayıcıda çalışıyor. İndirilebilir uygulama Windows 10/11 64-bit ve x86_64 Linux masaüstü sistemleri içindir.';
       } else if (lowRam || lowCores) {
         status.dataset.state = 'warn';
-        title.textContent = 'Sınırlı kaynak algılandı';
-        detail.textContent = 'Tarayıcının bildirdiği değerlerden en az biri temel önerinin altında. İşletim sisteminin ve açık uygulamaların bellek ihtiyacını da hesaba kat.';
+        title.textContent = 'Minimum RAM profilinin altında olabilir';
+        detail.textContent = 'Tarayıcının bildirdiği RAM 4 GB altındaysa veya mantıksal işlemci sayısı düşükse cihaz kaynakları sınırlı olabilir. İşletim sisteminin ve açık uygulamaların bellek ihtiyacını da hesaba kat.';
       } else if (ram === null || cores === null) {
         status.dataset.state = 'info';
         title.textContent = 'Sistem kısmen tanındı';
