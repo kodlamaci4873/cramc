@@ -399,6 +399,84 @@
       .manual-ram select, .manual-ram button { flex: 1 1 100%; }
     }
 
+  
+    /* Global language picker, welcome experience and responsive mission section */
+    .nav { gap: 15px; }
+    .nav-links { gap: 15px; }
+    .language-select {
+      flex: none; min-width: 112px; padding: 10px 31px 10px 12px;
+      border: 1px solid rgba(148,172,207,.22); border-radius: 10px;
+      color: #dbe9fa; background: #101b2c; font: inherit; font-size: 11px;
+      font-weight: 700; cursor: pointer;
+    }
+    .language-select:focus { outline: 2px solid rgba(104,179,255,.55); outline-offset: 2px; }
+    .mission-section {
+      position: relative; overflow: hidden; padding: 94px 0;
+      border-block: 1px solid rgba(148,172,207,.1);
+      background: radial-gradient(ellipse at 12% 50%, rgba(50,137,231,.12), transparent 36rem), rgba(15,25,41,.43);
+    }
+    .mission-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 48px; }
+    .mission-copy h2 { margin: 14px 0 16px; font-size: clamp(31px,4vw,47px); line-height: 1.1; letter-spacing: -.05em; }
+    .mission-copy p { margin: 0 0 13px; color: #a4b4c9; font-size: 13px; line-height: 1.9; }
+    .mission-copy p strong { color: #e8f3ff; }
+    .mission-values { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    .mission-value { min-height: 128px; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: rgba(12,22,37,.72); }
+    .mission-value b { display:block; margin-bottom:7px; color:#d8eaff; font-size:13px; }
+    .mission-value span { color:#91a4bd; font-size:11px; line-height:1.75; }
+    .welcome-overlay {
+      position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+      padding: 22px; background: rgba(3,8,15,.82); backdrop-filter: blur(15px);
+    }
+    .welcome-overlay[hidden] { display: none !important; }
+    .welcome-card {
+      position: relative; overflow: hidden; width: min(720px,100%); max-height: min(92vh,850px); overflow-y: auto;
+      padding: clamp(25px,5vw,48px); border: 1px solid rgba(119,177,239,.28); border-radius: 27px;
+      background: radial-gradient(ellipse at 100% 0%, rgba(62,154,231,.18), transparent 22rem), linear-gradient(145deg,#142239,#0b1422 72%);
+      box-shadow: 0 35px 120px rgba(0,0,0,.55);
+    }
+    .welcome-card::before { content:""; position:absolute; width:230px; height:230px; right:-100px; bottom:-140px; border:1px solid rgba(99,181,255,.16); border-radius:50%; box-shadow:0 0 0 24px rgba(99,181,255,.025),0 0 0 48px rgba(99,181,255,.02); pointer-events:none; }
+    .welcome-brand { display:flex; align-items:center; gap:12px; color:#dceaff; font-size:12px; font-weight:850; letter-spacing:.12em; }
+    .welcome-brand-mark { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; color:#061522; background:linear-gradient(135deg,#68b6ff,#4ce0a3); font-size:22px; font-weight:950; }
+    .welcome-card h2 { max-width:590px; margin:23px 0 13px; font-size:clamp(30px,5vw,48px); line-height:1.08; letter-spacing:-.055em; }
+    .welcome-card .welcome-lead { max-width:610px; margin:0; color:#adbed3; font-size:14px; line-height:1.85; }
+    .welcome-promise { display:grid; gap:9px; margin:20px 0; padding:17px 18px; border:1px solid rgba(69,223,155,.19); border-radius:15px; background:rgba(29,128,91,.07); }
+    .welcome-promise strong { color:#caffdf; font-size:12px; }
+    .welcome-promise p { margin:0; color:#a7cabb; font-size:11px; line-height:1.75; }
+    .welcome-language-row { display:flex; flex-wrap:wrap; align-items:center; gap:11px; margin-top:22px; }
+    .welcome-language-row label { flex:1 1 180px; color:#b5c5d9; font-size:11px; font-weight:750; }
+    .welcome-language-row .language-select { min-width:190px; }
+    .welcome-privacy { margin:14px 0 0; color:#8295ad; font-size:10px; line-height:1.7; }
+    .welcome-privacy a { color:#9bcaff; text-decoration:underline; text-underline-offset:3px; }
+    .welcome-status { min-height:22px; margin-top:13px; color:#86c4ff; font-size:11px; }
+    .welcome-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:17px; }
+    .welcome-actions .button { flex:1 1 210px; min-height:47px; }
+    .welcome-skip { border:1px solid rgba(148,172,207,.22); color:#d3deed; background:rgba(255,255,255,.035); }
+    .welcome-skip:hover { border-color:rgba(104,179,255,.5); background:rgba(255,255,255,.07); }
+    .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    [dir="rtl"] body { direction:rtl; }
+    [dir="rtl"] .nav, [dir="rtl"] .hero-grid, [dir="rtl"] .mission-grid { direction:rtl; }
+    [dir="rtl"] .hardware-status, [dir="rtl"] .supported-os-card { flex-direction:row; }
+    [dir="rtl"] .tier-specs strong { text-align:left; }
+    @media (max-width:1080px) {
+      .nav { gap:10px; }
+      .nav-links { gap:10px; font-size:10px; }
+      .language-select { min-width:98px; }
+    }
+    @media (max-width:720px) {
+      .mission-section { padding:72px 0; }
+      .mission-grid { grid-template-columns:1fr; gap:25px; }
+      .mission-values { grid-template-columns:1fr 1fr; }
+      .welcome-overlay { padding:12px; }
+      .welcome-card { padding:25px 20px; border-radius:21px; }
+      .welcome-language-row { align-items:stretch; }
+      .welcome-language-row .language-select { flex:1 1 100%; width:100%; }
+    }
+    @media (max-width:430px) {
+      .mission-values { grid-template-columns:1fr; }
+      .welcome-actions { flex-direction:column; }
+      .welcome-actions .button { width:100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -421,8 +499,25 @@
         <a href="#gereksinimler">Gereksinimler</a>
         <a href="#nasil-calisir">Nasıl çalışır?</a>
         <a href="#depolama">Depolama</a>
+        <a href="#misyon">Misyonumuz</a>
         <a href="#sss">SSS</a>
       </nav>
+
+      <label class="sr-only" for="siteLanguage">Website language</label>
+      <select class="language-select" id="siteLanguage" aria-label="Website language">
+        <option value="tr">Türkçe</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="pt">Português</option>
+        <option value="ru">Русский</option>
+        <option value="ar">العربية</option>
+        <option value="zh">中文</option>
+        <option value="ja">日本語</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+
       <a class="nav-cta" href="#indir">İndir <span aria-hidden="true">↓</span></a>
       <button class="mobile-toggle" id="mobileToggle" aria-label="Menüyü aç" aria-expanded="false">☰</button>
     </div>
@@ -490,7 +585,26 @@
     </div>
 
     
-    <section class="system-check-section" id="donanim">
+    
+    <section class="mission-section" id="misyon">
+      <div class="container mission-grid">
+        <div class="mission-copy">
+          <span class="kicker">İNSANLAR İÇİN · ÜCRETSİZ · SADE</span>
+          <h2>Teknoloji herkes için.<br><span class="gradient-text">Karmaşa olmadan.</span></h2>
+          <p><strong>CRAMC para kazanma amacıyla yola çıkmadı.</strong> Üyelik, abonelik, reklam ya da ücretli özelliklerle kullanıcıların karşısına çıkmak yerine; herkesin kolayca kullanabileceği ücretsiz bir yardımcı araç sunmak istiyoruz.</p>
+          <p>Bilgisayarcıların, donanım toplayanların ve tamir tezgâhında çalışan teknisyenlerin yıllardır ihtiyaç duyduğu şeylerden biri, temel sistem bilgisini hızlıca görebilmek ve belleği anlaşılır biçimde yönetebilmektir. CRAMC Lite bu ihtiyaca tarayıcıdan küçük bir pencere açar; masaüstü uygulaması RAM ve önbellek yönetimini tek yerde toplar.</p>
+          <p>İster ilk bilgisayarını kullanan biri ol, ister yıllardır cihaz kurup onaran bir usta: hedefimiz aynı — <strong>anlaşılır, kullanıcı dostu ve ücretsiz bir deneyim.</strong></p>
+        </div>
+        <div class="mission-values">
+          <article class="mission-value"><b>Ücretsiz kalır</b><span>Üyelik, abonelik ve ücretli özellik olmadan herkesin erişebileceği bir yardımcı.</span></article>
+          <article class="mission-value"><b>Önce kullanıcı</b><span>Kolay gezinme, açık anlatım ve işlemler üzerinde kullanıcının kontrolü.</span></article>
+          <article class="mission-value"><b>Teknisyenlere de yardımcı</b><span>Bilgisayarcılar, donanım meraklıları ve bakım-onarım yapanlar için hızlı sistem özeti.</span></article>
+          <article class="mission-value"><b>Gereksiz veri yok</b><span>CRAMC Lite donanım özetini sayfada işler; raporları CRAMC sunucusuna göndermez.</span></article>
+        </div>
+      </div>
+    </section>
+
+<section class="system-check-section" id="donanim">
       <div class="container">
         <div class="section-head wide">
           <span class="kicker">CRAMC LITE · TARAYICIDA DONANIM ÖZETİ</span>
@@ -830,6 +944,45 @@
     </section>
   </main>
 
+  
+  <div class="welcome-overlay" id="welcomeOverlay" hidden>
+    <section class="welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+      <div class="welcome-brand">
+        <span class="welcome-brand-mark">C</span>
+        <span>COMPUTERRAMCleaner · v1.1.0</span>
+      </div>
+      <span class="eyebrow" style="margin-top:23px"><span class="pulse"></span> HOŞ GELDİN · WELCOME</span>
+      <h2 id="welcomeTitle">Bilgisayarını tanı.<br><span class="gradient-text">Kontrol sende olsun.</span></h2>
+      <p class="welcome-lead">CRAMC; bilgisayarını kullanan, kuran, bakımını yapan veya tamir eden herkes için sade bir yardımcıdır. Donanımını tarayıcıdan tanı, RAM ve önbellek yönetimi için ücretsiz masaüstü aracını keşfet.</p>
+      <div class="welcome-promise">
+        <strong>Bu proje para kazanmayı hedeflemiyor.</strong>
+        <p>Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.</p>
+      </div>
+      <div class="welcome-language-row">
+        <label for="welcomeLanguage">Dilini seç / Choose your language</label>
+        <select class="language-select" id="welcomeLanguage" aria-label="Choose website language">
+          <option value="tr">Türkçe</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="ar">العربية</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="hi">हिन्दी</option>
+        </select>
+      </div>
+      <p class="welcome-privacy">Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir. <a href="https://ipapi.co/privacy/" target="_blank" rel="noopener noreferrer">IPAPI gizlilik politikası</a>.</p>
+      <div class="welcome-status" id="welcomeStatus" role="status" aria-live="polite">Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.</div>
+      <div class="welcome-actions">
+        <button class="button button-primary" id="welcomeAuto" type="button">Ülkeme göre dili otomatik seç</button>
+        <button class="button welcome-skip" id="welcomeContinue" type="button">Siteyi keşfet</button>
+      </div>
+    </section>
+  </div>
+
   <footer>
     <div class="container footer-inner">
       <div><span class="footer-brand">ComputerRAMCleaner (CRAMC)</span><br>© <span id="year"></span> · Sürüm 1.1.0</div>
@@ -1024,6 +1177,739 @@
     });
     document.getElementById('applyManualRam').addEventListener('click', renderLiteHardware);
     renderLiteHardware();
+
+
+    // Lightweight static i18n. The selected locale stays in localStorage.
+    const localeNames = {
+      tr: "Türkçe", en: "English", es: "Español", fr: "Français", de: "Deutsch",
+      pt: "Português", ru: "Русский", ar: "العربية", zh: "中文", ja: "日本語", hi: "हिन्दी"
+    };
+
+    const translations = {
+      en: {
+        "Özellikler":"Features","Platformlar":"Platforms","Donanımım":"My hardware","Gereksinimler":"Requirements",
+        "Nasıl çalışır?":"How it works","Depolama":"Storage","SSS":"FAQ","İndir":"Download","Misyonumuz":"Our mission",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · NO INSTALLATION",
+        "Belleğini daha yakından":"Get to know your memory","tanı.":"better.","Kontrolü eline al.":"Take control.",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) helps you monitor RAM usage, manage cache-cleaning options and handle memory tasks through one simple interface on Linux and Windows.",
+        "↓   CRAMC'yi indir":"↓   Download CRAMC","Özellikleri keşfet":"Explore features","sürümü":"release",
+        "Kurulumsuz tek dosya":"Standalone app · no setup","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"SUPPORTED PLATFORMS","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · BROWSER HARDWARE SUMMARY",
+        "Önce cihazını tanı.":"Know your device first.","Sonra doğru sürümü seç.":"Then choose the right version.",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"See the processor, memory and operating-system details your browser is able to share. This quick check runs without downloading an app.",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · READY","Bilgisayarının":"Your computer's","kısa sistem raporu.":"quick system report.",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"This mini tool runs in your browser. It does not ask for access to your computer; it reads only basic hardware details exposed by the browser. Browsers do not always reveal the exact CPU model or installed RAM capacity.",
+        "Gizlilik:":"Privacy:","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"The hardware summary is processed on this page and is not sent to CRAMC servers or stored by CRAMC.",
+        "↻   Sistemimi yeniden tara":"↻   Scan my system again","İşletim sistemi":"Operating system","İşlemci":"Processor",
+        "RAM belleği":"RAM memory","Tarayıcı":"Browser","Algılanıyor…":"Detecting…","Kontrol ediliyor…":"Checking…",
+        "Tarayıcı desteği denetleniyor.":"Checking browser support.","Yerel tarayıcı bilgisi.":"Local browser information.",
+        "Sistem özeti hazırlanıyor":"Preparing your system summary","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"Showing the information your browser allows.",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"If your browser does not share RAM information, you can enter your RAM size.",
+        "Otomatik algılama":"Automatic detection","RAM değerini uygula":"Apply RAM value",
+        "ÖNE ÇIKAN ÖZELLİKLER":"KEY FEATURES","Gereken kontroller,":"Essential controls,","tek bir pencerede.":"in one window.",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC brings RAM monitoring, a quick-start guide and a preview-based user temporary-file cleaner together in one tabbed interface.",
+        "Canlı RAM takibi":"Live RAM monitoring","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"Track total, used, available and cached memory, as well as swap and running process counts.",
+        "Seçilebilir temizlik":"Selectable cleaning","Tahmini kazanım":"Estimated recovery","İsteğe bağlı otomatik temizlik":"Optional automatic cleaning",
+        "İşlem günlüğü":"Activity log","Kalıcı ayarlar":"Persistent settings","Hoş Geldin / Hızlı Rehber":"Welcome / Quick guide",
+        "Depolama / Geçici Dosya Temizliği":"Storage / Temporary file cleanup",
+        "İşletim sistemine uygun":"Tools for your","bellek araçları.":"operating system.",
+        "İKİ PLATFORM, İKİ YÖNTEM":"TWO PLATFORMS, TWO APPROACHES","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"BEFORE YOU DOWNLOAD · SYSTEM REQUIREMENTS",
+        "Her bilgisayara uygun,":"Made for everyday computers,","ihtiyacına göre rahatlık.":"with room for your needs.",
+        "RAM, işlemci ve boş alan önerileri":"RAM, processor and storage guidance","MİNİMUM · TEMEL KULLANIM":"MINIMUM · BASIC USE",
+        "Başlangıç":"Entry level","ORTA · ÖNERİLEN":"STANDARD · RECOMMENDED","Dengeli":"Balanced",
+        "YÜKSEK · RAHAT KULLANIM":"HIGH · COMFORTABLE USE","Geniş alan":"More headroom",
+        "Desteklenen masaüstü sistemleri":"Supported desktop systems","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64-bit",
+        "Linux · x86_64 masaüstü":"Linux · x86_64 desktop","KURULUM GEREKTİRMEZ":"NO INSTALLATION REQUIRED",
+        "İndir, çalıştır,":"Download, launch,","kontrol et.":"take control.","Uygun dosyayı indir":"Download the right file",
+        "Yetki vererek çalıştır":"Run with permission","RAM kullanımını yönet":"Manage RAM usage",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · DOWNLOAD","resmî sürümü indir.":"download the official release.",
+        "İşletim sistemi algılanıyor…":"Detecting operating system…","↓   İndirme seçeneklerini görüntüle":"↓   View download options",
+        "Diğer işletim sistemi için indir":"Download for the other OS","Kaynak kodu indir (cramc.py)":"Download source code (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"View all release files ↗","SIK SORULAN SORULAR":"FREQUENTLY ASKED QUESTIONS",
+        "Merak edilenler.":"Good to know.","Başa dön ↑":"Back to top ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"This project is not built to make money.",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"No ads, accounts, subscriptions or paid features. Our goal is to offer computer technicians, hardware enthusiasts, repairers and everyday users a simple, clear and free tool.",
+        "Ülkeme göre dili otomatik seç":"Choose language automatically by country","Siteyi keşfet":"Explore the site",
+        "Dilini seç / Choose your language":"Choose your language","HOŞ GELDİN · WELCOME":"WELCOME",
+        "Bilgisayarını tanı.":"Know your computer.","Kontrol sende olsun.":"Stay in control.",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"Choose a language or detect one using your country.",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"When you enable country-based language selection, your public IP address is sent to IPAPI to identify your country code. CRAMC does not receive or store your IP. Only the country code and language choice are stored on this device. IPAPI states that it may retain IP queries in its server logs for a limited period.",
+        "Hızlı RAM takibi":"Quick RAM overview","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"Preview a possible memory recovery based on selected actions. Estimates are not a guarantee of actual results.",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"Set a RAM-use threshold from 50–95% and an interval from 1–60 minutes.",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"Review completed actions, warnings and errors in the activity log, along with the latest cleanup and session summary.",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"Cleanup preferences and automatic schedule settings are saved for your next session.",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"A separate welcome screen guides first-time users through the RAM tab, permissions and basic steps.",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"Lists ordinary files in user temporary folders that are older than 24 hours. Files are previewed and require explicit approval before deletion.",
+        "Bu mini araç tarayıcıda çalışır.":"This mini tool runs in your browser."
+      },
+      es: {
+        "Özellikler":"Funciones","Platformlar":"Plataformas","Donanımım":"Mi hardware","Gereksinimler":"Requisitos",
+        "Nasıl çalışır?":"Cómo funciona","Depolama":"Almacenamiento","SSS":"Preguntas frecuentes","İndir":"Descargar","Misyonumuz":"Nuestra misión",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · SIN INSTALACIÓN",
+        "Belleğini daha yakından":"Conoce mejor tu","tanı.":"memoria.","Kontrolü eline al.":"Toma el control.",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) te ayuda a vigilar la memoria RAM, gestionar la limpieza de caché y realizar tareas desde una interfaz sencilla en Linux y Windows.",
+        "↓   CRAMC'yi indir":"↓   Descargar CRAMC","Özellikleri keşfet":"Ver funciones","sürümü":"versión",
+        "Kurulumsuz tek dosya":"Un solo archivo · sin instalación","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"PLATAFORMAS COMPATIBLES","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · RESUMEN DE HARDWARE EN EL NAVEGADOR",
+        "Önce cihazını tanı.":"Conoce tu equipo.","Sonra doğru sürümü seç.":"Después elige la versión adecuada.",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"Consulta la información de procesador, memoria y sistema operativo que tu navegador permita compartir. Funciona sin descargar ningún programa.",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · LISTO","Bilgisayarının":"El informe rápido","kısa sistem raporu.":"de tu ordenador.",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"Esta herramienta funciona en el navegador. No solicita acceso al ordenador; solo lee los datos básicos que el navegador comparte. No todos los navegadores revelan el modelo exacto de CPU ni la RAM instalada.",
+        "Gizlilik:":"Privacidad:","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"El resumen se procesa en esta página. CRAMC no recibe ni almacena esos datos de hardware en sus servidores.",
+        "↻   Sistemimi yeniden tara":"↻   Volver a analizar","İşletim sistemi":"Sistema operativo","İşlemci":"Procesador",
+        "RAM belleği":"Memoria RAM","Tarayıcı":"Navegador","Algılanıyor…":"Detectando…","Kontrol ediliyor…":"Comprobando…",
+        "Tarayıcı desteği denetleniyor.":"Comprobando compatibilidad del navegador.","Yerel tarayıcı bilgisi.":"Información del navegador local.",
+        "Sistem özeti hazırlanıyor":"Preparando el resumen del sistema","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"Mostramos la información que permite el navegador.",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"Si el navegador no muestra la RAM, puedes indicar la cantidad manualmente.",
+        "Otomatik algılama":"Detección automática","RAM değerini uygula":"Aplicar RAM",
+        "ÖNE ÇIKAN ÖZELLİKLER":"FUNCIONES DESTACADAS","Gereken kontroller,":"Los controles que necesitas,","tek bir pencerede.":"en una sola ventana.",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC reúne el control de RAM, una guía inicial y una limpieza con vista previa de archivos temporales en una interfaz por pestañas.",
+        "Canlı RAM takibi":"Monitorización de RAM","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"Consulta la memoria total, usada, libre y en caché, además del swap y los procesos activos.",
+        "Seçilebilir temizlik":"Limpieza configurable","Tahmini kazanım":"Ahorro estimado","İsteğe bağlı otomatik temizlik":"Limpieza automática opcional",
+        "İşlem günlüğü":"Registro de actividad","Kalıcı ayarlar":"Ajustes guardados","Hoş Geldin / Hızlı Rehber":"Bienvenida / Guía rápida",
+        "Depolama / Geçici Dosya Temizliği":"Almacenamiento / Limpieza temporal",
+        "İşletim sistemine uygun":"Herramientas de memoria","bellek araçları.":"para cada sistema.",
+        "İKİ PLATFORM, İKİ YÖNTEM":"DOS PLATAFORMAS, DOS MÉTODOS","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"ANTES DE DESCARGAR · REQUISITOS",
+        "Her bilgisayara uygun,":"Para distintos equipos,","ihtiyacına göre rahatlık.":"según tus necesidades.",
+        "RAM, işlemci ve boş alan önerileri":"Recomendaciones de RAM, CPU y espacio","MİNİMUM · TEMEL KULLANIM":"MÍNIMO · USO BÁSICO",
+        "Başlangıç":"Inicial","ORTA · ÖNERİLEN":"MEDIO · RECOMENDADO","Dengeli":"Equilibrado",
+        "YÜKSEK · RAHAT KULLANIM":"ALTO · USO CÓMODO","Geniş alan":"Más margen",
+        "Desteklenen masaüstü sistemleri":"Sistemas de escritorio compatibles","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64 bits",
+        "Linux · x86_64 masaüstü":"Linux · escritorio x86_64","KURULUM GEREKTİRMEZ":"SIN INSTALACIÓN",
+        "İndir, çalıştır,":"Descarga, ejecuta,","kontrol et.":"controla.","Uygun dosyayı indir":"Descarga el archivo adecuado",
+        "Yetki vererek çalıştır":"Ejecuta con permisos","RAM kullanımını yönet":"Gestiona la RAM",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · DESCARGA","resmî sürümü indir.":"descarga la versión oficial.",
+        "İşletim sistemi algılanıyor…":"Detectando sistema operativo…","↓   İndirme seçeneklerini görüntüle":"↓   Ver opciones de descarga",
+        "Diğer işletim sistemi için indir":"Descargar para el otro sistema","Kaynak kodu indir (cramc.py)":"Descargar código fuente (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"Ver todos los archivos ↗","SIK SORULAN SORULAR":"PREGUNTAS FRECUENTES",
+        "Merak edilenler.":"Lo que conviene saber.","Başa dön ↑":"Volver arriba ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"Este proyecto no busca ganar dinero.",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"Sin anuncios, cuentas, suscripciones ni funciones de pago. Queremos ofrecer una herramienta sencilla y gratuita a técnicos, especialistas de hardware, reparadores y usuarios.",
+        "Ülkeme göre dili otomatik seç":"Elegir idioma según mi país","Siteyi keşfet":"Explorar el sitio",
+        "Dilini seç / Choose your language":"Elige tu idioma","HOŞ GELDİN · WELCOME":"BIENVENIDO",
+        "Bilgisayarını tanı.":"Conoce tu ordenador.","Kontrol sende olsun.":"Tú tienes el control.",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"Elige un idioma o detecta uno según tu país.",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"Si activas la selección automática, tu IP pública se envía a IPAPI para obtener el código del país. CRAMC no recibe ni guarda tu IP; solo se almacenan el país y el idioma en este dispositivo. IPAPI indica que puede conservar consultas IP en sus registros durante un tiempo limitado.",
+        "Hızlı RAM takibi":"Vista rápida de RAM","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"Consulta una posible recuperación según las acciones elegidas. Las estimaciones no garantizan resultados reales.",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"Configura un umbral de RAM del 50–95 % y un intervalo de 1–60 minutos.",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"Consulta acciones, avisos y errores en el registro, además del resumen de limpieza y sesión.",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"Las preferencias de limpieza y el temporizador se guardan para la próxima sesión.",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"Una pantalla inicial guía sobre la pestaña RAM, los permisos y los pasos básicos.",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"Muestra archivos normales de carpetas temporales de usuario con más de 24 horas. Se previsualizan y requieren confirmación antes de borrarse."
+      },
+      de: {
+        "Özellikler":"Funktionen","Platformlar":"Plattformen","Donanımım":"Meine Hardware","Gereksinimler":"Systemanforderungen",
+        "Nasıl çalışır?":"So funktioniert's","Depolama":"Speicher","SSS":"FAQ","İndir":"Download","Misyonumuz":"Unsere Mission",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · OHNE INSTALLATION",
+        "Belleğini daha yakından":"Lerne deinen Arbeitsspeicher","tanı.":"besser kennen.","Kontrolü eline al.":"Übernimm die Kontrolle.",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) hilft dir, die RAM-Auslastung zu beobachten, Cache-Bereinigungen zu verwalten und Speicheraufgaben unter Linux und Windows über eine einfache Oberfläche auszuführen.",
+        "↓   CRAMC'yi indir":"↓   CRAMC herunterladen","Özellikleri keşfet":"Funktionen entdecken","sürümü":"Version",
+        "Kurulumsuz tek dosya":"Eine Datei · keine Installation","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"UNTERSTÜTZTE PLATTFORMEN","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · HARDWARE-ÜBERSICHT IM BROWSER",
+        "Önce cihazını tanı.":"Lerne dein Gerät kennen.","Sonra doğru sürümü seç.":"Wähle danach die passende Version.",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"Sieh dir Prozessor-, Speicher- und Betriebssysteminformationen an, die dein Browser freigibt. Die Prüfung funktioniert ohne Programmdownload.",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · BEREIT","Bilgisayarının":"Der kurze Systembericht","kısa sistem raporu.":"deines Computers.",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"Dieses Mini-Tool läuft im Browser. Es fordert keinen Computerzugriff an und liest nur grundlegende Hardwaredaten, die der Browser bereitstellt. Das genaue CPU-Modell oder den installierten RAM zeigen nicht alle Browser an.",
+        "Gizlilik:":"Datenschutz:","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"Die Übersicht wird auf dieser Seite verarbeitet und von CRAMC weder an Server gesendet noch gespeichert.",
+        "↻   Sistemimi yeniden tara":"↻   Erneut prüfen","İşletim sistemi":"Betriebssystem","İşlemci":"Prozessor",
+        "RAM belleği":"Arbeitsspeicher","Tarayıcı":"Browser","Algılanıyor…":"Wird erkannt…","Kontrol ediliyor…":"Wird geprüft…",
+        "Tarayıcı desteği denetleniyor.":"Browser-Unterstützung wird geprüft.","Yerel tarayıcı bilgisi.":"Lokale Browser-Information.",
+        "Sistem özeti hazırlanıyor":"Systemübersicht wird erstellt","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"Wir zeigen die Informationen, die dein Browser freigibt.",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"Wenn dein Browser keine RAM-Angabe liefert, kannst du die Größe selbst auswählen.",
+        "Otomatik algılama":"Automatisch erkennen","RAM değerini uygula":"RAM-Wert übernehmen",
+        "ÖNE ÇIKAN ÖZELLİKLER":"WICHTIGE FUNKTIONEN","Gereken kontroller,":"Alle wichtigen Kontrollen","tek bir pencerede.":"in einem Fenster.",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC vereint RAM-Überwachung, eine Kurzanleitung und eine Vorschau für temporäre Benutzerdateien in einer Oberfläche mit Registerkarten.",
+        "Canlı RAM takibi":"Live-RAM-Überwachung","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"Behalte gesamten, belegten, freien und zwischengespeicherten Speicher sowie Swap und laufende Prozesse im Blick.",
+        "Seçilebilir temizlik":"Wählbare Bereinigung","Tahmini kazanım":"Geschätzter Gewinn","İsteğe bağlı otomatik temizlik":"Optionale automatische Bereinigung",
+        "İşlem günlüğü":"Aktivitätsprotokoll","Kalıcı ayarlar":"Gespeicherte Einstellungen","Hoş Geldin / Hızlı Rehber":"Willkommen / Kurzanleitung",
+        "Depolama / Geçici Dosya Temizliği":"Speicher / Temporäre Dateien bereinigen",
+        "İşletim sistemine uygun":"Speicherwerkzeuge","bellek araçları.":"für dein Betriebssystem.",
+        "İKİ PLATFORM, İKİ YÖNTEM":"ZWEI PLATTFORMEN, ZWEI WEGE","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"VOR DEM DOWNLOAD · SYSTEMANFORDERUNGEN",
+        "Her bilgisayara uygun,":"Für viele Computer,","ihtiyacına göre rahatlık.":"passend zum Bedarf.",
+        "RAM, işlemci ve boş alan önerileri":"Empfehlungen für RAM, CPU und Speicher","MİNİMUM · TEMEL KULLANIM":"MINIMUM · BASISNUTZUNG",
+        "Başlangıç":"Einstieg","ORTA · ÖNERİLEN":"MITTEL · EMPFOHLEN","Dengeli":"Ausgewogen",
+        "YÜKSEK · RAHAT KULLANIM":"HOCH · KOMFORTABEL","Geniş alan":"Mehr Spielraum",
+        "Desteklenen masaüstü sistemleri":"Unterstützte Desktop-Systeme","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64-Bit",
+        "Linux · x86_64 masaüstü":"Linux · x86_64 Desktop","KURULUM GEREKTİRMEZ":"KEINE INSTALLATION NÖTIG",
+        "İndir, çalıştır,":"Herunterladen, starten,","kontrol et.":"kontrollieren.","Uygun dosyayı indir":"Passende Datei herunterladen",
+        "Yetki vererek çalıştır":"Mit Berechtigung starten","RAM kullanımını yönet":"RAM verwalten",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · DOWNLOAD","resmî sürümü indir.":"offizielle Version herunterladen.",
+        "İşletim sistemi algılanıyor…":"Betriebssystem wird erkannt…","↓   İndirme seçeneklerini görüntüle":"↓   Download-Optionen anzeigen",
+        "Diğer işletim sistemi için indir":"Für das andere Betriebssystem","Kaynak kodu indir (cramc.py)":"Quellcode herunterladen (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"Alle Release-Dateien anzeigen ↗","SIK SORULAN SORULAR":"HÄUFIGE FRAGEN",
+        "Merak edilenler.":"Gut zu wissen.","Başa dön ↑":"Nach oben ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"Dieses Projekt will kein Geld verdienen.",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"Keine Werbung, Konten, Abos oder kostenpflichtigen Funktionen. Unser Ziel ist ein einfaches, verständliches und kostenloses Werkzeug für Techniker, Hardware-Fans, Reparaturprofis und Alltagsnutzer.",
+        "Ülkeme göre dili otomatik seç":"Sprache automatisch nach Land wählen","Siteyi keşfet":"Website entdecken",
+        "Dilini seç / Choose your language":"Sprache auswählen","HOŞ GELDİN · WELCOME":"WILLKOMMEN",
+        "Bilgisayarını tanı.":"Lerne deinen Computer kennen.","Kontrol sende olsun.":"Du behältst die Kontrolle.",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"Wähle eine Sprache oder lasse sie anhand deines Landes erkennen.",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"Wenn du die automatische Sprachauswahl aktivierst, wird deine öffentliche IP an IPAPI gesendet, um den Ländercode zu ermitteln. CRAMC erhält oder speichert deine IP nicht. Nur Länder- und Spracheinstellung werden auf diesem Gerät gespeichert. IPAPI weist darauf hin, dass IP-Abfragen begrenzt lange in Serverprotokollen gespeichert werden können.",
+        "Hızlı RAM takibi":"Schneller RAM-Überblick","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"Sieh eine mögliche Speicherfreigabe anhand der gewählten Aktionen. Schätzwerte sind keine Garantie.",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"Lege eine RAM-Schwelle von 50–95 % und ein Intervall von 1–60 Minuten fest.",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"Verfolge ausgeführte Aktionen, Warnungen und Fehler im Protokoll und sieh die letzte Bereinigung sowie die Sitzungsübersicht.",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"Bereinigungseinstellungen und automatische Zeitpläne werden für die nächste Sitzung gespeichert.",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"Ein eigener Startbildschirm führt durch den RAM-Bereich, Berechtigungen und die grundlegende Bedienung.",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"Listet normale Dateien in temporären Benutzerordnern auf, die älter als 24 Stunden sind. Vor dem Löschen werden sie angezeigt und müssen bestätigt werden."
+      },
+      fr: {
+        "Özellikler":"Fonctionnalités","Platformlar":"Plateformes","Donanımım":"Mon matériel","Gereksinimler":"Configuration requise",
+        "Nasıl çalışır?":"Comment ça marche ?","Depolama":"Stockage","SSS":"FAQ","İndir":"Télécharger","Misyonumuz":"Notre mission",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · SANS INSTALLATION",
+        "Belleğini daha yakından":"Mieux connaître ta","tanı.":"mémoire.","Kontrolü eline al.":"Reprends le contrôle.",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) vous aide à surveiller la RAM, gérer le nettoyage du cache et effectuer ces opérations depuis une interface simple sous Linux et Windows.",
+        "↓   CRAMC'yi indir":"↓   Télécharger CRAMC","Özellikleri keşfet":"Découvrir les fonctions","sürümü":"version",
+        "Kurulumsuz tek dosya":"Un seul fichier · sans installation","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"PLATEFORMES PRISES EN CHARGE","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · RÉSUMÉ MATÉRIEL DANS LE NAVIGATEUR",
+        "Önce cihazını tanı.":"Découvre ton appareil.","Sonra doğru sürümü seç.":"Choisis ensuite la bonne version.",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"Consulte les informations de processeur, de mémoire et de système que ton navigateur accepte de partager. Aucun téléchargement n'est nécessaire.",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · PRÊT","Bilgisayarının":"Le résumé rapide","kısa sistem raporu.":"de ton ordinateur.",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"Cet outil fonctionne dans le navigateur. Il ne demande pas d'accès à l'ordinateur et lit uniquement les données matérielles de base exposées par le navigateur. Le modèle exact du CPU ou la RAM installée ne sont pas toujours disponibles.",
+        "Gizlilik:":"Confidentialité :","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"Le résumé est traité sur cette page et n'est ni envoyé ni enregistré sur les serveurs de CRAMC.",
+        "↻   Sistemimi yeniden tara":"↻   Analyser à nouveau","İşletim sistemi":"Système d'exploitation","İşlemci":"Processeur",
+        "RAM belleği":"Mémoire RAM","Tarayıcı":"Navigateur","Algılanıyor…":"Détection…","Kontrol ediliyor…":"Vérification…",
+        "Tarayıcı desteği denetleniyor.":"Vérification de la compatibilité du navigateur.","Yerel tarayıcı bilgisi.":"Informations locales du navigateur.",
+        "Sistem özeti hazırlanıyor":"Préparation du résumé système","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"Nous affichons les informations autorisées par votre navigateur.",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"Si le navigateur n'indique pas la RAM, tu peux saisir sa capacité.",
+        "Otomatik algılama":"Détection automatique","RAM değerini uygula":"Appliquer la valeur RAM",
+        "ÖNE ÇIKAN ÖZELLİKLER":"FONCTIONNALITÉS PRINCIPALES","Gereken kontroller,":"Les contrôles essentiels,","tek bir pencerede.":"dans une seule fenêtre.",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC réunit le suivi de la RAM, un guide de démarrage et le nettoyage avec aperçu des fichiers temporaires dans une interface à onglets.",
+        "Canlı RAM takibi":"Suivi de la RAM en direct","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"Suivez la mémoire totale, utilisée, libre et en cache, ainsi que le swap et le nombre de processus actifs.",
+        "Seçilebilir temizlik":"Nettoyage au choix","Tahmini kazanım":"Gain estimé","İsteğe bağlı otomatik temizlik":"Nettoyage automatique facultatif",
+        "İşlem günlüğü":"Journal d'activité","Kalıcı ayarlar":"Préférences enregistrées","Hoş Geldin / Hızlı Rehber":"Bienvenue / Guide rapide",
+        "Depolama / Geçici Dosya Temizliği":"Stockage / Nettoyage des fichiers temporaires",
+        "İşletim sistemine uygun":"Des outils mémoire","bellek araçları.":"adaptés à ton système.",
+        "İKİ PLATFORM, İKİ YÖNTEM":"DEUX PLATEFORMES, DEUX MÉTHODES","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"AVANT TÉLÉCHARGEMENT · CONFIGURATION REQUISE",
+        "Her bilgisayara uygun,":"Pour différents ordinateurs,","ihtiyacına göre rahatlık.":"selon tes besoins.",
+        "RAM, işlemci ve boş alan önerileri":"Conseils RAM, processeur et stockage","MİNİMUM · TEMEL KULLANIM":"MINIMUM · UTILISATION DE BASE",
+        "Başlangıç":"Débutant","ORTA · ÖNERİLEN":"MOYEN · RECOMMANDÉ","Dengeli":"Équilibré",
+        "YÜKSEK · RAHAT KULLANIM":"ÉLEVÉ · CONFORT","Geniş alan":"Plus de marge",
+        "Desteklenen masaüstü sistemleri":"Systèmes de bureau pris en charge","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64 bits",
+        "Linux · x86_64 masaüstü":"Linux · bureau x86_64","KURULUM GEREKTİRMEZ":"AUCUNE INSTALLATION",
+        "İndir, çalıştır,":"Télécharge, lance,","kontrol et.":"garde le contrôle.","Uygun dosyayı indir":"Télécharger le bon fichier",
+        "Yetki vererek çalıştır":"Lancer avec les droits requis","RAM kullanımını yönet":"Gérer la RAM",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · TÉLÉCHARGEMENT","resmî sürümü indir.":"télécharge la version officielle.",
+        "İşletim sistemi algılanıyor…":"Détection du système…","↓   İndirme seçeneklerini görüntüle":"↓   Voir les téléchargements",
+        "Diğer işletim sistemi için indir":"Télécharger pour l'autre système","Kaynak kodu indir (cramc.py)":"Télécharger le code source (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"Voir tous les fichiers de la version ↗","SIK SORULAN SORULAR":"QUESTIONS FRÉQUENTES",
+        "Merak edilenler.":"À savoir.","Başa dön ↑":"Retour en haut ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"Ce projet n'a pas pour objectif de gagner de l'argent.",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"Pas de publicité, de compte, d'abonnement ni de fonctionnalité payante. Notre objectif est de proposer un outil simple, clair et gratuit aux techniciens, passionnés de matériel, réparateurs et utilisateurs.",
+        "Ülkeme göre dili otomatik seç":"Choisir automatiquement la langue selon mon pays","Siteyi keşfet":"Découvrir le site",
+        "Dilini seç / Choose your language":"Choisis ta langue","HOŞ GELDİN · WELCOME":"BIENVENUE",
+        "Bilgisayarını tanı.":"Découvre ton ordinateur.","Kontrol sende olsun.":"Garde le contrôle.",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"Choisis une langue ou détecte-la selon ton pays.",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"Si tu actives le choix automatique, ton adresse IP publique est envoyée à IPAPI pour obtenir le code du pays. CRAMC ne reçoit ni ne stocke ton IP. Seuls le pays et la langue sont mémorisés sur cet appareil. IPAPI indique conserver les requêtes IP dans ses journaux pendant une durée limitée.",
+        "Hızlı RAM takibi":"Aperçu rapide de la RAM","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"Prévisualise la mémoire potentiellement libérée selon les actions choisies. Les estimations ne garantissent pas un résultat.",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"Définis un seuil RAM de 50 à 95 % et un intervalle de 1 à 60 minutes.",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"Consulte les actions, alertes et erreurs dans le journal, ainsi que le dernier nettoyage et le résumé de session.",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"Les préférences de nettoyage et le programmateur sont conservés pour la prochaine session.",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"Un écran d'accueil guide les nouveaux utilisateurs vers l'onglet RAM, les autorisations et les étapes de base.",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"Affiche les fichiers ordinaires des dossiers temporaires utilisateur de plus de 24 heures. Ils sont prévisualisés et nécessitent une confirmation avant suppression."
+      },
+      pt: {
+        "Özellikler":"Recursos","Platformlar":"Plataformas","Donanımım":"Meu hardware","Gereksinimler":"Requisitos",
+        "Nasıl çalışır?":"Como funciona","Depolama":"Armazenamento","SSS":"Perguntas frequentes","İndir":"Baixar","Misyonumuz":"Nossa missão",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · SEM INSTALAÇÃO",
+        "Belleğini daha yakından":"Conheça melhor sua","tanı.":"memória.","Kontrolü eline al.":"Assuma o controle.",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"O ComputerRAMCleaner (CRAMC) ajuda a monitorar o uso da RAM, gerenciar opções de limpeza de cache e realizar tarefas em uma interface simples no Linux e no Windows.",
+        "↓   CRAMC'yi indir":"↓   Baixar CRAMC","Özellikleri keşfet":"Explorar recursos","sürümü":"versão",
+        "Kurulumsuz tek dosya":"Arquivo único · sem instalação","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"PLATAFORMAS COMPATÍVEIS","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · RESUMO DE HARDWARE NO NAVEGADOR",
+        "Önce cihazını tanı.":"Conheça seu dispositivo.","Sonra doğru sürümü seç.":"Depois escolha a versão certa.",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"Veja as informações de processador, memória e sistema operacional que seu navegador permite compartilhar. Funciona sem baixar programas.",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · PRONTO","Bilgisayarının":"Resumo rápido do","kısa sistem raporu.":"seu computador.",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"Esta ferramenta funciona no navegador. Não pede acesso ao computador e lê apenas os dados básicos de hardware disponibilizados pelo navegador. Nem todos os navegadores mostram o modelo exato da CPU ou a RAM instalada.",
+        "Gizlilik:":"Privacidade:","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"O resumo é processado nesta página e não é enviado nem armazenado nos servidores do CRAMC.",
+        "↻   Sistemimi yeniden tara":"↻   Examinar novamente","İşletim sistemi":"Sistema operacional","İşlemci":"Processador",
+        "RAM belleği":"Memória RAM","Tarayıcı":"Navegador","Algılanıyor…":"Detectando…","Kontrol ediliyor…":"Verificando…",
+        "Tarayıcı desteği denetleniyor.":"Verificando suporte do navegador.","Yerel tarayıcı bilgisi.":"Informações do navegador local.",
+        "Sistem özeti hazırlanıyor":"Preparando o resumo do sistema","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"Exibindo as informações permitidas pelo navegador.",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"Se o navegador não mostrar a RAM, você pode informar a quantidade.",
+        "Otomatik algılama":"Detecção automática","RAM değerini uygula":"Aplicar valor de RAM",
+        "ÖNE ÇIKAN ÖZELLİKLER":"RECURSOS EM DESTAQUE","Gereken kontroller,":"Os controles essenciais,","tek bir pencerede.":"em uma única janela.",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"O CRAMC reúne monitoramento de RAM, guia inicial e limpeza com prévia de arquivos temporários em uma interface com abas.",
+        "Canlı RAM takibi":"Monitoramento de RAM","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"Acompanhe a memória total, usada, livre e em cache, além do swap e dos processos ativos.",
+        "Seçilebilir temizlik":"Limpeza configurável","Tahmini kazanım":"Recuperação estimada","İsteğe bağlı otomatik temizlik":"Limpeza automática opcional",
+        "İşlem günlüğü":"Registro de atividades","Kalıcı ayarlar":"Configurações salvas","Hoş Geldin / Hızlı Rehber":"Boas-vindas / Guia rápido",
+        "Depolama / Geçici Dosya Temizliği":"Armazenamento / Limpeza de temporários",
+        "İşletim sistemine uygun":"Ferramentas de memória","bellek araçları.":"para seu sistema.",
+        "İKİ PLATFORM, İKİ YÖNTEM":"DUAS PLATAFORMAS, DOIS MÉTODOS","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"ANTES DE BAIXAR · REQUISITOS DO SISTEMA",
+        "Her bilgisayara uygun,":"Para diferentes computadores,","ihtiyacına göre rahatlık.":"conforme sua necessidade.",
+        "RAM, işlemci ve boş alan önerileri":"Recomendações de RAM, CPU e espaço","MİNİMUM · TEMEL KULLANIM":"MÍNIMO · USO BÁSICO",
+        "Başlangıç":"Inicial","ORTA · ÖNERİLEN":"MÉDIO · RECOMENDADO","Dengeli":"Equilibrado",
+        "YÜKSEK · RAHAT KULLANIM":"ALTO · USO CONFORTÁVEL","Geniş alan":"Mais folga",
+        "Desteklenen masaüstü sistemleri":"Sistemas desktop compatíveis","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64 bits",
+        "Linux · x86_64 masaüstü":"Linux · desktop x86_64","KURULUM GEREKTİRMEZ":"NÃO PRECISA INSTALAR",
+        "İndir, çalıştır,":"Baixe, execute,","kontrol et.":"assuma o controle.","Uygun dosyayı indir":"Baixe o arquivo certo",
+        "Yetki vererek çalıştır":"Execute com permissão","RAM kullanımını yönet":"Gerencie a RAM",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · DOWNLOAD","resmî sürümü indir.":"baixe a versão oficial.",
+        "İşletim sistemi algılanıyor…":"Detectando sistema operacional…","↓   İndirme seçeneklerini görüntüle":"↓   Ver opções de download",
+        "Diğer işletim sistemi için indir":"Baixar para o outro sistema","Kaynak kodu indir (cramc.py)":"Baixar código-fonte (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"Ver todos os arquivos da versão ↗","SIK SORULAN SORULAR":"PERGUNTAS FREQUENTES",
+        "Merak edilenler.":"Saiba mais.","Başa dön ↑":"Voltar ao topo ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"Este projeto não tem como objetivo ganhar dinheiro.",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"Sem anúncios, contas, assinaturas ou recursos pagos. Nosso objetivo é oferecer uma ferramenta simples e gratuita para técnicos, especialistas em hardware, reparadores e usuários.",
+        "Ülkeme göre dili otomatik seç":"Escolher idioma pelo meu país","Siteyi keşfet":"Explorar o site",
+        "Dilini seç / Choose your language":"Escolha seu idioma","HOŞ GELDİN · WELCOME":"BEM-VINDO",
+        "Bilgisayarını tanı.":"Conheça seu computador.","Kontrol sende olsun.":"Você está no controle.",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"Escolha um idioma ou detecte-o pelo seu país.",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"Ao ativar a seleção automática, seu IP público é enviado à IPAPI para identificar o código do país. O CRAMC não recebe nem armazena seu IP; apenas país e idioma ficam salvos neste dispositivo. A IPAPI informa que pode manter consultas de IP em seus registros por um período limitado.",
+        "Hızlı RAM takibi":"Visão rápida da RAM","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"Veja uma possível recuperação de memória conforme as ações selecionadas. As estimativas não garantem resultados reais.",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"Defina um limite de RAM de 50–95% e um intervalo de 1–60 minutos.",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"Acompanhe ações, avisos e erros no registro, além do resumo da última limpeza e da sessão.",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"As preferências de limpeza e o temporizador automático ficam salvos para a próxima sessão.",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"Uma tela inicial orienta sobre a aba RAM, permissões e etapas básicas.",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"Lista arquivos comuns em pastas temporárias do usuário com mais de 24 horas. Eles são pré-visualizados e exigem confirmação antes da exclusão."
+      },
+      ru: {
+        "Özellikler":"Возможности","Platformlar":"Платформы","Donanımım":"Моё оборудование","Gereksinimler":"Требования",
+        "Nasıl çalışır?":"Как это работает","Depolama":"Хранилище","SSS":"Вопросы и ответы","İndir":"Скачать","Misyonumuz":"Наша миссия",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · БЕЗ УСТАНОВКИ",
+        "Belleğini daha yakından":"Узнай свою память","tanı.":"лучше.","Kontrolü eline al.":"Возьми управление в свои руки.",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) помогает отслеживать использование ОЗУ, управлять очисткой кэша и выполнять задачи в простом интерфейсе Linux и Windows.",
+        "↓   CRAMC'yi indir":"↓   Скачать CRAMC","Özellikleri keşfet":"Возможности","sürümü":"версия",
+        "Kurulumsuz tek dosya":"Один файл · без установки","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"ПОДДЕРЖИВАЕМЫЕ ПЛАТФОРМЫ","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · СВЕДЕНИЯ ОБ ОБОРУДОВАНИИ В БРАУЗЕРЕ",
+        "Önce cihazını tanı.":"Сначала узнай устройство.","Sonra doğru sürümü seç.":"Затем выбери подходящую версию.",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"Посмотри сведения о процессоре, памяти и ОС, которыми браузер может поделиться. Проверка работает без загрузки программ.",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · ГОТОВО","Bilgisayarının":"Краткий отчёт","kısa sistem raporu.":"о компьютере.",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"Этот мини-инструмент работает в браузере. Он не запрашивает доступ к компьютеру и читает только основные данные, доступные браузеру. Точная модель CPU и объём установленной ОЗУ доступны не во всех браузерах.",
+        "Gizlilik:":"Конфиденциальность:","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"Сводка обрабатывается на этой странице и не отправляется на серверы CRAMC и не сохраняется ими.",
+        "↻   Sistemimi yeniden tara":"↻   Проверить снова","İşletim sistemi":"Операционная система","İşlemci":"Процессор",
+        "RAM belleği":"Оперативная память","Tarayıcı":"Браузер","Algılanıyor…":"Определение…","Kontrol ediliyor…":"Проверка…",
+        "Tarayıcı desteği denetleniyor.":"Проверка поддержки браузера.","Yerel tarayıcı bilgisi.":"Локальная информация о браузере.",
+        "Sistem özeti hazırlanıyor":"Подготовка сводки системы","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"Показываем данные, доступные браузеру.",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"Если браузер не показывает ОЗУ, можно указать её объём вручную.",
+        "Otomatik algılama":"Автоопределение","RAM değerini uygula":"Применить объём ОЗУ",
+        "ÖNE ÇIKAN ÖZELLİKLER":"ОСНОВНЫЕ ВОЗМОЖНОСТИ","Gereken kontroller,":"Нужные инструменты","tek bir pencerede.":"в одном окне.",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC объединяет мониторинг ОЗУ, краткое руководство и очистку временных файлов пользователя с предварительным просмотром во вкладках.",
+        "Canlı RAM takibi":"Мониторинг ОЗУ","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"Следите за общей, используемой, свободной и кэшированной памятью, swap и числом запущенных процессов.",
+        "Seçilebilir temizlik":"Настраиваемая очистка","Tahmini kazanım":"Оценка освобождения","İsteğe bağlı otomatik temizlik":"Автоматическая очистка по желанию",
+        "İşlem günlüğü":"Журнал действий","Kalıcı ayarlar":"Сохранённые настройки","Hoş Geldin / Hızlı Rehber":"Приветствие / Краткое руководство",
+        "Depolama / Geçici Dosya Temizliği":"Хранилище / Очистка временных файлов",
+        "İşletim sistemine uygun":"Инструменты памяти","bellek araçları.":"для вашей ОС.",
+        "İKİ PLATFORM, İKİ YÖNTEM":"ДВЕ ПЛАТФОРМЫ, ДВА СПОСОБА","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"ПЕРЕД ЗАГРУЗКОЙ · СИСТЕМНЫЕ ТРЕБОВАНИЯ",
+        "Her bilgisayara uygun,":"Для разных компьютеров,","ihtiyacına göre rahatlık.":"с учётом ваших задач.",
+        "RAM, işlemci ve boş alan önerileri":"Рекомендации по ОЗУ, CPU и месту","MİNİMUM · TEMEL KULLANIM":"МИНИМУМ · БАЗОВОЕ ИСПОЛЬЗОВАНИЕ",
+        "Başlangıç":"Начальный","ORTA · ÖNERİLEN":"СРЕДНИЙ · РЕКОМЕНДУЕТСЯ","Dengeli":"Сбалансированный",
+        "YÜKSEK · RAHAT KULLANIM":"ВЫСОКИЙ · КОМФОРТНОЕ ИСПОЛЬЗОВАНИЕ","Geniş alan":"Больше ресурсов",
+        "Desteklenen masaüstü sistemleri":"Поддерживаемые настольные системы","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64-bit",
+        "Linux · x86_64 masaüstü":"Linux · x86_64 Desktop","KURULUM GEREKTİRMEZ":"НЕ ТРЕБУЕТ УСТАНОВКИ",
+        "İndir, çalıştır,":"Скачай, запусти,","kontrol et.":"управляй.","Uygun dosyayı indir":"Скачай нужный файл",
+        "Yetki vererek çalıştır":"Запусти с нужными правами","RAM kullanımını yönet":"Управляй ОЗУ",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · ЗАГРУЗКА","resmî sürümü indir.":"скачай официальный выпуск.",
+        "İşletim sistemi algılanıyor…":"Определение ОС…","↓   İndirme seçeneklerini görüntüle":"↓   Все варианты загрузки",
+        "Diğer işletim sistemi için indir":"Скачать для другой ОС","Kaynak kodu indir (cramc.py)":"Скачать исходный код (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"Все файлы выпуска ↗","SIK SORULAN SORULAR":"ЧАСТЫЕ ВОПРОСЫ",
+        "Merak edilenler.":"Полезно знать.","Başa dön ↑":"Наверх ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"Цель проекта — не заработок.",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"Без рекламы, аккаунтов, подписок и платных функций. Мы хотим предложить простой и бесплатный инструмент специалистам по ПК, энтузиастам железа, мастерам по ремонту и обычным пользователям.",
+        "Ülkeme göre dili otomatik seç":"Выбрать язык по стране","Siteyi keşfet":"Перейти на сайт",
+        "Dilini seç / Choose your language":"Выберите язык","HOŞ GELDİN · WELCOME":"ДОБРО ПОЖАЛОВАТЬ",
+        "Bilgisayarını tanı.":"Узнай свой компьютер.","Kontrol sende olsun.":"Управление у тебя.",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"Выбери язык вручную или определи его по стране.",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"При включении автоопределения ваш публичный IP отправляется в IPAPI для получения кода страны. CRAMC не получает и не хранит ваш IP; на этом устройстве сохраняются только страна и язык. IPAPI сообщает, что может ограниченное время хранить IP-запросы в журналах.",
+        "Hızlı RAM takibi":"Быстрый обзор ОЗУ","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"Посмотрите возможное освобождение памяти для выбранных действий. Оценка не гарантирует результат.",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"Задайте порог ОЗУ 50–95 % и интервал 1–60 минут.",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"Отслеживайте действия, предупреждения и ошибки в журнале, а также итог последней очистки и сеанса.",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"Настройки очистки и таймера сохраняются для следующего запуска.",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"Отдельный экран приветствия знакомит с вкладкой ОЗУ, правами доступа и основными шагами.",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"Показывает обычные файлы в пользовательских временных папках старше 24 часов. Перед удалением доступен просмотр и требуется подтверждение."
+      },
+      ar: {
+        "Özellikler":"الميزات","Platformlar":"المنصات","Donanımım":"جهازي","Gereksinimler":"متطلبات النظام",
+        "Nasıl çalışır?":"كيف يعمل؟","Depolama":"التخزين","SSS":"الأسئلة الشائعة","İndir":"تنزيل","Misyonumuz":"رسالتنا",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · بدون تثبيت",
+        "Belleğini daha yakından":"تعرّف على ذاكرتك","tanı.":"بشكل أفضل.","Kontrolü eline al.":"تحكّم بنفسك.",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"يساعدك ComputerRAMCleaner (CRAMC) على مراقبة استخدام الذاكرة وإدارة خيارات تنظيف الذاكرة المؤقتة من واجهة بسيطة على Linux وWindows.",
+        "↓   CRAMC'yi indir":"↓   تنزيل CRAMC","Özellikleri keşfet":"اكتشف الميزات","sürümü":"الإصدار",
+        "Kurulumsuz tek dosya":"ملف واحد · بلا تثبيت","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"الأنظمة المدعومة","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · ملخص العتاد في المتصفح",
+        "Önce cihazını tanı.":"تعرّف على جهازك أولاً.","Sonra doğru sürümü seç.":"ثم اختر الإصدار المناسب.",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"اطّلع على معلومات المعالج والذاكرة ونظام التشغيل التي يسمح المتصفح بمشاركتها. تعمل الأداة دون تنزيل أي برنامج.",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · جاهز","Bilgisayarının":"ملخص سريع","kısa sistem raporu.":"لنظام حاسوبك.",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"تعمل هذه الأداة المصغرة داخل المتصفح. لا تطلب الوصول إلى حاسوبك، بل تقرأ فقط معلومات العتاد الأساسية التي يتيحها المتصفح. لا تعرض جميع المتصفحات طراز المعالج أو سعة الذاكرة الدقيقة.",
+        "Gizlilik:":"الخصوصية:","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"تُعالج المعلومات في هذه الصفحة ولا تُرسل إلى خوادم CRAMC أو تُحفظ لديها.",
+        "↻   Sistemimi yeniden tara":"↻   افحص جهازي مجدداً","İşletim sistemi":"نظام التشغيل","İşlemci":"المعالج",
+        "RAM belleği":"ذاكرة RAM","Tarayıcı":"المتصفح","Algılanıyor…":"جارٍ الاكتشاف…","Kontrol ediliyor…":"جارٍ الفحص…",
+        "Tarayıcı desteği denetleniyor.":"جارٍ التحقق من دعم المتصفح.","Yerel tarayıcı bilgisi.":"معلومات المتصفح المحلي.",
+        "Sistem özeti hazırlanıyor":"جارٍ إعداد ملخص النظام","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"نعرض المعلومات التي يسمح المتصفح بمشاركتها.",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"إذا لم يعرض المتصفح معلومات RAM، يمكنك تحديد السعة بنفسك.",
+        "Otomatik algılama":"اكتشاف تلقائي","RAM değerini uygula":"تطبيق قيمة RAM",
+        "ÖNE ÇIKAN ÖZELLİKLER":"أبرز الميزات","Gereken kontroller,":"كل أدوات التحكم،","tek bir pencerede.":"في نافذة واحدة.",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"يجمع CRAMC مراقبة RAM ودليل البدء وأداة معاينة لتنظيف الملفات المؤقتة في واجهة واحدة ذات علامات تبويب.",
+        "Canlı RAM takibi":"مراقبة RAM مباشرة","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"تابع الذاكرة الإجمالية والمستخدمة والمتاحة والمخبأة، بالإضافة إلى swap وعدد العمليات النشطة.",
+        "Seçilebilir temizlik":"تنظيف قابل للاختيار","Tahmini kazanım":"التحرير المتوقع","İsteğe bağlı otomatik temizlik":"تنظيف تلقائي اختياري",
+        "İşlem günlüğü":"سجل النشاط","Kalıcı ayarlar":"إعدادات محفوظة","Hoş Geldin / Hızlı Rehber":"مرحباً / دليل سريع",
+        "Depolama / Geçici Dosya Temizliği":"التخزين / تنظيف الملفات المؤقتة",
+        "İşletim sistemine uygun":"أدوات ذاكرة","bellek araçları.":"مناسبة لنظامك.",
+        "İKİ PLATFORM, İKİ YÖNTEM":"منصتان، طريقتان","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"قبل التنزيل · متطلبات النظام",
+        "Her bilgisayara uygun,":"مناسب لأجهزة مختلفة،","ihtiyacına göre rahatlık.":"وفق احتياجاتك.",
+        "RAM, işlemci ve boş alan önerileri":"توصيات الذاكرة والمعالج والمساحة","MİNİMUM · TEMEL KULLANIM":"الحد الأدنى · استخدام أساسي",
+        "Başlangıç":"مبتدئ","ORTA · ÖNERİLEN":"متوسط · موصى به","Dengeli":"متوازن",
+        "YÜKSEK · RAHAT KULLANIM":"مرتفع · استخدام مريح","Geniş alan":"موارد أكثر",
+        "Desteklenen masaüstü sistemleri":"أنظمة سطح المكتب المدعومة","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64 بت",
+        "Linux · x86_64 masaüstü":"Linux · سطح مكتب x86_64","KURULUM GEREKTİRMEZ":"لا يتطلب التثبيت",
+        "İndir, çalıştır,":"نزّل، شغّل،","kontrol et.":"وتحكّم.","Uygun dosyayı indir":"نزّل الملف المناسب",
+        "Yetki vererek çalıştır":"شغّل بالصلاحيات اللازمة","RAM kullanımını yönet":"أدر استخدام RAM",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · تنزيل","resmî sürümü indir.":"نزّل الإصدار الرسمي.",
+        "İşletim sistemi algılanıyor…":"جارٍ اكتشاف نظام التشغيل…","↓   İndirme seçeneklerini görüntüle":"↓   عرض خيارات التنزيل",
+        "Diğer işletim sistemi için indir":"تنزيل للنظام الآخر","Kaynak kodu indir (cramc.py)":"تنزيل الكود المصدري (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"عرض جميع ملفات الإصدار ↗","SIK SORULAN SORULAR":"الأسئلة المتكررة",
+        "Merak edilenler.":"معلومات مهمة.","Başa dön ↑":"العودة للأعلى ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"هذا المشروع لا يهدف إلى تحقيق الربح.",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"لا إعلانات أو حسابات أو اشتراكات أو ميزات مدفوعة. هدفنا توفير أداة بسيطة ومجانية لفنيي الحاسوب وخبراء العتاد ومصلحي الأجهزة والمستخدمين.",
+        "Ülkeme göre dili otomatik seç":"اختيار اللغة تلقائياً حسب بلدي","Siteyi keşfet":"استكشف الموقع",
+        "Dilini seç / Choose your language":"اختر لغتك","HOŞ GELDİN · WELCOME":"مرحباً",
+        "Bilgisayarını tanı.":"تعرّف على حاسوبك.","Kontrol sende olsun.":"التحكم بيدك.",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"اختر لغتك أو حدّدها تلقائياً حسب بلدك.",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"عند تفعيل اختيار اللغة حسب البلد، يُرسل عنوان IP العام إلى IPAPI لمعرفة رمز البلد. لا تتلقى CRAMC عنوان IP ولا تخزّنه؛ يتم حفظ البلد واللغة فقط على هذا الجهاز. تشير IPAPI إلى أنها قد تحتفظ باستعلامات IP في سجلاتها لفترة محدودة.",
+        "Hızlı RAM takibi":"نظرة سريعة على RAM","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"اعرض مقدار الذاكرة المحتمل تحريرها وفق الإجراءات المحددة. التقديرات ليست ضماناً للنتيجة.",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"اضبط حد استخدام RAM بين 50 و95% والفاصل بين دقيقة و60 دقيقة.",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"تابع العمليات والتنبيهات والأخطاء في السجل، واطّلع على ملخص التنظيف والجلسة.",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"تُحفظ تفضيلات التنظيف وإعدادات الجدولة للجلسة التالية.",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"شاشة ترحيب منفصلة ترشد المستخدم إلى تبويب RAM والصلاحيات وخطوات الاستخدام الأساسية.",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"تعرض الملفات العادية الأقدم من 24 ساعة في مجلدات المستخدم المؤقتة. تتم معاينتها وتتطلب تأكيداً قبل الحذف."
+      },
+      zh: {
+        "Özellikler":"功能","Platformlar":"平台","Donanımım":"我的硬件","Gereksinimler":"系统要求",
+        "Nasıl çalışır?":"使用方法","Depolama":"存储","SSS":"常见问题","İndir":"下载","Misyonumuz":"我们的使命",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · 无需安装",
+        "Belleğini daha yakından":"更了解你的内存","tanı.":"状况。","Kontrolü eline al.":"掌控你的设备。",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) 帮助你在 Linux 和 Windows 上监控内存使用、管理缓存清理选项，并通过简洁界面完成相关操作。",
+        "↓   CRAMC'yi indir":"↓   下载 CRAMC","Özellikleri keşfet":"查看功能","sürümü":"版本",
+        "Kurulumsuz tek dosya":"单文件 · 无需安装","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"支持的平台","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · 浏览器硬件概览",
+        "Önce cihazını tanı.":"先了解你的设备。","Sonra doğru sürümü seç.":"再选择合适的版本。",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"查看浏览器允许读取的处理器、内存和操作系统信息。无需下载任何程序即可使用。",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · 就绪","Bilgisayarının":"你的电脑","kısa sistem raporu.":"系统简报。",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"此工具在浏览器中运行，不会请求电脑访问权限，只读取浏览器提供的基本硬件信息。并非所有浏览器都会提供准确的 CPU 型号或已安装内存容量。",
+        "Gizlilik:":"隐私：","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"硬件摘要在本页面本地处理，不会发送到 CRAMC 服务器或由 CRAMC 保存。",
+        "↻   Sistemimi yeniden tara":"↻   重新检测","İşletim sistemi":"操作系统","İşlemci":"处理器",
+        "RAM belleği":"内存","Tarayıcı":"浏览器","Algılanıyor…":"正在检测…","Kontrol ediliyor…":"正在检查…",
+        "Tarayıcı desteği denetleniyor.":"正在检查浏览器支持。","Yerel tarayıcı bilgisi.":"本地浏览器信息。",
+        "Sistem özeti hazırlanıyor":"正在生成系统摘要","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"显示浏览器允许提供的信息。",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"如果浏览器不提供内存信息，你可以手动选择内存容量。",
+        "Otomatik algılama":"自动检测","RAM değerini uygula":"应用内存值",
+        "ÖNE ÇIKAN ÖZELLİKLER":"主要功能","Gereken kontroller,":"所需控制功能，","tek bir pencerede.":"尽在一个窗口。",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC 将内存监控、快速入门指南和带预览的用户临时文件清理整合在一个标签式界面中。",
+        "Canlı RAM takibi":"实时内存监控","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"查看总内存、已用内存、可用内存、缓存、交换空间及运行进程数量。",
+        "Seçilebilir temizlik":"可选清理","Tahmini kazanım":"预计释放","İsteğe bağlı otomatik temizlik":"可选自动清理",
+        "İşlem günlüğü":"操作日志","Kalıcı ayarlar":"保存设置","Hoş Geldin / Hızlı Rehber":"欢迎 / 快速指南",
+        "Depolama / Geçici Dosya Temizliği":"存储 / 临时文件清理",
+        "İşletim sistemine uygun":"适合操作系统的","bellek araçları.":"内存工具。",
+        "İKİ PLATFORM, İKİ YÖNTEM":"两种平台，两种方式","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"下载前 · 系统要求",
+        "Her bilgisayara uygun,":"适合不同电脑，","ihtiyacına göre rahatlık.":"满足不同需求。",
+        "RAM, işlemci ve boş alan önerileri":"内存、处理器和磁盘空间建议","MİNİMUM · TEMEL KULLANIM":"最低 · 基本使用",
+        "Başlangıç":"入门","ORTA · ÖNERİLEN":"中等 · 推荐","Dengeli":"均衡",
+        "YÜKSEK · RAHAT KULLANIM":"较高 · 舒适使用","Geniş alan":"更充足",
+        "Desteklenen masaüstü sistemleri":"支持的桌面系统","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64 位",
+        "Linux · x86_64 masaüstü":"Linux · x86_64 桌面版","KURULUM GEREKTİRMEZ":"无需安装",
+        "İndir, çalıştır,":"下载、运行、","kontrol et.":"轻松管理。","Uygun dosyayı indir":"下载对应文件",
+        "Yetki vererek çalıştır":"以所需权限运行","RAM kullanımını yönet":"管理内存使用",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · 下载","resmî sürümü indir.":"下载官方版本。",
+        "İşletim sistemi algılanıyor…":"正在检测操作系统…","↓   İndirme seçeneklerini görüntüle":"↓   查看下载选项",
+        "Diğer işletim sistemi için indir":"下载其他系统版本","Kaynak kodu indir (cramc.py)":"下载源代码 (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"查看所有发布文件 ↗","SIK SORULAN SORULAR":"常见问题",
+        "Merak edilenler.":"你可能想了解。","Başa dön ↑":"返回顶部 ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"本项目不以盈利为目标。",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"没有广告、账户、订阅或付费功能。我们的目标是为电脑技术人员、硬件爱好者、维修人员和日常用户提供简单易用的免费工具。",
+        "Ülkeme göre dili otomatik seç":"根据所在国家自动选择语言","Siteyi keşfet":"进入网站",
+        "Dilini seç / Choose your language":"选择语言","HOŞ GELDİN · WELCOME":"欢迎",
+        "Bilgisayarını tanı.":"了解你的电脑。","Kontrol sende olsun.":"由你掌控。",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"你可以手动选择语言，也可以根据所在国家自动选择。",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"启用国家自动语言选择时，你的公网 IP 会发送给 IPAPI 以获取国家代码。CRAMC 不会接收或保存你的 IP；此设备仅保存国家代码和语言偏好。IPAPI 表示其服务器日志可能会在有限时间内保留 IP 查询记录。",
+        "Hızlı RAM takibi":"快速内存概览","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"根据所选操作预览可能释放的内存。估算值不保证实际结果。",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"将内存使用阈值设置为 50–95%，间隔设置为 1–60 分钟。",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"在日志中查看操作、警告和错误，以及最近的清理和会话摘要。",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"清理偏好和自动计划设置会保存到下次使用。",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"独立的欢迎页面会介绍内存标签、权限要求和基本操作步骤。",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"列出用户临时文件夹中超过 24 小时的普通文件。删除前会预览文件并要求明确确认。"
+      },
+      ja: {
+        "Özellikler":"機能","Platformlar":"対応プラットフォーム","Donanımım":"ハードウェア","Gereksinimler":"動作要件",
+        "Nasıl çalışır?":"使い方","Depolama":"ストレージ","SSS":"よくある質問","İndir":"ダウンロード","Misyonumuz":"私たちの使命",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · インストール不要",
+        "Belleğini daha yakından":"メモリの状態を","tanı.":"もっと知ろう。","Kontrolü eline al.":"自分で管理しよう。",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) は、Linux と Windows で RAM 使用状況を確認し、キャッシュのクリーンアップをシンプルな画面から管理できるツールです。",
+        "↓   CRAMC'yi indir":"↓   CRAMC をダウンロード","Özellikleri keşfet":"機能を見る","sürümü":"バージョン",
+        "Kurulumsuz tek dosya":"単一ファイル · インストール不要","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"対応プラットフォーム","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · ブラウザーでハードウェア確認",
+        "Önce cihazını tanı.":"まずデバイスを確認。","Sonra doğru sürümü seç.":"次に適切な版を選択。",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"ブラウザーが公開できる CPU、メモリ、OS 情報を確認できます。ソフトウェアのダウンロードは不要です。",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · 準備完了","Bilgisayarının":"パソコンの","kısa sistem raporu.":"簡易システムレポート。",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"このミニツールはブラウザー内で動作します。PC へのアクセス許可は求めず、ブラウザーが公開する基本的な情報だけを読み取ります。正確な CPU 型番や RAM 容量を表示できない場合があります。",
+        "Gizlilik:":"プライバシー：","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"概要はこのページ内で処理され、CRAMC のサーバーに送信・保存されません。",
+        "↻   Sistemimi yeniden tara":"↻   再スキャン","İşletim sistemi":"OS","İşlemci":"プロセッサー",
+        "RAM belleği":"RAM","Tarayıcı":"ブラウザー","Algılanıyor…":"検出中…","Kontrol ediliyor…":"確認中…",
+        "Tarayıcı desteği denetleniyor.":"ブラウザーの対応状況を確認中。","Yerel tarayıcı bilgisi.":"現在のブラウザー情報。",
+        "Sistem özeti hazırlanıyor":"システム概要を準備中","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"ブラウザーが許可する情報を表示します。",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"ブラウザーが RAM を表示しない場合は、容量を手動で選択できます。",
+        "Otomatik algılama":"自動検出","RAM değerini uygula":"RAM 値を適用",
+        "ÖNE ÇIKAN ÖZELLİKLER":"主な機能","Gereken kontroller,":"必要な管理機能を","tek bir pencerede.":"ひとつの画面に。",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC は RAM 監視、クイックガイド、ユーザー一時ファイルのプレビュー付き整理機能をタブ式画面にまとめます。",
+        "Canlı RAM takibi":"RAM のリアルタイム監視","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"合計、使用中、空き、キャッシュ、スワップ、実行中プロセス数を確認できます。",
+        "Seçilebilir temizlik":"選択式クリーンアップ","Tahmini kazanım":"解放量の目安","İsteğe bağlı otomatik temizlik":"任意の自動クリーンアップ",
+        "İşlem günlüğü":"操作ログ","Kalıcı ayarlar":"設定の保存","Hoş Geldin / Hızlı Rehber":"ようこそ / クイックガイド",
+        "Depolama / Geçici Dosya Temizliği":"ストレージ / 一時ファイルの整理",
+        "İşletim sistemine uygun":"OS に合わせた","bellek araçları.":"メモリ管理ツール。",
+        "İKİ PLATFORM, İKİ YÖNTEM":"2 つのプラットフォーム、2 つの方法","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"ダウンロード前 · システム要件",
+        "Her bilgisayara uygun,":"さまざまな PC に対応、","ihtiyacına göre rahatlık.":"用途に合わせて。",
+        "RAM, işlemci ve boş alan önerileri":"RAM、CPU、空き容量の目安","MİNİMUM · TEMEL KULLANIM":"最小 · 基本利用",
+        "Başlangıç":"エントリー","ORTA · ÖNERİLEN":"標準 · 推奨","Dengeli":"バランス",
+        "YÜKSEK · RAHAT KULLANIM":"高性能 · 快適利用","Geniş alan":"余裕のある構成",
+        "Desteklenen masaüstü sistemleri":"対応デスクトップ OS","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64-bit",
+        "Linux · x86_64 masaüstü":"Linux · x86_64 デスクトップ","KURULUM GEREKTİRMEZ":"インストール不要",
+        "İndir, çalıştır,":"ダウンロードして起動、","kontrol et.":"すぐに管理。","Uygun dosyayı indir":"対応ファイルをダウンロード",
+        "Yetki vererek çalıştır":"必要な権限で起動","RAM kullanımını yönet":"RAM を管理",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · ダウンロード","resmî sürümü indir.":"公式版をダウンロード。",
+        "İşletim sistemi algılanıyor…":"OS を検出中…","↓   İndirme seçeneklerini görüntüle":"↓   ダウンロード विकल्पを表示",
+        "Diğer işletim sistemi için indir":"他の OS 用をダウンロード","Kaynak kodu indir (cramc.py)":"ソースコードをダウンロード (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"すべてのリリースファイルを見る ↗","SIK SORULAN SORULAR":"よくある質問",
+        "Merak edilenler.":"知っておきたいこと。","Başa dön ↑":"トップへ戻る ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"このプロジェクトは利益を目的としていません。",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"広告、会員登録、サブスクリプション、有料機能はありません。PC 技術者、ハードウェア愛好家、修理担当者、一般ユーザーにシンプルで無料のツールを届けることが目的です。",
+        "Ülkeme göre dili otomatik seç":"国に合わせて言語を自動選択","Siteyi keşfet":"サイトを見る",
+        "Dilini seç / Choose your language":"言語を選択","HOŞ GELDİN · WELCOME":"ようこそ",
+        "Bilgisayarını tanı.":"あなたの PC を知ろう。","Kontrol sende olsun.":"管理するのはあなたです。",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"言語を手動で選ぶか、国に基づいて自動選択できます。",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"国別の自動選択を有効にすると、国コードの取得のため公開 IP アドレスが IPAPI に送信されます。CRAMC は IP を受信・保存せず、この端末には国コードと言語設定のみ保存されます。IPAPI は IP 照会をサーバーログに一定期間保存する場合があると説明しています。",
+        "Hızlı RAM takibi":"RAM クイック確認","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"選択した操作に応じたメモリ解放の目安を表示します。実際の結果を保証するものではありません。",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"RAM 使用率のしきい値を 50～95%、間隔を 1～60 分に設定できます。",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"操作、警告、エラーをログで確認し、直近のクリーンアップとセッション概要を表示します。",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"クリーンアップ設定と自動スケジュールは次回起動用に保存されます。",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"初回起動時に RAM タブ、権限、基本操作を案内する専用ウェルカム画面です。",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"ユーザーの一時フォルダーにある 24 時間以上前の通常ファイルを一覧表示します。削除前にプレビューと明示的な確認を行います。"
+      },
+      hi: {
+        "Özellikler":"विशेषताएँ","Platformlar":"प्लेटफ़ॉर्म","Donanımım":"मेरा हार्डवेयर","Gereksinimler":"सिस्टम आवश्यकताएँ",
+        "Nasıl çalışır?":"यह कैसे काम करता है?","Depolama":"स्टोरेज","SSS":"अक्सर पूछे जाने वाले प्रश्न","İndir":"डाउनलोड","Misyonumuz":"हमारा उद्देश्य",
+        "WINDOWS + LINUX · KURULUMSUZ UYGULAMA":"WINDOWS + LINUX · इंस्टॉल करने की जरूरत नहीं",
+        "Belleğini daha yakından":"अपनी मेमोरी को","tanı.":"बेहतर समझें।","Kontrolü eline al.":"नियंत्रण अपने हाथ में रखें।",
+        "ComputerRAMCleaner (CRAMC), Linux ve Windows sistemlerinde RAM kullanımını izlemenize, önbellek temizleme seçeneklerini yönetmenize ve işlemleri tek bir sade arayüzden yürütmenize yardımcı olur.":"ComputerRAMCleaner (CRAMC) Linux और Windows पर RAM उपयोग देखने, कैश सफाई विकल्प प्रबंधित करने और सरल इंटरफ़ेस से काम करने में मदद करता है।",
+        "↓   CRAMC'yi indir":"↓   CRAMC डाउनलोड करें","Özellikleri keşfet":"विशेषताएँ देखें","sürümü":"संस्करण",
+        "Kurulumsuz tek dosya":"एक फ़ाइल · इंस्टॉलेशन नहीं","Lubuntu + Windows 10/11":"Lubuntu + Windows 10/11",
+        "DESTEKLENEN PLATFORMLAR":"समर्थित प्लेटफ़ॉर्म","CRAMC LITE · TARAYICIDA DONANIM ÖZETİ":"CRAMC LITE · ब्राउज़र में हार्डवेयर सारांश",
+        "Önce cihazını tanı.":"पहले अपना डिवाइस जानें।","Sonra doğru sürümü seç.":"फिर सही संस्करण चुनें।",
+        "Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.":"ब्राउज़र द्वारा साझा की जा सकने वाली प्रोसेसर, मेमोरी और ऑपरेटिंग सिस्टम जानकारी देखें। बिना कोई प्रोग्राम डाउनलोड किए काम करता है।",
+        "CRAMC LITE · HAZIR":"CRAMC LITE · तैयार","Bilgisayarının":"आपके कंप्यूटर की","kısa sistem raporu.":"त्वरित सिस्टम रिपोर्ट।",
+        "Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.":"यह छोटा टूल ब्राउज़र में चलता है। यह कंप्यूटर की पहुँच नहीं माँगता, केवल ब्राउज़र द्वारा उपलब्ध कराई गई बुनियादी हार्डवेयर जानकारी पढ़ता है। हर ब्राउज़र सटीक CPU मॉडल या RAM क्षमता नहीं बताता।",
+        "Gizlilik:":"गोपनीयता:","Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.":"सारांश इसी पेज पर प्रोसेस होता है और CRAMC सर्वर पर नहीं भेजा या सहेजा जाता।",
+        "↻   Sistemimi yeniden tara":"↻   फिर से जाँचें","İşletim sistemi":"ऑपरेटिंग सिस्टम","İşlemci":"प्रोसेसर",
+        "RAM belleği":"RAM मेमोरी","Tarayıcı":"ब्राउज़र","Algılanıyor…":"पहचाना जा रहा है…","Kontrol ediliyor…":"जाँच हो रही है…",
+        "Tarayıcı desteği denetleniyor.":"ब्राउज़र समर्थन जाँचा जा रहा है।","Yerel tarayıcı bilgisi.":"स्थानीय ब्राउज़र जानकारी।",
+        "Sistem özeti hazırlanıyor":"सिस्टम सारांश तैयार हो रहा है","Tarayıcı izin verdiği bilgileri gösteriyoruz.":"ब्राउज़र द्वारा अनुमत जानकारी दिखाई जा रही है।",
+        "Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.":"यदि ब्राउज़र RAM नहीं दिखाता, तो आप स्वयं मात्रा चुन सकते हैं।",
+        "Otomatik algılama":"स्वचालित पहचान","RAM değerini uygula":"RAM मान लागू करें",
+        "ÖNE ÇIKAN ÖZELLİKLER":"मुख्य विशेषताएँ","Gereken kontroller,":"ज़रूरी नियंत्रण,","tek bir pencerede.":"एक ही विंडो में।",
+        "CRAMC; RAM kontrolünü, başlangıç rehberini ve kullanıcı geçici dosyaları için önizlemeli temizlik alanını tek bir sekmeli arayüzde toplar.":"CRAMC RAM मॉनिटरिंग, शुरुआती गाइड और अस्थायी उपयोगकर्ता फ़ाइलों की पूर्वावलोकन सफाई को एक टैब वाले इंटरफ़ेस में जोड़ता है।",
+        "Canlı RAM takibi":"लाइव RAM निगरानी","Toplam, kullanılan, boş ve önbellekteki belleği; ayrıca swap ve çalışan süreç sayısını takip edin.":"कुल, उपयोग की गई, खाली और कैश मेमोरी के साथ swap और चल रही प्रक्रियाएँ देखें।",
+        "Seçilebilir temizlik":"चुनने योग्य सफाई","Tahmini kazanım":"अनुमानित रिकवरी","İsteğe bağlı otomatik temizlik":"वैकल्पिक स्वचालित सफाई",
+        "İşlem günlüğü":"गतिविधि लॉग","Kalıcı ayarlar":"सहेजी गई सेटिंग्स","Hoş Geldin / Hızlı Rehber":"स्वागत / त्वरित गाइड",
+        "Depolama / Geçici Dosya Temizliği":"स्टोरेज / अस्थायी फ़ाइल सफाई",
+        "İşletim sistemine uygun":"आपके सिस्टम के लिए","bellek araçları.":"मेमोरी टूल।",
+        "İKİ PLATFORM, İKİ YÖNTEM":"दो प्लेटफ़ॉर्म, दो तरीके","Linux / Lubuntu":"Linux / Lubuntu","Windows 10 / 11":"Windows 10 / 11",
+        "İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ":"डाउनलोड से पहले · सिस्टम आवश्यकताएँ",
+        "Her bilgisayara uygun,":"विभिन्न कंप्यूटरों के लिए,","ihtiyacına göre rahatlık.":"आपकी ज़रूरत के अनुसार।",
+        "RAM, işlemci ve boş alan önerileri":"RAM, प्रोसेसर और खाली जगह के सुझाव","MİNİMUM · TEMEL KULLANIM":"न्यूनतम · बुनियादी उपयोग",
+        "Başlangıç":"शुरुआती","ORTA · ÖNERİLEN":"मध्यम · अनुशंसित","Dengeli":"संतुलित",
+        "YÜKSEK · RAHAT KULLANIM":"उच्च · आरामदायक उपयोग","Geniş alan":"अधिक संसाधन",
+        "Desteklenen masaüstü sistemleri":"समर्थित डेस्कटॉप सिस्टम","Windows 10 / 11 · 64-bit":"Windows 10 / 11 · 64-bit",
+        "Linux · x86_64 masaüstü":"Linux · x86_64 डेस्कटॉप","KURULUM GEREKTİRMEZ":"इंस्टॉल की आवश्यकता नहीं",
+        "İndir, çalıştır,":"डाउनलोड करें, चलाएँ,","kontrol et.":"नियंत्रण रखें।","Uygun dosyayı indir":"सही फ़ाइल डाउनलोड करें",
+        "Yetki vererek çalıştır":"आवश्यक अनुमति से चलाएँ","RAM kullanımını yönet":"RAM प्रबंधित करें",
+        "CRAMC v1.1.0 · İNDİRME":"CRAMC v1.1.0 · डाउनलोड","resmî sürümü indir.":"आधिकारिक संस्करण डाउनलोड करें।",
+        "İşletim sistemi algılanıyor…":"ऑपरेटिंग सिस्टम पहचाना जा रहा है…","↓   İndirme seçeneklerini görüntüle":"↓   डाउनलोड विकल्प देखें",
+        "Diğer işletim sistemi için indir":"दूसरे सिस्टम के लिए डाउनलोड","Kaynak kodu indir (cramc.py)":"सोर्स कोड डाउनलोड (cramc.py)",
+        "Tüm Release dosyalarını görüntüle ↗":"सभी रिलीज़ फ़ाइलें देखें ↗","SIK SORULAN SORULAR":"अक्सर पूछे जाने वाले प्रश्न",
+        "Merak edilenler.":"जानने योग्य बातें।","Başa dön ↑":"ऊपर जाएँ ↑",
+        "Bu proje para kazanmayı hedeflemiyor.":"इस प्रोजेक्ट का उद्देश्य पैसा कमाना नहीं है।",
+        "Reklam, üyelik, abonelik veya ücretli özellik yok. Amacımız; bilgisayarcılara, donanımcılara, tamircilere ve günlük kullanıcılara kolay, anlaşılır ve ücretsiz bir araç sunmak.":"कोई विज्ञापन, खाता, सदस्यता या भुगतान वाली सुविधा नहीं। हमारा उद्देश्य कंप्यूटर तकनीशियनों, हार्डवेयर प्रेमियों, मरम्मत करने वालों और आम उपयोगकर्ताओं को सरल और मुफ्त टूल देना है।",
+        "Ülkeme göre dili otomatik seç":"मेरे देश के अनुसार भाषा चुनें","Siteyi keşfet":"वेबसाइट देखें",
+        "Dilini seç / Choose your language":"अपनी भाषा चुनें","HOŞ GELDİN · WELCOME":"स्वागत है",
+        "Bilgisayarını tanı.":"अपने कंप्यूटर को जानें।","Kontrol sende olsun.":"नियंत्रण आपके हाथ में।",
+        "Dilersen dilini seçebilir veya ülkeni kullanarak otomatik belirleyebilirsin.":"भाषा स्वयं चुनें या देश के आधार पर अपने आप निर्धारित करें।",
+        "Ülkeye göre otomatik dil seçimini açarsan, ülke kodunu bulmak için herkese açık IP adresin IPAPI hizmetine gönderilir. IP adresini CRAMC almaz veya saklamaz; yalnızca ülke kodu ve dil tercihi bu cihazda saklanır. IPAPI kendi günlüklerinde IP sorgularını sınırlı süre tutabildiğini belirtir.":"देश के अनुसार भाषा चुनने पर, देश कोड जानने के लिए आपका सार्वजनिक IP IPAPI को भेजा जाता है। CRAMC आपका IP प्राप्त या संग्रहीत नहीं करता; केवल देश कोड और भाषा इस डिवाइस पर सहेजी जाती है। IPAPI बताता है कि IP अनुरोध उसके सर्वर लॉग में सीमित समय तक रह सकते हैं।",
+        "Hızlı RAM takibi":"त्वरित RAM जानकारी","Seçtiğiniz işlemlere göre olası kazanımı önceden görün. Uygulama tahmini değerleri gerçek sonuç garantisi olarak sunmaz.":"चुने गए कार्यों के अनुसार संभावित मेमोरी रिकवरी देखें। अनुमान वास्तविक परिणाम की गारंटी नहीं है।",
+        "RAM kullanım eşiğini %50–95 aralığında, bekleme süresini 1–60 dakika aralığında ayarlayın.":"RAM उपयोग सीमा 50–95% और अंतराल 1–60 मिनट सेट करें।",
+        "Gerçekleşen işlemleri, uyarıları ve hataları arayüzdeki günlükten izleyin; son temizlik ve oturum özetini görün.":"लॉग में किए गए कार्य, चेतावनियाँ और त्रुटियाँ देखें; हाल की सफाई और सत्र सारांश पढ़ें।",
+        "Temizlik tercihleri ve otomatik zamanlayıcı ayarları sonraki açılışlar için saklanır.":"सफाई प्राथमिकताएँ और स्वचालित शेड्यूल अगली बार के लिए सहेजे जाते हैं।",
+        "İlk açılışta RAM sekmesine, yetki gereksinimlerine ve temel kullanım adımlarına yönlendiren ayrı bir başlangıç ekranı.":"पहली बार उपयोग करने वालों के लिए RAM टैब, अनुमतियों और बुनियादी चरणों का स्वागत स्क्रीन पर परिचय।",
+        "Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaları listeler. Silme öncesi dosyalar önizlenir ve açık onay istenir.":"उपयोगकर्ता के अस्थायी फ़ोल्डरों में 24 घंटे से पुरानी सामान्य फ़ाइलें दिखाता है। हटाने से पहले पूर्वावलोकन और पुष्टि आवश्यक है।"
+      }
+    };
+
+    const localeList = ["tr","en","es","fr","de","pt","ru","ar","zh","ja","hi"];
+    const localeLabels = {
+      tr:"Türkçe",en:"English",es:"Español",fr:"Français",de:"Deutsch",
+      pt:"Português",ru:"Русский",ar:"العربية",zh:"中文",ja:"日本語",hi:"हिन्दी"
+    };
+    let currentLocale = "tr";
+    let translate = key => key;
+    const sourceNodes = [];
+    const textWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    while (textWalker.nextNode()) {
+      const node = textWalker.currentNode;
+      const parent = node.parentElement;
+      if (!parent || /^(SCRIPT|STYLE|NOSCRIPT|TEXTAREA)$/i.test(parent.tagName)) continue;
+      const raw = node.nodeValue;
+      const key = raw.trim();
+      if (key) sourceNodes.push({node,raw,key});
+    }
+
+    function setLocale(locale, persist) {
+      if (!localeList.includes(locale)) locale = "en";
+      currentLocale = locale;
+      const pack = translations[locale] || {};
+      translate = key => pack[key] || key;
+      sourceNodes.forEach(item => {
+        const leading = item.raw.match(/^\s*/)?.[0] || "";
+        const trailing = item.raw.match(/\s*$/)?.[0] || "";
+        const translated = pack[item.key];
+        item.node.nodeValue = leading + (translated || item.key) + trailing;
+      });
+      document.documentElement.lang = locale;
+      document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+      document.title = pack["ComputerRAMCleaner (CRAMC) v1.1.0 — Belleğini kontrol altına al"] ||
+        (locale === "en" ? "ComputerRAMCleaner (CRAMC) v1.1.0" : "ComputerRAMCleaner (CRAMC) v1.1.0");
+      const description = document.querySelector('meta[name="description"]');
+      if (description) description.content = pack["ComputerRAMCleaner (CRAMC) v1.1.0 — Belleğini kontrol altına al"] || "ComputerRAMCleaner v1.1.0 for Windows and Linux.";
+      document.getElementById("siteLanguage").value = locale;
+      document.getElementById("welcomeLanguage").value = locale;
+      const osDetail = document.getElementById("deviceOSDetail");
+      if (osDetail) renderLiteHardware();
+      const welcomeTitle = document.getElementById("welcomeTitle");
+      if (welcomeTitle && translations[locale]) {
+        const country = sessionStorage.getItem("cramc_country_name");
+        if (country) document.getElementById("welcomeStatus").textContent = locale === "en"
+          ? "Country detected: " + country + ". You can continue or choose another language."
+          : country + " · " + (locale === "tr" ? "Ülke algılandı. Devam edebilir veya başka bir dil seçebilirsin." : "Country detected. You can continue or choose another language.");
+      }
+      document.querySelectorAll(".nav-links a").forEach(link => link.addEventListener("click", closeMobileNavOnce, {once:true}));
+    }
+
+    function closeMobileNavOnce() {
+      const links = document.getElementById("navLinks");
+      const toggle = document.getElementById("mobileToggle");
+      links.classList.remove("open");
+      toggle.setAttribute("aria-expanded","false");
+      toggle.setAttribute("aria-label", translate("Menüyü aç"));
+      toggle.textContent = "☰";
+    }
+
+    const countryLanguage = {
+      TR:"tr", US:"en", GB:"en", IE:"en", AU:"en", NZ:"en", ZA:"en", NG:"en", GH:"en", KE:"en",
+      ES:"es", MX:"es", AR:"es", CL:"es", CO:"es", PE:"es", VE:"es", UY:"es", PY:"es", BO:"es",
+      EC:"es", GT:"es", HN:"es", SV:"es", NI:"es", CR:"es", PA:"es", DO:"es", CU:"es",
+      FR:"fr", MC:"fr", SN:"fr", CI:"fr", CM:"fr", BE:"fr", CA:"fr",
+      DE:"de", AT:"de", CH:"de", LI:"de",
+      PT:"pt", BR:"pt", AO:"pt", MZ:"pt",
+      RU:"ru", BY:"ru", KZ:"ru", KG:"ru",
+      SA:"ar", AE:"ar", QA:"ar", KW:"ar", BH:"ar", OM:"ar", EG:"ar", JO:"ar", LB:"ar", IQ:"ar", MA:"ar", DZ:"ar", TN:"ar",
+      CN:"zh", TW:"zh", HK:"zh", MO:"zh", JP:"ja", IN:"hi"
+    };
+
+    function browserLocale() {
+      const candidates = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"];
+      for (const candidate of candidates) {
+        const base = String(candidate).toLowerCase().split("-")[0];
+        if (localeList.includes(base)) return base;
+      }
+      return "en";
+    }
+
+    const manualLocaleKey = "cramc_manual_locale_v1";
+    const geoCacheKey = "cramc_country_locale_v1";
+    const welcomeSeenKey = "cramc_welcome_seen_v1";
+    const cachedManual = localStorage.getItem(manualLocaleKey);
+    const cachedGeoText = localStorage.getItem(geoCacheKey);
+    let cachedGeo = null;
+    try { cachedGeo = cachedGeoText ? JSON.parse(cachedGeoText) : null; } catch (_) {}
+    const geoCacheFresh = cachedGeo && cachedGeo.locale && cachedGeo.country &&
+      Date.now() - Number(cachedGeo.savedAt || 0) < 45 * 24 * 60 * 60 * 1000;
+
+    setLocale(cachedManual || (geoCacheFresh ? cachedGeo.locale : browserLocale()), false);
+
+    function setWelcomeStatus(message) {
+      const el = document.getElementById("welcomeStatus");
+      if (el) el.textContent = message;
+    }
+
+    async function detectLanguageByCountry() {
+      setWelcomeStatus(translate("Ülke kodu için IPAPI hizmetine güvenli bir istek gönderiliyor…"));
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 4500);
+      try {
+        const response = await fetch("https://ipapi.co/country/", {
+          method: "GET", mode: "cors", cache: "no-store", credentials: "omit",
+          signal: controller.signal, headers: { "Accept": "text/plain" }
+        });
+        if (!response.ok) throw new Error("Geolocation service unavailable");
+        const country = (await response.text()).trim().toUpperCase();
+        if (!/^[A-Z]{2}$/.test(country)) throw new Error("Country code unavailable");
+        const locale = countryLanguage[country] || browserLocale();
+        const displayCountry = new Intl.DisplayNames([currentLocale], {type:"region"}).of(country) || country;
+        localStorage.setItem(geoCacheKey, JSON.stringify({country,locale,savedAt:Date.now()}));
+        sessionStorage.setItem("cramc_country_name", displayCountry);
+        setLocale(locale, false);
+        setWelcomeStatus(translate("Ülken algılandı: ") + displayCountry + ". " + translate("Dilersen bu dili kullanabilir veya listeden değiştirebilirsin."));
+        return true;
+      } catch (error) {
+        setWelcomeStatus(translate("Ülke algılanamadı. Tarayıcı dilin kullanılıyor; istersen listeden kendin seçebilirsin."));
+        setLocale(browserLocale(), false);
+        return false;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    document.getElementById("siteLanguage").addEventListener("change", event => {
+      localStorage.setItem(manualLocaleKey, event.target.value);
+      setLocale(event.target.value, true);
+    });
+
+    document.getElementById("welcomeLanguage").addEventListener("change", event => {
+      localStorage.setItem(manualLocaleKey, event.target.value);
+      setLocale(event.target.value, true);
+      setWelcomeStatus(translate("Dil seçimin kaydedildi. Siteye devam edebilirsin."));
+    });
+
+    document.getElementById("welcomeAuto").addEventListener("click", async () => {
+      localStorage.removeItem(manualLocaleKey);
+      const button = document.getElementById("welcomeAuto");
+      button.disabled = true;
+      button.textContent = translate("Ülke algılanıyor…");
+      await detectLanguageByCountry();
+      button.disabled = false;
+      button.textContent = translate("Ülkeme göre dili otomatik seç");
+    });
+
+    document.getElementById("welcomeContinue").addEventListener("click", () => {
+      localStorage.setItem(welcomeSeenKey,"1");
+      document.getElementById("welcomeOverlay").hidden = true;
+      document.getElementById("siteLanguage").focus({preventScroll:true});
+    });
+
+    if (!localStorage.getItem(welcomeSeenKey)) {
+      document.getElementById("welcomeOverlay").hidden = false;
+    }
+
+    // Use cached country data silently on return visits only when the visitor previously chose auto-detection.
+    if (!cachedManual && geoCacheFresh) {
+      const label = new Intl.DisplayNames([currentLocale], {type:"region"}).of(cachedGeo.country) || cachedGeo.country;
+      sessionStorage.setItem("cramc_country_name",label);
+    }
+
 
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
