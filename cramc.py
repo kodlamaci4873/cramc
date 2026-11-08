@@ -1354,7 +1354,8 @@ class CramcApp:
 
         s = load_settings()
         saved_language = s.get("language")
-        self.language = saved_language if saved_language in LANGUAGE_NAMES else detect_system_language()
+        self.language = (saved_language if isinstance(saved_language, str) and saved_language in LANGUAGE_NAMES
+                         else detect_system_language())
         ACTIVE_LANGUAGE = self.language
         o = s.get("opts", {}) if isinstance(s.get("opts"), dict) else {}
         defaults = CleanOptions()
@@ -2394,9 +2395,58 @@ def selftest() -> int:
     return 0
 
 
+def ui_selftest() -> int:
+    """Tkinter arayüzünde dil seçimini ve kalıcı tercihi sınar (--uitest)."""
+    if not TK_OK:
+        print("UI self-test skipped: tkinter is unavailable")
+        return 1
+    root = None
+    app = None
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        app = CramcApp(root)
+        checked = 0
+        for language in LANGUAGE_ORDER:
+            app.language_var.set(LANGUAGE_NAMES[language])
+            app._change_language()
+            root.update_idletasks()
+            expected_tab = _tr("✦  Hoş Geldin")
+            expected_button = _tr("RAM TEMİZLE")
+            expected_heading = _tr("GEÇİCİ DOSYA")
+            if app.language != language:
+                raise AssertionError(f"Language state mismatch for {language}")
+            if app.language_var.get() != LANGUAGE_NAMES[language]:
+                raise AssertionError(f"Language selector mismatch for {language}")
+            if app.notebook.tab(app.welcome_tab, "text") != expected_tab:
+                raise AssertionError(f"Notebook tab did not update for {language}")
+            if app.button.cget("text") != expected_button:
+                raise AssertionError(f"Main action button did not update for {language}")
+            if app.storage_tree.heading("path", "text") != expected_heading:
+                raise AssertionError(f"Storage table heading did not update for {language}")
+            if load_settings().get("language") != language:
+                raise AssertionError(f"Language preference was not saved for {language}")
+            checked += 1
+        print(f"UI language switching test: {checked}/{len(LANGUAGE_ORDER)} passed")
+        return 0
+    except Exception as exc:
+        print(f"UI language switching test failed: {exc}")
+        return 1
+    finally:
+        if app is not None:
+            app._stop = True
+        if root is not None:
+            try:
+                root.destroy()
+            except Exception:
+                pass
+
+
 def main() -> int:
     if "--selftest" in sys.argv:
         return selftest()
+    if "--uitest" in sys.argv:
+        return ui_selftest()
     if not TK_OK:
         print("tkinter bulunamadı. Lubuntu/Ubuntu için kurulum:")
         print("    sudo apt install -y python3-tk")
