@@ -44,6 +44,8 @@ jobs:
 
       - name: Run non-destructive application self-test
         shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
         run: |
           python cramc.py --selftest
           if ($LASTEXITCODE -ne 0) {
