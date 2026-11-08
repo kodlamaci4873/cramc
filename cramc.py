@@ -997,7 +997,8 @@ CARD2 = "#232328"
 CARD_BORDER = "#2a2a2f"
 FG = "#e8e8ea"
 FG_DIM = "#8b8b93"
-BLUE = "#3b9cff"GREEN = "#2ecc71"
+BLUE = "#3b9cff"
+GREEN = "#2ecc71"
 GREEN_DARK = "#25a85c"
 AMBER = "#f5a524"
 RED = "#ef4444"
@@ -1996,7 +1997,8 @@ class CramcApp:
         try:
             before = take_snapshot()
             log("info", f"Temizlik başlatıldı ({'otomatik' if auto else 'manuel'})  •  "
-                        f"önce: kullanılan {fmt_size(before.used)}, "                        f"kullanılabilir {fmt_size(before.free)}")
+                        f"önce: kullanılan {fmt_size(before.used)}, "
+                        f"kullanılabilir {fmt_size(before.free)}")
             if IS_LINUX:
                 ok, err = clean_linux(opts, log)
             else:
