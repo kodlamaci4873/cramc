@@ -1,25 +1,38 @@
-name: Build CRAMC Windows & Linux
+name: CRAMC - Windows EXE and Linux AppImage
 
 on:
+  # Main branch commits create downloadable Actions artifacts.
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - master
+
+  # Allows a build to be started manually from Actions.
   workflow_dispatch:
 
+  # Publishing a GitHub Release builds both platforms and attaches the files.
+  release:
+    types: [published]
+
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: cramc-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-windows:
     name: Build Windows EXE
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - name: Check out source
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -29,44 +42,208 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pyinstaller psutil
 
-      - name: Build single-file Windows application
+      - name: Run non-destructive application self-test
         shell: pwsh
         run: |
-          python -m PyInstaller --noconfirm --clean --onefile --windowed --name CRAMC-Windows --uac-admin --collect-all psutil cramc.py
+          python cramc.py --selftest
+          if ($LASTEXITCODE -ne 0) {
+            throw "CRAMC self-test failed with exit code $LASTEXITCODE"
+          }
 
-      - name: Upload Windows EXE Artifact
-        uses: actions/upload-artifact@v4
+      - name: Build single-file EXE with UAC elevation manifest
+        shell: pwsh
+        run: |
+          python -m PyInstaller `
+            --noconfirm `
+            --clean `
+            --onefile `
+            --windowed `
+            --name CRAMC-Windows `
+            --uac-admin `
+            --collect-all psutil `
+            --hidden-import psutil._pswindows `
+            cramc.py
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "PyInstaller failed with exit code $LASTEXITCODE"
+          }
+
+          if (-not (Test-Path 'dist/CRAMC-Windows.exe')) {
+            throw 'dist/CRAMC-Windows.exe was not created.'
+          }
+
+      - name: Upload Windows EXE as a direct-download artifact
+        uses: actions/upload-artifact@v7
         with:
-          name: CRAMC-Windows-EXE
+          name: CRAMC-Windows.exe
           path: dist/CRAMC-Windows.exe
+          archive: false
+          if-no-files-found: error
+          retention-days: 30
 
   build-linux:
-    name: Build Linux Binary
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    name: Build Linux AppImage
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - name: Check out source
+        uses: actions/checkout@v7
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install system and Python dependencies
+      # tkinter must come from the same system Python used to create the venv.
+      - name: Install Linux and Tk build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-tk binutils
-          python -m pip install --upgrade pip
-          python -m pip install pyinstaller
+          sudo apt-get install -y --no-install-recommends \
+            python3 python3-tk python3-venv python3-dev \
+            wget curl file patchelf ca-certificates
 
-      - name: Build single-file Linux application
+      - name: Create build environment
         run: |
-          python -m PyInstaller --noconfirm --clean --onefile --windowed --name CRAMC-Linux cramc.py
+          python3 -m venv --system-site-packages .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install pyinstaller psutil
+          .venv/bin/python -c "import tkinter, psutil; print('Tk:', tkinter.TkVersion, '| psutil:', psutil.__version__)"
 
-      - name: Upload Linux Artifact
-        uses: actions/upload-artifact@v4
+      - name: Run non-destructive application self-test
+        run: .venv/bin/python cramc.py --selftest
+
+      - name: Build single-file Linux executable
+        run: |
+          .venv/bin/python -m PyInstaller \
+            --noconfirm \
+            --clean \
+            --onefile \
+            --windowed \
+            --name CRAMC-Linux \
+            --collect-all psutil \
+            cramc.py
+
+          test -s dist/CRAMC-Linux
+          file dist/CRAMC-Linux
+
+      - name: Assemble AppDir
+        shell: bash
+        run: |
+          set -euo pipefail
+          APPDIR="$GITHUB_WORKSPACE/CRAMC.AppDir"
+
+          mkdir -p \
+            "$APPDIR/usr/bin" \
+            "$APPDIR/usr/share/applications" \
+            "$APPDIR/usr/share/icons/hicolor/256x256/apps"
+
+          install -m 0755 dist/CRAMC-Linux "$APPDIR/usr/bin/CRAMC-Linux"
+
+          # Reuse the application's built-in vector-generated logo as the AppImage icon.
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import cramc
+
+          png = cramc.generate_logo_png(256)
+          Path('CRAMC.AppDir/cramc.png').write_bytes(png)
+          Path('CRAMC.AppDir/.DirIcon').write_bytes(png)
+          Path('CRAMC.AppDir/usr/share/icons/hicolor/256x256/apps/cramc.png').write_bytes(png)
+          PY
+
+          cat > "$APPDIR/AppRun" <<'APPRUN'
+          #!/bin/sh
+          set -eu
+          HERE="$(dirname "$(readlink -f "$0")")"
+          exec "$HERE/usr/bin/CRAMC-Linux" "$@"
+          APPRUN
+          chmod 0755 "$APPDIR/AppRun"
+
+          cat > "$APPDIR/cramc.desktop" <<'DESKTOP'
+          [Desktop Entry]
+          Type=Application
+          Name=ComputerRAMCleaner
+          Comment=RAM monitor and cache management utility
+          Exec=AppRun
+          Icon=cramc
+          Terminal=false
+          Categories=System;Utility;
+          DESKTOP
+
+          cp "$APPDIR/cramc.desktop" "$APPDIR/usr/share/applications/cramc.desktop"
+          test -x "$APPDIR/AppRun"
+          test -s "$APPDIR/cramc.png"
+
+      - name: Download appimagetool
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage \
+            --output appimagetool-x86_64.AppImage
+          chmod 0755 appimagetool-x86_64.AppImage
+          test -s appimagetool-x86_64.AppImage
+
+      - name: Build standalone AppImage
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARCH=x86_64 \
+            VERSION="${GITHUB_REF_NAME}" \
+            APPIMAGE_EXTRACT_AND_RUN=1 \
+            ./appimagetool-x86_64.AppImage \
+              "$GITHUB_WORKSPACE/CRAMC.AppDir" \
+              "$GITHUB_WORKSPACE/CRAMC-Linux.AppImage"
+
+          chmod 0755 CRAMC-Linux.AppImage
+          test -s CRAMC-Linux.AppImage
+          file CRAMC-Linux.AppImage
+
+      - name: Upload Linux AppImage as a direct-download artifact
+        uses: actions/upload-artifact@v7
         with:
-          name: CRAMC-Linux-Binary
-          path: dist/CRAMC-Linux
+          name: CRAMC-Linux.AppImage
+          path: CRAMC-Linux.AppImage
+          archive: false
+          if-no-files-found: error
+          retention-days: 30
+
+  publish-release:
+    name: Attach binaries to GitHub Release
+    if: github.event_name == 'release' && github.event.action == 'published'
+    needs:
+      - build-windows
+      - build-linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Windows and Linux artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: CRAMC-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Verify binaries and create checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s release-assets/CRAMC-Windows.exe
+          test -s release-assets/CRAMC-Linux.AppImage
+          chmod 0755 release-assets/CRAMC-Linux.AppImage
+          (cd release-assets && sha256sum CRAMC-Windows.exe CRAMC-Linux.AppImage > SHA256SUMS.txt)
+          ls -lh release-assets
+          cat release-assets/SHA256SUMS.txt
+
+      - name: Upload binaries to the published Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release upload "$TAG_NAME" \
+            release-assets/CRAMC-Windows.exe \
+            release-assets/CRAMC-Linux.AppImage \
+            release-assets/SHA256SUMS.txt \
+            --clobber \
+            --repo "$REPOSITORY"

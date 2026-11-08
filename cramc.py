@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ComputerRAMCleaner (CRAMC) v1.0 - Masaüstü uygulaması
+ComputerRAMCleaner (CRAMC) v1.1.0 - Masaüstü uygulaması
 
 Linux (Lubuntu/LXQt) : sync + /proc/sys/vm/drop_caches (PageCache, Dentries & Inodes)
                        isteğe bağlı güvenli swap sıfırlama
 Windows 10/11        : Working Set + Sistem Önbelleği temizliği (ctypes + psutil)
+Depolama             : Kullanıcı geçici klasörlerinde 24 saatten eski normal dosyaların
+                       önizlemeli ve onaylı temizliği
 
 Çalıştırma:
     Linux  : sudo python3 cramc.py
     Windows: python cramc.py   (Yönetici olarak çalıştırmak daha etkilidir)
     Test   : python3 cramc.py --selftest     (arayüzsüz motor testi)
 
-Gereksinimler:
-    Linux  : python3-tk            (sudo apt install -y python3-tk)
-    Windows: psutil                (pip install psutil)
+Gereksinimler (kaynak koddan çalıştırırken):
+    Linux  : python3-tk ve psutil (Windows ölçümü için)
+    Windows: psutil
+
+PyInstaller ile üretilen tek dosyalık dağıtımlarda Python/pip kurulumu gerekmez.
 """
 
 import base64
@@ -23,9 +27,11 @@ import os
 import platform
 import queue
 import shutil
+import stat
 import struct
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import zlib
@@ -34,11 +40,12 @@ from datetime import datetime
 
 try:
     import tkinter as tk
-    from tkinter import ttk
+    from tkinter import ttk, messagebox
     TK_OK = True
 except ImportError:
     tk = None
     ttk = None
+    messagebox = None
     TK_OK = False
 
 try:
@@ -48,7 +55,7 @@ except ImportError:
 
 APP_NAME = "ComputerRAMCleaner"
 APP_SHORT = "CRAMC"
-APP_VERSION = "1.0"
+APP_VERSION = "1.1.0"
 
 MB = 1024 * 1024
 GB = 1024 * MB
@@ -57,10 +64,6 @@ OS_NAME = platform.system()
 IS_LINUX = OS_NAME == "Linux"
 IS_WINDOWS = OS_NAME == "Windows"
 
-# Windows tahmin katsayıları (sezgisel): kırpılan sayfaların bir kısmı hemen
-# geri yüklenir, bu yüzden toplam çalışma kümesinin yalnızca bir bölümü kazanç olur.
-WS_TRIM_RATIO = 0.35
-SYSCACHE_RATIO = 0.20
 
 
 # =========================================================================== #
@@ -189,7 +192,7 @@ def save_settings(data: dict) -> bool:
 class MemSnapshot:
     total: int
     used: int
-    free: int          # Linux: MemFree | Windows: kullanılabilir (available)
+    free: int          # Her iki platformda da kullanılabilir bellek (Linux MemAvailable)
     available: int
     cached: int        # Linux: buffers+cache | Windows: sistem önbelleği
     swap_total: int = 0
@@ -213,22 +216,33 @@ def read_meminfo() -> dict:
 
 
 def _snapshot_linux() -> MemSnapshot:
+    """Linux belleğini MemAvailable temelinde ölçer.
+
+    MemFree yalnızca tamamen boş sayfaları gösterir. MemAvailable ise kernel'in
+    reclaim edilebilir cache/slab havuzlarını da hesaba katar ve günlük kullanım
+    görünümü için daha gerçekçi bir used metriği sağlar.
+    """
     m = read_meminfo()
     total = m["MemTotal"]
-    free = m["MemFree"]
+    free = m.get("MemFree", 0)
     buffers = m.get("Buffers", 0)
-    cached = m.get("Cached", 0) + m.get("SReclaimable", 0)
-    available = m.get("MemAvailable", free + buffers + cached)
-    used = max(total - free - buffers - cached, 0)
+    shmem = m.get("Shmem", 0)
+    cached_raw = m.get("Cached", 0)
+    sreclaimable = m.get("SReclaimable", 0)
+    fallback_available = free + buffers + max(cached_raw - shmem, 0) + sreclaimable
+    available = min(total, max(0, m.get("MemAvailable", fallback_available)))
+    used = max(total - available, 0)
+    # Ekrandaki önbellek metriği tmpfs/shmem'i cache gibi göstermemek için çıkarır.
+    cached = max(0, buffers + cached_raw - shmem + sreclaimable)
     swap_total = m.get("SwapTotal", 0)
     swap_used = max(swap_total - m.get("SwapFree", 0), 0)
-    return MemSnapshot(total, used, free, available, buffers + cached,
+    return MemSnapshot(total, used, available, available, cached,
                        swap_total, swap_used, m)
 
 
 def _snapshot_windows() -> MemSnapshot:
     if psutil is None:
-        raise RuntimeError("psutil bulunamadı (pip install psutil)")
+        raise RuntimeError("psutil bulunamadı (Windows derlemesinde psutil gömülü olmalıdır)")
     vm = psutil.virtual_memory()
     try:
         sw = psutil.swap_memory()
@@ -443,35 +457,280 @@ def swap_reset_is_safe(snap: MemSnapshot, swap_used: int) -> bool:
 
 
 def estimate_gain(opts: CleanOptions, snap: MemSnapshot, ws_bytes: int = 0):
-    """(toplam_bayt, [(etiket, bayt), ...]) döndürür. Değerler tahminidir."""
+    """Kernel/işlem ölçümlerinden muhafazakâr aday havuzu tahmini döndürür.
+
+    Sonuç garanti edilen boş RAM değildir. Linux'ta temiz page-cache adayları ve
+    reclaimable slab üst sınırı; Windows'ta süreçlerin USS belleği ile kernel
+    SystemCache metriği kullanılır. Çakışan Windows havuzları toplam RAM'i aşamaz.
+    """
     items = []
     if IS_LINUX:
         m = snap.raw
         if opts.pagecache:
+            cached = max(0, m.get("Cached", 0) + m.get("Buffers", 0)
+                         - m.get("Shmem", 0))
             file_lru = m.get("Active(file)", 0) + m.get("Inactive(file)", 0)
-            if file_lru:
-                est = file_lru - m.get("Mapped", 0)
-            else:
-                est = (m.get("Buffers", 0) + m.get("Cached", 0)
-                       - m.get("Shmem", 0) - m.get("Mapped", 0))
-            items.append(("PageCache", max(est, 0)))
+            if file_lru > 0:
+                cached = min(cached, file_lru)
+            not_immediately_clean = (m.get("Mapped", 0) + m.get("Dirty", 0)
+                                     + m.get("Writeback", 0))
+            pagecache_candidate = max(0, cached - not_immediately_clean)
+            items.append(("Temiz PageCache adayı (kernel meminfo)", pagecache_candidate))
         if opts.dentries:
-            items.append(("Dentries & Inodes", m.get("SReclaimable", 0)))
+            # SReclaimable tüm reclaimable slab havuzudur; tamamı dentry/inode
+            # olarak boşaltılamayabileceğinden UI bunu açıkça üst sınır diye sunar.
+            slab_candidate = max(0, m.get("SReclaimable", 0))
+            items.append(("Reclaimable slab üst sınırı (SReclaimable)", slab_candidate))
         if opts.swap_reset:
             if snap.swap_total == 0:
                 items.append(("Swap sıfırlama (swap etkin değil)", 0))
             elif snap.swap_used == 0:
                 items.append(("Swap sıfırlama (swap boş)", 0))
             elif swap_reset_is_safe(snap, snap.swap_used):
-                items.append(("Swap sıfırlama (RAM'e geri yüklenir)", -snap.swap_used))
+                items.append(("Swap sıfırlama (RAM tüketimi)", -snap.swap_used))
             else:
                 items.append(("Swap sıfırlama (RAM yetersiz, atlanır)", 0))
+        positive = sum(max(value, 0) for _, value in items)
+        # MemAvailable, kernel'in yakın vadede geri kazanabileceği alanı da
+        # içerir; aday havuzunu kullanılan bellek sınırında tutar.
+        ceiling = max(0, snap.total - snap.available)
+        if positive > ceiling and positive:
+            ratio = ceiling / positive
+            items = [(label, int(value * ratio) if value > 0 else value)
+                     for label, value in items]
     elif IS_WINDOWS:
+        used_ceiling = max(0, snap.total - snap.available)
         if opts.working_set:
-            items.append(("Arka Plan Working Set", int(ws_bytes * WS_TRIM_RATIO)))
+            private_ws = min(max(int(ws_bytes), 0), used_ceiling)
+            items.append(("Süreç USS toplamı (özel bellek üst sınırı)", private_ws))
+        else:
+            private_ws = 0
         if opts.system_cache:
-            items.append(("Sistem Önbelleği", int(snap.cached * SYSCACHE_RATIO)))
-    return sum(v for _, v in items), items
+            # SystemCache, GetPerformanceInfo/psutil.snapshot üzerinden alınan
+            # Windows kernel metriğidir. Working Set tahminiyle çakışmaya karşı cap.
+            cache_candidate = min(max(int(snap.cached), 0),
+                                  max(0, used_ceiling - private_ws))
+            items.append(("Sistem dosya önbelleği (Windows SystemCache)", cache_candidate))
+    return sum(value for _, value in items), items
+
+
+# =========================================================================== #
+#  DEPOLAMA / GEÇİCİ DOSYA TEMİZLİĞİ
+# =========================================================================== #
+TEMP_FILE_MIN_AGE_SECONDS = 24 * 60 * 60
+TEMP_SCAN_LIMIT = 20000
+
+
+@dataclass(frozen=True)
+class TempFileCandidate:
+    path: str
+    size: int
+    mtime: float
+
+
+def _temp_target_uid():
+    """sudo ile başlatıldıysa gerçek kullanıcıya ait geçici dosyaları hedefle."""
+    if not IS_LINUX:
+        return None
+    try:
+        return int(os.environ.get("SUDO_UID", os.getuid()))
+    except (TypeError, ValueError, OSError):
+        return os.getuid()
+
+
+def _temp_roots() -> list:
+    if IS_WINDOWS:
+        roots = [tempfile.gettempdir()]
+    elif IS_LINUX:
+        roots = [tempfile.gettempdir(), "/tmp", "/var/tmp"]
+    else:
+        roots = []
+    unique = []
+    seen = set()
+    for root in roots:
+        path = os.path.abspath(os.path.expanduser(root))
+        if path not in seen:
+            seen.add(path)
+            unique.append(path)
+    return unique
+
+
+def _is_reparse_or_symlink(path: str, st) -> bool:
+    if stat.S_ISLNK(st.st_mode):
+        return True
+    # Windows reparse points (junctions/mount points) are not followed.
+    attrs = getattr(st, "st_file_attributes", 0)
+    return bool(IS_WINDOWS and (attrs & 0x400))  # FILE_ATTRIBUTE_REPARSE_POINT
+
+
+def _path_is_inside(path: str, root: str) -> bool:
+    try:
+        path_abs = os.path.abspath(path)
+        root_abs = os.path.abspath(root)
+        return os.path.commonpath((path_abs, root_abs)) == root_abs and path_abs != root_abs
+    except (ValueError, OSError):
+        return False
+
+
+def scan_temp_files(min_age_seconds: int = TEMP_FILE_MIN_AGE_SECONDS):
+    """Yalnızca kullanıcı temp dizinlerinde 24 saatten eski normal dosyaları listeler.
+
+    Sembolik bağlantılar/junction'lar izlenmez. Linux'ta SUDO_UID kullanılarak
+    yalnızca gerçek kullanıcıya ait dosya ve dizinlere girilir. Hiçbir dosya silinmez.
+    Dönüş: (adaylar, erişim_hatası_sayısı, limit_doldu_mu).
+    """
+    cutoff = time.time() - max(0, int(min_age_seconds))
+    target_uid = _temp_target_uid()
+    candidates = []
+    errors = 0
+    limited = False
+
+    for root in _temp_roots():
+        try:
+            root_stat = os.lstat(root)
+            if _is_reparse_or_symlink(root, root_stat) or not stat.S_ISDIR(root_stat.st_mode):
+                continue
+        except OSError:
+            continue
+
+        def on_walk_error(_exc):
+            nonlocal errors
+            errors += 1
+
+        for current, dirnames, filenames in os.walk(
+                root, topdown=True, followlinks=False, onerror=on_walk_error):
+            try:
+                current_stat = os.lstat(current)
+            except OSError:
+                dirnames[:] = []
+                errors += 1
+                continue
+            if _is_reparse_or_symlink(current, current_stat):
+                dirnames[:] = []
+                continue
+            if IS_LINUX and current != root and current_stat.st_uid != target_uid:
+                # /tmp ve /var/tmp kökleri normalde root sahibidir; kök dizini
+                # geçilebilir, ancak alt klasörler gerçek kullanıcıya ait olmalıdır.
+                dirnames[:] = []
+                continue
+
+            safe_dirs = []
+            for dirname in dirnames:
+                child = os.path.join(current, dirname)
+                try:
+                    child_stat = os.lstat(child)
+                except OSError:
+                    errors += 1
+                    continue
+                if _is_reparse_or_symlink(child, child_stat) or not stat.S_ISDIR(child_stat.st_mode):
+                    continue
+                if IS_LINUX and child_stat.st_uid != target_uid:
+                    continue
+                safe_dirs.append(dirname)
+            dirnames[:] = safe_dirs
+
+            for filename in filenames:
+                path = os.path.join(current, filename)
+                try:
+                    st = os.lstat(path)
+                    if _is_reparse_or_symlink(path, st) or not stat.S_ISREG(st.st_mode):
+                        continue
+                    if IS_LINUX and st.st_uid != target_uid:
+                        continue
+                    if st.st_mtime > cutoff:
+                        continue
+                    candidates.append(TempFileCandidate(path, int(st.st_size), float(st.st_mtime)))
+                    if len(candidates) >= TEMP_SCAN_LIMIT:
+                        limited = True
+                        break
+                except OSError:
+                    errors += 1
+            if limited:
+                break
+        if limited:
+            break
+
+    candidates.sort(key=lambda item: item.size, reverse=True)
+    return candidates, errors, limited
+
+
+def delete_temp_files(candidates, min_age_seconds: int = TEMP_FILE_MIN_AGE_SECONDS):
+    """Önizlemede listelenen dosyaları yeniden doğrulayıp tek tek siler.
+
+    Yalnızca izin verilen temp köklerinin altında kalan, hâlâ normal dosya olan,
+    eşik yaştan eski ve Linux'ta gerçek kullanıcıya ait dosyalar silinir.
+    Dizinler, bağlantılar, cache klasörleri ve sistem genelindeki dosyalar silinmez.
+    """
+    cutoff = time.time() - max(0, int(min_age_seconds))
+    target_uid = _temp_target_uid()
+    roots = _temp_roots()
+    removed = 0
+    bytes_removed = 0
+    skipped = 0
+
+    for candidate in candidates:
+        path = getattr(candidate, "path", "")
+        root = next((r for r in roots if _path_is_inside(path, r)), None)
+        if root is None:
+            skipped += 1
+            continue
+        try:
+            relative = os.path.relpath(path, root)
+            parts = relative.split(os.sep)
+            if not parts or any(part in ("", ".", "..") for part in parts):
+                skipped += 1
+                continue
+
+            # POSIX'te dir_fd + O_NOFOLLOW parent symlink yarışlarını önler:
+            # her klasör bileşeni gerçek dizin olarak açılır ve unlink aynı fd'de yapılır.
+            if os.name == "posix" and hasattr(os, "O_NOFOLLOW") and os.open in os.supports_dir_fd:
+                flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | os.O_NOFOLLOW
+                dir_fd = os.open(root, flags)
+                try:
+                    for component in parts[:-1]:
+                        next_fd = os.open(component, flags, dir_fd=dir_fd)
+                        os.close(dir_fd)
+                        dir_fd = next_fd
+                    st = os.stat(parts[-1], dir_fd=dir_fd, follow_symlinks=False)
+                    if not stat.S_ISREG(st.st_mode) or st.st_mtime > cutoff:
+                        skipped += 1
+                        continue
+                    if IS_LINUX and st.st_uid != target_uid:
+                        skipped += 1
+                        continue
+                    size = int(st.st_size)
+                    os.unlink(parts[-1], dir_fd=dir_fd)
+                finally:
+                    os.close(dir_fd)
+            else:
+                # Windows: her üst dizin ve son dosya yeniden lstat edilir;
+                # reparse point/junction veya symlink görüldüğünde işlem durur.
+                parent = root
+                safe = True
+                for component in parts[:-1]:
+                    parent = os.path.join(parent, component)
+                    parent_stat = os.lstat(parent)
+                    if (_is_reparse_or_symlink(parent, parent_stat)
+                            or not stat.S_ISDIR(parent_stat.st_mode)):
+                        safe = False
+                        break
+                if not safe:
+                    skipped += 1
+                    continue
+                st = os.lstat(path)
+                if (_is_reparse_or_symlink(path, st) or not stat.S_ISREG(st.st_mode)
+                        or st.st_mtime > cutoff):
+                    skipped += 1
+                    continue
+                size = int(st.st_size)
+                os.remove(path)
+
+            removed += 1
+            bytes_removed += size
+        except OSError:
+            skipped += 1
+
+    return removed, bytes_removed, skipped
 
 
 # =========================================================================== #
@@ -738,8 +997,7 @@ CARD2 = "#232328"
 CARD_BORDER = "#2a2a2f"
 FG = "#e8e8ea"
 FG_DIM = "#8b8b93"
-BLUE = "#3b9cff"
-GREEN = "#2ecc71"
+BLUE = "#3b9cff"GREEN = "#2ecc71"
 GREEN_DARK = "#25a85c"
 AMBER = "#f5a524"
 RED = "#ef4444"
@@ -862,7 +1120,9 @@ class CramcApp:
         self.root = root
         self.busy = False
         self.q = queue.Queue()
-        self.ws_bytes = 0
+        self.ws_bytes = 0  # Windows: toplam süreç USS (özel, benzersiz bellek)
+        self.storage_candidates = []
+        self.storage_busy = False
         self._stop = False
         self._swap_running = False
         self._notice_job = None
@@ -952,11 +1212,119 @@ class CramcApp:
                      arrowcolor=FG_DIM, lightcolor="#2f2f36", darkcolor="#2f2f36",
                      relief="flat")
         st.map("Dark.Vertical.TScrollbar", background=[("active", "#3d3d46")])
+        st.configure("CRAMC.TNotebook", background=BG, borderwidth=0)
+        st.configure("CRAMC.TNotebook.Tab", background=CARD2, foreground=FG_DIM,
+                     padding=(18, 10), borderwidth=0)
+        st.map("CRAMC.TNotebook.Tab",
+               background=[("selected", CARD)],
+               foreground=[("selected", FG), ("active", FG)])
+        st.configure("Storage.Treeview", background="#0d0d0f", foreground=FG,
+                     fieldbackground="#0d0d0f", rowheight=26, borderwidth=0)
+        st.configure("Storage.Treeview.Heading", background=CARD2,
+                     foreground=FG_DIM, relief="flat")
+        st.map("Storage.Treeview", background=[("selected", "#21436a")],
+               foreground=[("selected", "#ffffff")])
         self.style = st
 
     # ----------------------------------------------------------------- UI
     def _build_ui(self):
-        main = tk.Frame(self.root, bg=BG)
+        self.notebook = ttk.Notebook(self.root, style="CRAMC.TNotebook")
+        self.notebook.pack(fill="both", expand=True, padx=12, pady=12)
+
+        self.welcome_tab = tk.Frame(self.notebook, bg=BG)
+        self.ram_tab = tk.Frame(self.notebook, bg=BG)
+        self.storage_tab = tk.Frame(self.notebook, bg=BG)
+
+        self.notebook.add(self.welcome_tab, text="✦  Hoş Geldin")
+        self.notebook.add(self.ram_tab, text="◈  RAM Yönetimi")
+        self.notebook.add(self.storage_tab, text="▣  Depolama")
+
+        self._build_welcome_tab(self.welcome_tab)
+        self._build_dashboard_tab(self.ram_tab)
+        self._build_storage_tab(self.storage_tab)
+
+    def _build_welcome_tab(self, parent):
+        outer = tk.Frame(parent, bg=BG)
+        outer.pack(fill="both", expand=True, padx=24, pady=22)
+
+        hero = tk.Frame(outer, bg=CARD, highlightbackground=CARD_BORDER,
+                        highlightthickness=1)
+        hero.pack(fill="x", pady=(0, 14))
+
+        head = tk.Frame(hero, bg=CARD)
+        head.pack(fill="x", padx=24, pady=(22, 6))
+        if self.logo_img is not None:
+            tk.Label(head, image=self.logo_img, bg=CARD).pack(side="left", padx=(0, 14))
+        title_box = tk.Frame(head, bg=CARD)
+        title_box.pack(side="left", fill="x", expand=True)
+        tk.Label(title_box, text="CRAMC'ye hoş geldin!", bg=CARD, fg=FG,
+                 font=(FONT, 22, "bold")).pack(anchor="w")
+        tk.Label(title_box, text=f"{os_pretty()}  •  Sürüm {APP_VERSION}",
+                 bg=CARD, fg=BLUE, font=(FONT, 9, "bold")).pack(anchor="w", pady=(3, 0))
+
+        tk.Label(hero,
+                 text="ComputerRAMCleaner; RAM ve sistem önbelleği durumunu izlemenize, "
+                      "işletim sisteminize uygun temizlik işlemlerini seçmenize ve "
+                      "kullanıcı geçici dosyalarını kontrollü biçimde yönetmenize yardımcı olur.",
+                 bg=CARD, fg=FG_DIM, justify="left", anchor="w", wraplength=900,
+                 font=(FONT, 10), padx=24).pack(fill="x", pady=(8, 12))
+
+        action_row = tk.Frame(hero, bg=CARD)
+        action_row.pack(fill="x", padx=24, pady=(0, 22))
+        tk.Button(action_row, text="RAM Yönetimine Git  →",
+                  command=lambda: self.notebook.select(self.ram_tab),
+                  bg=GREEN, fg="#06220f", activebackground=GREEN_DARK,
+                  relief="flat", bd=0, cursor="hand2",
+                  font=(FONT, 10, "bold"), padx=18, pady=9).pack(side="left")
+        privilege_text = ("● Yetkili çalışıyor" if has_privileges()
+                          else ("● Linux: tam temizlik için sudo gerekli" if IS_LINUX
+                                else "● Yönetici izni yok; bazı işlemler atlanabilir"))
+        privilege_color = GREEN if has_privileges() else AMBER
+        tk.Label(action_row, text=privilege_text, bg=CARD, fg=privilege_color,
+                 font=(FONT, 9, "bold")).pack(side="right", padx=(10, 0))
+
+        tk.Label(outer, text="HIZLI BAŞLANGIÇ REHBERİ", bg=BG, fg=FG_DIM,
+                 font=(FONT, 9, "bold")).pack(anchor="w", pady=(8, 10))
+
+        guide = tk.Frame(outer, bg=BG)
+        guide.pack(fill="x")
+        for col in range(3):
+            guide.columnconfigure(col, weight=1, uniform="guide")
+
+        guide_items = [
+            ("01", "Sistemi gözlemle",
+             "RAM, kullanılabilir bellek, önbellek, swap ve işlem sayısını RAM Yönetimi sekmesinde incele."),
+            ("02", "İşlemleri seç",
+             "Linux veya Windows için gösterilen seçenekleri ihtiyacına göre işaretle. Swap sıfırlama isteğe bağlıdır."),
+            ("03", "Önizle ve uygula",
+             "Tahmini kazanımı üst sınır olarak değerlendir; ardından RAM TEMİZLE düğmesiyle işlemi başlat."),
+        ]
+        for col, (num, title_text, desc) in enumerate(guide_items):
+            card = tk.Frame(guide, bg=CARD, highlightbackground=CARD_BORDER,
+                            highlightthickness=1)
+            card.grid(row=0, column=col, sticky="nsew", padx=(0 if col == 0 else 7, 0),
+                      pady=0)
+            tk.Label(card, text=num, bg=CARD, fg=BLUE,
+                     font=(FONT, 10, "bold")).pack(anchor="w", padx=16, pady=(15, 4))
+            tk.Label(card, text=title_text, bg=CARD, fg=FG,
+                     font=(FONT, 11, "bold")).pack(anchor="w", padx=16)
+            tk.Label(card, text=desc, bg=CARD, fg=FG_DIM, justify="left",
+                     anchor="nw", wraplength=260, font=(FONT, 8)).pack(
+                         fill="both", expand=True, padx=16, pady=(7, 16))
+
+        note = tk.Frame(outer, bg="#2b2418", highlightbackground="#5a4528",
+                        highlightthickness=1)
+        note.pack(fill="x", pady=(16, 0))
+        tk.Label(note,
+                 text="GÜVENLİK NOTU  •  Bellek önbelleklerini temizlemek her zaman performans artışı sağlamaz. "
+                      "Sistemler bu belleği ihtiyaç olduğunda otomatik geri kazanabilir. Depolama sekmesi "
+                      "yalnızca kullanıcının geçici klasörlerinde 24 saatten eski dosyaları listeler; "
+                      "silmeden önce önizleme ve onay ister.",
+                 bg="#2b2418", fg=AMBER, justify="left", anchor="w",
+                 wraplength=920, font=(FONT, 8), padx=15, pady=11).pack(fill="x")
+
+    def _build_dashboard_tab(self, tab):
+        main = tk.Frame(tab, bg=BG)
         main.pack(fill="both", expand=True, padx=20, pady=(16, 8))
         main.columnconfigure(0, weight=1, uniform="cols")
         main.columnconfigure(1, weight=1, uniform="cols")
@@ -974,6 +1342,164 @@ class CramcApp:
 
         tk.Label(main, text=f"{APP_SHORT} v{APP_VERSION}", bg=BG, fg="#4a4a52",
                  font=(FONT, 8)).grid(row=3, column=0, columnspan=2, pady=(6, 0))
+
+    def _build_storage_tab(self, parent):
+        outer = tk.Frame(parent, bg=BG)
+        outer.pack(fill="both", expand=True, padx=22, pady=20)
+
+        tk.Label(outer, text="DEPOLAMA YÖNETİMİ", bg=BG, fg=BLUE,
+                 font=(FONT, 9, "bold")).pack(anchor="w")
+        tk.Label(outer, text="Geçici dosyaları güvenle gözden geçir",
+                 bg=BG, fg=FG, font=(FONT, 20, "bold")).pack(anchor="w", pady=(4, 5))
+        tk.Label(outer,
+                 text="CRAMC yalnızca kullanıcı geçici klasörlerini tarar. Varsayılan olarak "
+                      "24 saatten eski normal dosyalar listelenir; sistem klasörleri, tarayıcı "
+                      "önbellekleri, İndirilenler klasörü ve sembolik bağlantı hedefleri taranmaz.",
+                 bg=BG, fg=FG_DIM, justify="left", anchor="w", wraplength=950,
+                 font=(FONT, 9)).pack(fill="x", pady=(0, 14))
+
+        summary = tk.Frame(outer, bg=CARD, highlightbackground=CARD_BORDER,
+                           highlightthickness=1)
+        summary.pack(fill="x", pady=(0, 12))
+        self.storage_status = tk.Label(summary,
+            text="Tarama yapılmadı. Önce geçici dosyaları tara.", bg=CARD,
+            fg=FG_DIM, anchor="w", justify="left", wraplength=900,
+            font=(FONT, 10), padx=16, pady=13)
+        self.storage_status.pack(fill="x")
+
+        table_frame = tk.Frame(outer, bg=CARD, highlightbackground=CARD_BORDER,
+                               highlightthickness=1)
+        table_frame.pack(fill="both", expand=True)
+        columns = ("path", "size", "date")
+        self.storage_tree = ttk.Treeview(table_frame, columns=columns,
+            show="headings", style="Storage.Treeview", height=12)
+        self.storage_tree.heading("path", text="GEÇİCİ DOSYA")
+        self.storage_tree.heading("size", text="BOYUT")
+        self.storage_tree.heading("date", text="SON DEĞİŞİKLİK")
+        self.storage_tree.column("path", width=650, minwidth=240, anchor="w")
+        self.storage_tree.column("size", width=110, minwidth=90, anchor="e")
+        self.storage_tree.column("date", width=170, minwidth=140, anchor="center")
+        scrollbar = ttk.Scrollbar(table_frame, orient="vertical",
+                                  command=self.storage_tree.yview,
+                                  style="Dark.Vertical.TScrollbar")
+        self.storage_tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+        self.storage_tree.pack(side="left", fill="both", expand=True, padx=8, pady=8)
+
+        buttons = tk.Frame(outer, bg=BG)
+        buttons.pack(fill="x", pady=(12, 0))
+        self.storage_scan_button = tk.Button(
+            buttons, text="GEÇİCİ DOSYALARI TARA", command=self._scan_storage,
+            bg=BLUE, fg="#061321", activebackground="#287ed2",
+            relief="flat", bd=0, cursor="hand2", font=(FONT, 10, "bold"),
+            padx=18, pady=10)
+        self.storage_scan_button.pack(side="left")
+        self.storage_clean_button = tk.Button(
+            buttons, text="ÖNİZLEMEDEKİ DOSYALARI SİL", command=self._clean_storage,
+            bg=GREEN, fg="#06220f", activebackground=GREEN_DARK,
+            disabledforeground="#557767", relief="flat", bd=0, cursor="hand2",
+            font=(FONT, 10, "bold"), padx=18, pady=10, state="disabled")
+        self.storage_clean_button.pack(side="left", padx=(10, 0))
+        tk.Label(buttons, text="Yalnızca listelenen dosyalar silinir; onay gerekir.",
+                 bg=BG, fg=FG_DIM, font=(FONT, 8)).pack(side="right")
+
+    def _scan_storage(self):
+        if self.storage_busy:
+            return
+        self.storage_busy = True
+        # Yeni tarama başlarken önceki önizlemenin yanlışlıkla silinmesini önle.
+        self.storage_candidates = []
+        for item in self.storage_tree.get_children():
+            self.storage_tree.delete(item)
+        self.storage_scan_button.configure(state="disabled")
+        self.storage_clean_button.configure(state="disabled")
+        self.storage_status.configure(text="Geçici klasörler taranıyor…", fg=BLUE)
+        threading.Thread(target=self._storage_scan_worker, daemon=True).start()
+
+    def _storage_scan_worker(self):
+        try:
+            candidates, errors, limited = scan_temp_files()
+            self.q.put(("storage_scan_done", candidates, errors, limited))
+        except Exception as exc:
+            self.q.put(("storage_scan_error", str(exc)))
+
+    def _clean_storage(self):
+        if self.storage_busy or not self.storage_candidates:
+            return
+        count = len(self.storage_candidates)
+        total_bytes = sum(item.size for item in self.storage_candidates)
+        answer = messagebox.askyesno(
+            "Geçici dosyaları sil",
+            f"{count} adet, toplam {fmt_size(total_bytes)} boyutunda geçici dosya silinecek.\n\n"
+            "Yalnızca kullanıcı geçici klasörlerinde bulunan ve en az 24 saat önce değiştirilmiş "
+            "normal dosyalar hedeflenir. Açık/kilitli veya artık uygun olmayan dosyalar atlanır.\n\n"
+            "Devam etmek istiyor musunuz?",
+            parent=self.root)
+        if not answer:
+            return
+        self.storage_busy = True
+        self.storage_scan_button.configure(state="disabled")
+        self.storage_clean_button.configure(state="disabled")
+        self.storage_status.configure(text="Önizlemede listelenen dosyalar tekrar doğrulanıyor ve temizleniyor…",
+                                      fg=AMBER)
+        candidates = list(self.storage_candidates)
+        threading.Thread(target=self._storage_clean_worker,
+                         args=(candidates,), daemon=True).start()
+
+    def _storage_clean_worker(self, candidates):
+        try:
+            removed, freed, skipped = delete_temp_files(candidates)
+            self.q.put(("storage_clean_done", removed, freed, skipped))
+        except Exception as exc:
+            self.q.put(("storage_clean_error", str(exc)))
+
+    def _finish_storage_scan(self, candidates, errors, limited):
+        self.storage_busy = False
+        # Silme işlemi yalnızca tabloda görünür olan önizleme satırlarını kapsar.
+        # Tarama 1000'den fazla dosya bulursa diğerleri kullanıcıya gösterilmeden silinmez.
+        self.storage_candidates = list(candidates[:1000])
+        for item in self.storage_tree.get_children():
+            self.storage_tree.delete(item)
+        total_bytes = sum(item.size for item in candidates)
+        for item in candidates[:1000]:
+            self.storage_tree.insert("", "end", values=(
+                item.path, fmt_size(item.size),
+                datetime.fromtimestamp(item.mtime).strftime("%d.%m.%Y %H:%M")))
+        shown = min(len(candidates), 1000)
+        text = (f"Bulunan dosya: {len(candidates)}  •  Toplam boyut: {fmt_size(total_bytes)}  •  "
+                f"Yaş eşiği: 24 saat")
+        if shown < len(candidates):
+            text += f"  •  İlk {shown} dosya gösteriliyor ve yalnızca bunlar silme önizlemesine dahil"
+        if limited:
+            text += "  •  Güvenlik sınırı nedeniyle tarama 20.000 dosyada durdu"
+        if errors:
+            text += f"  •  Erişim/okuma hatası: {errors}"
+        if not candidates:
+            text = "Uygun geçici dosya bulunamadı. Sistem ve kullanıcı klasörleri korunmuştur."
+        self.storage_status.configure(text=text, fg=GREEN if candidates else FG_DIM)
+        self.storage_scan_button.configure(state="normal")
+        self.storage_clean_button.configure(
+            state="normal" if self.storage_candidates else "disabled")
+
+    def _finish_storage_clean(self, removed, freed, skipped):
+        self.storage_busy = False
+        self.log("ok", f"Depolama temizliği: {removed} dosya, {fmt_size(freed)} silindi; {skipped} dosya atlandı")
+        self.storage_status.configure(
+            text=f"Temizlik tamamlandı: {removed} dosya silindi ({fmt_size(freed)}). "
+                 f"Atlanan dosya: {skipped}. Son durumu görmek için yeniden tarayın.",
+            fg=GREEN)
+        self.storage_candidates = []
+        for item in self.storage_tree.get_children():
+            self.storage_tree.delete(item)
+        self.storage_scan_button.configure(state="normal")
+        self.storage_clean_button.configure(state="disabled")
+
+    def _finish_storage_error(self, message):
+        self.storage_busy = False
+        self.storage_status.configure(text=f"Depolama işlemi başarısız: {message}", fg=RED)
+        self.storage_scan_button.configure(state="normal")
+        self.storage_clean_button.configure(
+            state="normal" if self.storage_candidates else "disabled")
 
     def _build_header(self, main):
         hdr = tk.Frame(main, bg=BG)
@@ -1010,7 +1536,7 @@ class CramcApp:
         elif IS_WINDOWS and not is_admin_windows():
             msgs.append("Tam temizlik için programı Yönetici olarak çalıştırın")
         if IS_WINDOWS and psutil is None:
-            msgs.append("psutil kurulu değil:  pip install psutil")
+            msgs.append("psutil modülü bulunamadı; kaynak kodla çalıştırıyorsanız psutil kurun")
         if msgs:
             self.banner.configure(text="⚠  " + "\n⚠  ".join(msgs))
             self.banner.grid()
@@ -1040,7 +1566,7 @@ class CramcApp:
         stats.columnconfigure((0, 1, 2, 3), weight=1, uniform="s")
         self.st_total = self._stat_box(stats, 0, "TOPLAM", FG)
         self.st_used = self._stat_box(stats, 1, "KULLANILAN", BLUE)
-        self.st_free = self._stat_box(stats, 2, "BOŞ", GREEN)
+        self.st_free = self._stat_box(stats, 2, "KULLANILABİLİR", GREEN)
         self.st_cache = self._stat_box(stats, 3, "ÖNBELLEK", CYAN)
 
         # Sistem özeti
@@ -1070,8 +1596,9 @@ class CramcApp:
         self.est_detail = tk.Label(body, text="", bg=CARD, fg="#b7b7c0", anchor="w",
                                    justify="left", wraplength=390, font=(FONT, 8))
         self.est_detail.pack(fill="x", pady=(4, 0))
-        tk.Label(body, text="Tahmindir; gerçek sonuç sistem durumuna göre değişir.",
-                 bg=CARD, fg="#55555e", anchor="w", font=(FONT, 7)).pack(fill="x")
+        tk.Label(body, text="Kernel/process verilerinden hesaplanan aday havuzu üst sınırıdır; gerçek serbest kalan RAM daha düşük olabilir.",
+                 bg=CARD, fg="#777783", anchor="w", wraplength=420,
+                 justify="left", font=(FONT, 7)).pack(fill="x")
 
         # Ana buton
         self.button = tk.Button(
@@ -1214,22 +1741,18 @@ class CramcApp:
             self._schedule_save()
 
     def _fit_window(self):
-        """Pencereyi (ayarlar açıkken gereken) boyuta sabitle ve ortala."""
+        """Sekmeli arayüzü ekrana sığdır; pencere yeniden boyutlandırılabilir."""
         root = self.root
-        was_open = self.settings_open
-        if not was_open:
-            self._set_settings_open(True, save=False)
         root.update_idletasks()
-        w, h = root.winfo_reqwidth(), root.winfo_reqheight()
-        if not was_open:
-            self._set_settings_open(False, save=False)
-            root.update_idletasks()
         sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
-        w, h = min(w, sw - 40), min(h, sh - 80)
-        x, y = (sw - w) // 2, max((sh - h) // 3, 10)
+        req_w, req_h = root.winfo_reqwidth(), root.winfo_reqheight()
+        w = min(max(req_w, 980), max(640, sw - 40))
+        h = min(max(req_h, 720), max(520, sh - 80))
+        x = max((sw - w) // 2, 10)
+        y = max((sh - h) // 3, 10)
         root.geometry(f"{w}x{h}+{x}+{y}")
-        root.minsize(w, h)
-        root.resizable(False, False)
+        root.minsize(min(900, max(640, sw - 40)), min(620, max(520, sh - 80)))
+        root.resizable(True, True)
 
     # ---------------------------------------------------------- günlük/bildirim
     def log(self, level, msg):
@@ -1395,7 +1918,7 @@ class CramcApp:
                                  fg=GREEN if total >= 0 else AMBER)
         self.est_sub.configure(
             text=f"{total / MB:.0f} MB  •  {total / GB:.2f} GB\n"
-                 f"toplam RAM'in %{pct:.1f}'i")
+                 f"toplam RAM'in %{pct:.1f}'i · üst sınır")
         lines = []
         for label, v in items:
             lines.append(f"•  {label}: " + (f"−{fmt_size(-v)}" if v < 0
@@ -1403,17 +1926,24 @@ class CramcApp:
         self.est_detail.configure(text="\n".join(lines))
 
     def _ws_loop(self):
-        """Windows: toplam çalışma kümesi tahmini için arka plan örnekleyici."""
+        """Windows: süreçlerin özel (USS) resident belleğini periyodik ölçer."""
         while not self._stop:
+            total_uss = 0
             try:
-                total = 0
-                for p in psutil.process_iter(["memory_info"]):
-                    mi = p.info.get("memory_info")
-                    if mi:
-                        total += mi.rss
-                self.ws_bytes = total
+                for proc in psutil.process_iter():
+                    try:
+                        # psutil 8.x, memory_full_info() yerine memory_footprint()
+                        # API'sini önerir. Eski sürümler için geriye dönük uyumluluk.
+                        footprint = getattr(proc, "memory_footprint", None)
+                        mem = footprint() if callable(footprint) else proc.memory_full_info()
+                        total_uss += int(getattr(mem, "uss", 0) or 0)
+                    except (psutil.AccessDenied, psutil.NoSuchProcess, psutil.ZombieProcess):
+                        continue
+                    except Exception:
+                        continue
+                self.ws_bytes = total_uss
             except Exception:
-                pass
+                self.ws_bytes = 0
             for _ in range(6):
                 if self._stop:
                     return
@@ -1466,8 +1996,7 @@ class CramcApp:
         try:
             before = take_snapshot()
             log("info", f"Temizlik başlatıldı ({'otomatik' if auto else 'manuel'})  •  "
-                        f"önce: kullanılan {fmt_size(before.used)}, "
-                        f"boş {fmt_size(before.free)}")
+                        f"önce: kullanılan {fmt_size(before.used)}, "                        f"kullanılabilir {fmt_size(before.free)}")
             if IS_LINUX:
                 ok, err = clean_linux(opts, log)
             else:
@@ -1476,7 +2005,7 @@ class CramcApp:
             after = take_snapshot()
             gained = after.free - before.free
             log("info", f"Sonra: kullanılan {fmt_size(after.used)}, "
-                        f"boş {fmt_size(after.free)}  (fark {fmt_size(gained)})")
+                        f"kullanılabilir {fmt_size(after.free)}  (fark {fmt_size(gained)})")
             self.q.put(("done", ok, err, gained, auto))
         except Exception as exc:
             log("err", f"Beklenmeyen hata: {exc}")
@@ -1490,6 +2019,12 @@ class CramcApp:
                     self.log(item[1], item[2])
                 elif item[0] == "done":
                     self._finish(*item[1:])
+                elif item[0] == "storage_scan_done":
+                    self._finish_storage_scan(*item[1:])
+                elif item[0] == "storage_clean_done":
+                    self._finish_storage_clean(*item[1:])
+                elif item[0] in ("storage_scan_error", "storage_clean_error"):
+                    self._finish_storage_error(item[1])
         except queue.Empty:
             pass
         self.root.after(100, self._poll_queue)
@@ -1507,12 +2042,12 @@ class CramcApp:
         self.session_cleans += 1
         self.session_freed += max(gained, 0)
         if gained_mb >= 1:
-            self._show_notice(f"{gained_mb:.0f} MB RAM Başarıyla Temizlendi!", GREEN)
-            self.log("ok", f"{gained_mb:.0f} MB RAM Başarıyla Temizlendi!")
+            self._show_notice(f"Kullanılabilir RAM ölçümünde +{gained_mb:.0f} MB fark", GREEN)
+            self.log("ok", f"Kullanılabilir RAM ölçüm farkı: +{gained_mb:.0f} MB")
         else:
-            self._show_notice("Temizlik tamamlandı (belirgin kazanç yok, sistem temiz).",
+            self._show_notice("Temizlik tamamlandı (belirgin kullanılabilir RAM artışı ölçülmedi).",
                               GREEN)
-            self.log("ok", "Temizlik tamamlandı (belirgin kazanç yok)")
+            self.log("ok", "Temizlik tamamlandı; belirgin kullanılabilir RAM artışı ölçülmedi")
         self._schedule_save()
         try:
             snap = take_snapshot()
@@ -1525,6 +2060,9 @@ class CramcApp:
     def _on_close(self):
         if self.busy and self._swap_running:
             self._show_notice("Swap sıfırlama sürüyor, bitmesini bekleyin.", AMBER)
+            return
+        if self.storage_busy:
+            self._show_notice("Depolama taraması/temizliği sürüyor; işlem bitince kapatın.", AMBER)
             return
         self._stop = True
         self._save_now()
@@ -1539,7 +2077,7 @@ def selftest() -> int:
     print(f"{APP_NAME} v{APP_VERSION} selftest  |  {os_pretty()}  |  python {platform.python_version()}")
     s = take_snapshot()
     print(f"RAM toplam {fmt_size(s.total)}, kullanılan {fmt_size(s.used)}, "
-          f"boş {fmt_size(s.free)}, önbellek {fmt_size(s.cached)}, "
+          f"kullanılabilir {fmt_size(s.free)}, önbellek {fmt_size(s.cached)}, "
           f"swap {fmt_size(s.swap_used)}/{fmt_size(s.swap_total)}")
     print(f"İşlem sayısı: {count_processes()}")
     total, items = estimate_gain(CleanOptions(swap_reset=True), s, 0)
@@ -1552,6 +2090,13 @@ def selftest() -> int:
     print(f"Yetki: {'var' if has_privileges() else 'yok'}  |  ayar dosyası: {settings_path()}")
     print(f"tkinter: {'var' if TK_OK else 'YOK (sudo apt install -y python3-tk)'}  |  "
           f"psutil: {'var' if psutil else 'yok'}")
+    try:
+        temp_items, temp_errors, temp_limited = scan_temp_files()
+        temp_bytes = sum(item.size for item in temp_items)
+        print(f"Geçici dosya önizlemesi: {len(temp_items)} dosya, {fmt_size(temp_bytes)} "
+              f"(hata={temp_errors}, limit={temp_limited}; silme yapılmadı)")
+    except Exception as exc:
+        print(f"Geçici dosya taraması kullanılamıyor: {exc}")
     return 0
 
 
