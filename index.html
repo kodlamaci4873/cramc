@@ -1093,11 +1093,11 @@
       const signature = (platform + ' ' + ua).toLowerCase();
       if (/android/.test(signature)) return { key: 'android', label: 'Android', supported: false };
       if (/cros/.test(signature)) return { key: 'chromeos', label: 'ChromeOS', supported: false };
-      if (/windows|win32|win64|wow64/.test(signature)) return { key: 'windows', label: liteT('Windows 10 / 11 ailesi'), supported: true };
+      if (/windows|win32|win64|wow64/.test(signature)) return { key: 'windows', label: 'Windows 10 / 11 ailesi', supported: true };
       if (/iphone|ipad|ipod/.test(signature)) return { key: 'ios', label: 'iOS / iPadOS', supported: false };
       if (/macintosh|mac os|macintel/.test(signature)) return { key: 'mac', label: 'macOS', supported: false };
-      if (/linux|x11|ubuntu|debian|fedora/.test(signature)) return { key: 'linux', label: liteT('Linux tabanlı'), supported: true };
-      return { key: 'unknown', label: liteT('Tanımlanamadı'), supported: false };
+      if (/linux|x11|ubuntu|debian|fedora/.test(signature)) return { key: 'linux', label: 'Linux tabanlı', supported: true };
+      return { key: 'unknown', label: 'Tanımlanamadı', supported: false };
     }
 
     function detectLiteBrowser() {
