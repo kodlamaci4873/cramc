@@ -1350,6 +1350,7 @@ class CramcApp:
         self.session_cleans = 0
         self._icons = []
         self.logo_img = None
+        self._slider_trace_ids = []
 
         s = load_settings()
         saved_language = s.get("language")
@@ -1963,6 +1964,14 @@ class CramcApp:
         ACTIVE_LANGUAGE = new_language
         self._save_now()
 
+        # Remove callbacks attached to labels that are about to be destroyed.
+        for variable, trace_id in self._slider_trace_ids:
+            try:
+                variable.trace_remove("write", trace_id)
+            except Exception:
+                pass
+        self._slider_trace_ids.clear()
+
         # Rebuild only the widgets; monitoring and background workers keep running.
         for child in self.root.winfo_children():
             child.destroy()
@@ -1993,7 +2002,8 @@ class CramcApp:
                        font=(FONT, 9, "bold"))
         val.pack(side="right")
         FlatSlider(f, var, lo, hi, step).pack(fill="x")
-        var.trace_add("write", lambda *a: val.configure(text=fmt(var.get())))
+        trace_id = var.trace_add("write", lambda *a: val.configure(text=fmt(var.get())))
+        self._slider_trace_ids.append((var, trace_id))
 
     def _toggle_settings(self):
         self._set_settings_open(not self.settings_open)
@@ -2347,6 +2357,17 @@ class CramcApp:
 # =========================================================================== #
 def selftest() -> int:
     """Arayüzsüz motor testi (--selftest)."""
+    global ACTIVE_LANGUAGE
+    previous_language = ACTIVE_LANGUAGE
+    try:
+        for language in LANGUAGE_ORDER:
+            ACTIVE_LANGUAGE = language
+            sample = _tr("RAM TEMİZLE")
+            if language != "tr" and sample == "RAM TEMİZLE":
+                raise RuntimeError(f"Translation missing for {language}")
+    finally:
+        ACTIVE_LANGUAGE = previous_language
+    print(f"Dil testleri: {len(LANGUAGE_ORDER)}/{len(LANGUAGE_ORDER)} başarılı ({', '.join(LANGUAGE_NAMES.values())})")
     print(f"{APP_NAME} v{APP_VERSION} selftest  |  {os_pretty()}  |  python {platform.python_version()}")
     s = take_snapshot()
     print(f"RAM toplam {fmt_size(s.total)}, kullanılan {fmt_size(s.used)}, "
