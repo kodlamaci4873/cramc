@@ -262,6 +262,143 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+  
+    /* v1.2 website expansion: browser-only CRAMC Lite and system guidance */
+    .container { width: min(1260px, calc(100% - 48px)); }
+    .nav-links { gap: 19px; }
+    @media (max-width: 1080px) {
+      .nav-links { gap: 13px; font-size: 11px; }
+      .brand-name { font-size: 14px; }
+    }
+    .section { padding-top: 112px; padding-bottom: 112px; }
+    .system-check-section {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding-top: 96px;
+      padding-bottom: 104px;
+      background:
+        radial-gradient(ellipse at 8% 15%, rgba(60, 145, 255, .12), transparent 34rem),
+        radial-gradient(ellipse at 95% 78%, rgba(52, 213, 151, .08), transparent 30rem);
+      border-block: 1px solid rgba(148, 172, 207, .09);
+    }
+    .system-check-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: .2;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(129, 165, 211, .35) .7px, transparent .7px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(90deg, transparent, black 18%, black 82%, transparent);
+    }
+    .section-head.wide { max-width: 790px; margin-bottom: 38px; }
+    .section-head .section-lead { max-width: 720px; margin: 0 auto; }
+    .lite-shell {
+      display: grid;
+      grid-template-columns: .78fr 1.22fr;
+      gap: 25px;
+      padding: 27px;
+      border: 1px solid rgba(112, 170, 237, .22);
+      border-radius: 26px;
+      background: linear-gradient(145deg, rgba(20, 35, 57, .9), rgba(10, 18, 31, .93));
+      box-shadow: 0 28px 85px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.035);
+    }
+    .lite-intro { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 14px 17px 14px 12px; }
+    .lite-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 11px; border: 1px solid rgba(69, 223, 155, .22);
+      border-radius: 999px; color: #9cf0c7; background: rgba(35, 151, 103, .09);
+      font-size: 10px; font-weight: 850; letter-spacing: .14em;
+    }
+    .lite-label span { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px var(--green); }
+    .lite-intro h3 { margin: 18px 0 12px; font-size: clamp(25px, 3vw, 36px); line-height: 1.13; letter-spacing: -.045em; }
+    .lite-intro p { margin: 0; color: #9eafc6; font-size: 13px; line-height: 1.85; }
+    .privacy-note { display: flex; align-items: flex-start; gap: 9px; margin-top: 20px; padding: 12px 13px; border: 1px solid rgba(69, 223, 155, .17); border-radius: 12px; color: #a9d9c4; background: rgba(29, 128, 91, .07); font-size: 11px; line-height: 1.65; }
+    .privacy-note strong { color: #d3ffe8; }
+    .lite-refresh { margin-top: 22px; min-height: 45px; }
+    .hardware-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .hardware-card {
+      min-width: 0; padding: 18px 18px 16px;
+      border: 1px solid rgba(148, 172, 207, .13); border-radius: 17px;
+      background: rgba(255,255,255,.028);
+      transition: transform .22s ease, border-color .22s ease, background .22s ease;
+    }
+    .hardware-card:hover { transform: translateY(-3px); border-color: rgba(104,179,255,.36); background: rgba(255,255,255,.045); }
+    .hardware-card-top { display: flex; align-items: center; gap: 10px; color: #9aabc1; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .hardware-icon { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid rgba(103,177,255,.17); border-radius: 10px; color: #82bdff; background: rgba(60,136,225,.1); }
+    .hardware-icon svg { width: 17px; height: 17px; }
+    .hardware-value { display: block; margin-top: 14px; color: #f0f6ff; font-size: clamp(18px, 2vw, 24px); font-weight: 790; letter-spacing: -.04em; overflow-wrap: anywhere; }
+    .hardware-detail { display: block; margin-top: 5px; color: #8597b0; font-size: 10px; line-height: 1.6; }
+    .hardware-status { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; padding: 15px 17px; border: 1px solid rgba(103,176,255,.18); border-radius: 15px; background: rgba(42,104,170,.08); }
+    .hardware-status[data-state="good"] { border-color: rgba(69,223,155,.22); background: rgba(29,128,91,.08); }
+    .hardware-status[data-state="warn"] { border-color: rgba(244,187,98,.25); background: rgba(174,117,33,.08); }
+    .hardware-status strong { display: block; margin-bottom: 2px; color: #ddecff; font-size: 12px; }
+    .hardware-status p { margin: 0; color: #9eafc6; font-size: 11px; line-height: 1.65; }
+    .status-dot { flex: none; width: 9px; height: 9px; margin: 5px 1px 0; border-radius: 50%; background: var(--blue); box-shadow: 0 0 13px currentColor; }
+    .hardware-status[data-state="good"] .status-dot { background: var(--green); }
+    .hardware-status[data-state="warn"] .status-dot { background: var(--amber); }
+    .manual-ram {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+      margin-top: 15px; padding: 13px 15px;
+      border: 1px solid rgba(148,172,207,.12); border-radius: 13px;
+      background: rgba(5,11,20,.27);
+    }
+    .manual-ram label { flex: 1 1 230px; color: #a6b6ca; font-size: 11px; }
+    .manual-ram select {
+      min-width: 130px; padding: 9px 11px; border: 1px solid rgba(148,172,207,.2);
+      border-radius: 9px; color: #e8f2ff; background: #111c2d; font: inherit; font-size: 11px;
+    }
+    .manual-ram button { padding: 9px 12px; border: 1px solid rgba(104,179,255,.25); border-radius: 9px; color: #c6e1ff; background: rgba(64,132,210,.1); font-size: 10px; font-weight: 750; cursor: pointer; }
+    .manual-ram button:hover { border-color: rgba(104,179,255,.6); background: rgba(64,132,210,.18); }
+    .section-divider { display: flex; align-items: center; gap: 15px; margin: 0 0 22px; color: #6f829d; font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+    .section-divider::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+    .requirement-section { padding-top: 94px; padding-bottom: 100px; }
+    .requirement-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .requirement-tier {
+      position: relative; overflow: hidden; padding: 24px 23px 23px;
+      border: 1px solid var(--line); border-radius: 19px;
+      background: linear-gradient(150deg, rgba(19,32,52,.86), rgba(11,19,32,.82));
+    }
+    .requirement-tier.featured { border-color: rgba(94,168,255,.35); box-shadow: inset 0 1px rgba(255,255,255,.04), 0 14px 45px rgba(29,90,160,.09); }
+    .tier-tag { display: inline-flex; padding: 5px 9px; border-radius: 999px; color: #9fcaff; background: rgba(70,140,225,.12); font-size: 9px; font-weight: 850; letter-spacing: .12em; }
+    .requirement-tier h3 { margin: 13px 0 5px; font-size: 19px; letter-spacing: -.035em; }
+    .tier-copy { min-height: 38px; margin: 0 0 17px; color: #8fa1b9; font-size: 11px; line-height: 1.65; }
+    .tier-specs { display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; }
+    .tier-specs li { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(148,172,207,.09); color: #93a5bd; font-size: 11px; }
+    .tier-specs li:last-child { padding-bottom: 0; border: 0; }
+    .tier-specs strong { color: #e1edfc; font-size: 11px; font-weight: 750; text-align: right; }
+    .requirements-footnote { margin: 17px 0 0; color: #8294ac; font-size: 10px; line-height: 1.7; }
+    .supported-os-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 39px; }
+    .supported-os-card { display: flex; align-items: flex-start; gap: 15px; padding: 20px; border: 1px solid var(--line); border-radius: 17px; background: rgba(14,24,39,.62); }
+    .supported-os-card h3 { margin: 0 0 5px; font-size: 14px; }
+    .supported-os-card p { margin: 0; color: #94a6bd; font-size: 11px; line-height: 1.75; }
+    .os-check { flex: none; display: grid; place-items: center; width: 37px; height: 37px; border-radius: 11px; color: #91c5ff; background: rgba(61,133,221,.13); font-size: 18px; font-weight: 850; }
+    .not-supported { margin-top: 14px; padding: 13px 15px; border: 1px solid rgba(244,187,98,.17); border-radius: 12px; color: #c9b58f; background: rgba(244,187,98,.05); font-size: 10px; line-height: 1.7; }
+    @media (max-width: 920px) {
+      .lite-shell { grid-template-columns: 1fr; }
+      .lite-intro { padding: 8px 5px 2px; }
+      .requirement-grid { grid-template-columns: 1fr 1fr; }
+      .requirement-tier:last-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .container { width: min(100% - 34px, 590px); }
+      .section { padding-top: 76px; padding-bottom: 76px; }
+      .system-check-section, .requirement-section { padding-top: 72px; padding-bottom: 76px; }
+      .lite-shell { padding: 17px; border-radius: 20px; }
+      .hardware-grid { grid-template-columns: 1fr 1fr; gap: 9px; }
+      .hardware-card { padding: 14px 13px; }
+      .hardware-value { font-size: 17px; }
+      .requirement-grid, .supported-os-grid { grid-template-columns: 1fr; }
+      .requirement-tier:last-child { grid-column: auto; }
+      .tier-copy { min-height: 0; }
+    }
+    @media (max-width: 420px) {
+      .hardware-grid { grid-template-columns: 1fr; }
+      .manual-ram select, .manual-ram button { flex: 1 1 100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -280,6 +417,8 @@
       <nav class="nav-links" id="navLinks" aria-label="Ana menü">
         <a href="#ozellikler">Özellikler</a>
         <a href="#platformlar">Platformlar</a>
+        <a href="#donanim">Donanımım</a>
+        <a href="#gereksinimler">Gereksinimler</a>
         <a href="#nasil-calisir">Nasıl çalışır?</a>
         <a href="#depolama">Depolama</a>
         <a href="#sss">SSS</a>
@@ -349,6 +488,88 @@
         </div>
       </div>
     </div>
+
+    
+    <section class="system-check-section" id="donanim">
+      <div class="container">
+        <div class="section-head wide">
+          <span class="kicker">CRAMC LITE · TARAYICIDA DONANIM ÖZETİ</span>
+          <h2>Önce cihazını tanı.<br><span class="gradient-text">Sonra doğru sürümü seç.</span></h2>
+          <p class="section-lead">Küçük bir sistem kontrolüyle tarayıcının paylaşabildiği işlemci, bellek ve işletim sistemi bilgilerini gör. Herhangi bir program indirmeden çalışır.</p>
+        </div>
+
+        <div class="lite-shell">
+          <div class="lite-intro">
+            <span class="lite-label"><span></span> CRAMC LITE · HAZIR</span>
+            <h3>Bilgisayarının<br><span class="gradient-text">kısa sistem raporu.</span></h3>
+            <p>Bu mini araç tarayıcıda çalışır. Bilgisayarına erişim izni istemez; yalnızca tarayıcının sunduğu temel donanım bilgilerini okur. Tam CPU modelini veya kesin RAM kapasitesini her tarayıcı açıklamaz.</p>
+            <div class="privacy-note">
+              <span aria-hidden="true">◆</span>
+              <span><strong>Gizlilik:</strong> Bilgiler bu sayfada, cihazında işlenir. CRAMC sunucusuna gönderilmez ve kaydedilmez.</span>
+            </div>
+            <button class="button button-primary lite-refresh" id="refreshHardware" type="button">↻ &nbsp; Sistemimi yeniden tara</button>
+          </div>
+
+          <div>
+            <div class="hardware-grid" aria-live="polite">
+              <article class="hardware-card">
+                <div class="hardware-card-top">
+                  <span class="hardware-icon" aria-hidden="true">▣</span> İşletim sistemi
+                </div>
+                <strong class="hardware-value" id="deviceOS">Algılanıyor…</strong>
+                <small class="hardware-detail" id="deviceOSDetail">Tarayıcı bilgisi okunuyor.</small>
+              </article>
+
+              <article class="hardware-card">
+                <div class="hardware-card-top">
+                  <span class="hardware-icon" aria-hidden="true">⌘</span> İşlemci
+                </div>
+                <strong class="hardware-value" id="deviceCPU">Kontrol ediliyor…</strong>
+                <small class="hardware-detail" id="deviceCPUDetail">Mantıksal işlemci bilgisi okunuyor.</small>
+              </article>
+
+              <article class="hardware-card">
+                <div class="hardware-card-top">
+                  <span class="hardware-icon" aria-hidden="true">▤</span> RAM belleği
+                </div>
+                <strong class="hardware-value" id="deviceRAM">Kontrol ediliyor…</strong>
+                <small class="hardware-detail" id="deviceRAMDetail">Tarayıcı desteği denetleniyor.</small>
+              </article>
+
+              <article class="hardware-card">
+                <div class="hardware-card-top">
+                  <span class="hardware-icon" aria-hidden="true">◉</span> Tarayıcı
+                </div>
+                <strong class="hardware-value" id="deviceBrowser">Algılanıyor…</strong>
+                <small class="hardware-detail" id="deviceBrowserDetail">Yerel tarayıcı bilgisi.</small>
+              </article>
+            </div>
+
+            <div class="hardware-status" id="hardwareStatus" data-state="info" role="status" aria-live="polite">
+              <span class="status-dot" aria-hidden="true"></span>
+              <div>
+                <strong id="hardwareStatusTitle">Sistem özeti hazırlanıyor</strong>
+                <p id="hardwareStatusText">Tarayıcı izin verdiği bilgileri gösteriyoruz.</p>
+              </div>
+            </div>
+
+            <div class="manual-ram">
+              <label for="manualRam">Tarayıcı RAM bilgisini göstermiyorsa kendi RAM miktarını seçebilirsin.</label>
+              <select id="manualRam" aria-label="RAM miktarını elle seç">
+                <option value="">Otomatik algılama</option>
+                <option value="2">2 GB</option>
+                <option value="4">4 GB</option>
+                <option value="8">8 GB</option>
+                <option value="16">16 GB</option>
+                <option value="32">32 GB</option>
+                <option value="64">64 GB veya üzeri</option>
+              </select>
+              <button id="applyManualRam" type="button">RAM değerini uygula</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="section" id="ozellikler">
       <div class="container">
@@ -447,6 +668,76 @@
             <div class="platform-note">Python veya pip kurulumu gerekmez. Daha kapsamlı temizlik için uygulamayı <strong>Yönetici olarak çalıştırın</strong>; UAC iznini onaylayın.</div>
           </article>
         </div>
+      </div>
+    </section>
+
+    
+    <section class="requirement-section" id="gereksinimler">
+      <div class="container">
+        <div class="section-head wide">
+          <span class="kicker">İNDİRMEDEN ÖNCE · SİSTEM GEREKSİNİMLERİ</span>
+          <h2>Her bilgisayara uygun,<br><span class="gradient-text">ihtiyacına göre rahatlık.</span></h2>
+          <p class="section-lead">CRAMC hafif bir masaüstü aracıdır. Aşağıdaki değerler pratik kullanım profilleridir; kesin performans garantisi veya zorunlu benchmark sonucu değildir.</p>
+        </div>
+
+        <div class="section-divider">RAM, işlemci ve boş alan önerileri</div>
+        <div class="requirement-grid">
+          <article class="requirement-tier">
+            <span class="tier-tag">MİNİMUM · TEMEL KULLANIM</span>
+            <h3>Başlangıç</h3>
+            <p class="tier-copy">Temel RAM izleme ve manuel temizlik işlemleri için pratik alt seviye.</p>
+            <ul class="tier-specs">
+              <li><span>RAM</span><strong>2 GB</strong></li>
+              <li><span>İşlemci</span><strong>2 mantıksal çekirdek</strong></li>
+              <li><span>Boş disk alanı</span><strong>200 MB</strong></li>
+              <li><span>Sistem</span><strong>64-bit Windows / Linux</strong></li>
+            </ul>
+          </article>
+
+          <article class="requirement-tier featured">
+            <span class="tier-tag">ORTA · ÖNERİLEN</span>
+            <h3>Dengeli</h3>
+            <p class="tier-copy">CRAMC ve günlük masaüstü uygulamalarını rahatça birlikte kullanmak için.</p>
+            <ul class="tier-specs">
+              <li><span>RAM</span><strong>4 GB</strong></li>
+              <li><span>İşlemci</span><strong>4 mantıksal çekirdek</strong></li>
+              <li><span>Boş disk alanı</span><strong>300 MB</strong></li>
+              <li><span>Sistem</span><strong>64-bit Windows / Linux</strong></li>
+            </ul>
+          </article>
+
+          <article class="requirement-tier">
+            <span class="tier-tag">YÜKSEK · RAHAT KULLANIM</span>
+            <h3>Geniş alan</h3>
+            <p class="tier-copy">Çok sayıda uygulama açıkken daha geniş sistem kaynağı payı isteyenler için.</p>
+            <ul class="tier-specs">
+              <li><span>RAM</span><strong>8 GB veya üzeri</strong></li>
+              <li><span>İşlemci</span><strong>6+ mantıksal çekirdek</strong></li>
+              <li><span>Boş disk alanı</span><strong>500 MB</strong></li>
+              <li><span>Sistem</span><strong>64-bit Windows / Linux</strong></li>
+            </ul>
+          </article>
+        </div>
+        <p class="requirements-footnote">Not: Bu profiller uygulamanın hafif yapısına göre hazırlanmış genel tavsiyelerdir. İşletim sisteminin kendi RAM ihtiyacı, açık programlar ve arka plan görevleri toplam deneyimi etkiler. İşlemci modeli veya frekansı tarayıcıdan güvenilir biçimde doğrulanamaz.</p>
+
+        <div class="section-divider" style="margin-top:42px">Desteklenen masaüstü sistemleri</div>
+        <div class="supported-os-grid">
+          <article class="supported-os-card">
+            <span class="os-check" aria-hidden="true">▦</span>
+            <div>
+              <h3>Windows 10 / 11 · 64-bit</h3>
+              <p>Tek dosyalık <strong>CRAMC-Windows.exe</strong>. Python veya pip kurulumu gerekmez. Daha kapsamlı temizlik için Yönetici izni gerekir.</p>
+            </div>
+          </article>
+          <article class="supported-os-card">
+            <span class="os-check" aria-hidden="true">🐧</span>
+            <div>
+              <h3>Linux · x86_64 masaüstü</h3>
+              <p>Ubuntu, Lubuntu, Debian, Fedora ve benzeri masaüstü dağıtımları hedeflenir. Tek dosyalık <strong>AppImage</strong>; kapsamlı işlemler için sudo yetkisi gerekir.</p>
+            </div>
+          </article>
+        </div>
+        <div class="not-supported"><strong>Şu anda masaüstü uygulaması olarak desteklenmeyenler:</strong> macOS, Android, iOS/iPadOS ve 32-bit Linux. Tarayıcıdaki CRAMC Lite kontrolü bu cihazlarda da açılabilir; ancak indirilebilir masaüstü paketi sunulmaz.</div>
       </div>
     </section>
 
@@ -640,6 +931,100 @@
         setTimeout(() => button.textContent = original, 1500);
       });
     });
+
+    // CRAMC Lite: browser-only system summary. No telemetry or network requests.
+    function detectLiteOS() {
+      const platform = navigator.userAgentData?.platform || navigator.platform || '';
+      const ua = navigator.userAgent || '';
+      const signature = (platform + ' ' + ua).toLowerCase();
+      if (/android/.test(signature)) return { key: 'android', label: 'Android', supported: false };
+      if (/cros/.test(signature)) return { key: 'chromeos', label: 'ChromeOS', supported: false };
+      if (/windows|win32|win64|wow64/.test(signature)) return { key: 'windows', label: 'Windows 10 / 11 ailesi', supported: true };
+      if (/iphone|ipad|ipod/.test(signature)) return { key: 'ios', label: 'iOS / iPadOS', supported: false };
+      if (/macintosh|mac os|macintel/.test(signature)) return { key: 'mac', label: 'macOS', supported: false };
+      if (/linux|x11|ubuntu|debian|fedora/.test(signature)) return { key: 'linux', label: 'Linux tabanlı', supported: true };
+      return { key: 'unknown', label: 'Tanımlanamadı', supported: false };
+    }
+
+    function detectLiteBrowser() {
+      const ua = navigator.userAgent || '';
+      const brands = navigator.userAgentData?.brands?.map(item => item.brand) || [];
+      if (brands.length) return brands.filter(name => !/not.?a.?brand/i.test(name)).join(' / ');
+      if (/edg\//i.test(ua)) return 'Microsoft Edge';
+      if (/firefox\//i.test(ua)) return 'Mozilla Firefox';
+      if (/opr\//i.test(ua)) return 'Opera';
+      if (/chrome\//i.test(ua)) return 'Google Chrome / Chromium';
+      if (/safari\//i.test(ua)) return 'Safari';
+      return 'Bilinmeyen tarayıcı';
+    }
+
+    function renderLiteHardware() {
+      const os = detectLiteOS();
+      const cores = Number.isFinite(navigator.hardwareConcurrency) ? navigator.hardwareConcurrency : null;
+      const browser = detectLiteBrowser();
+      const autoRam = Number.isFinite(navigator.deviceMemory) ? navigator.deviceMemory : null;
+      const manualChoice = document.getElementById('manualRam').value;
+      const manualRam = manualChoice ? Number(manualChoice) : null;
+      const ram = manualRam || autoRam;
+      const setText = (id, value) => { document.getElementById(id).textContent = value; };
+
+      setText('deviceOS', os.label);
+      setText('deviceOSDetail', os.supported
+        ? 'Tarayıcı Windows veya Linux ailesi algıladı. Tam sürüm ve mimari doğrulanamayabilir.'
+        : 'Bu işletim sistemi için masaüstü uygulama paketi sunulmuyor.');
+
+      setText('deviceCPU', cores ? cores + ' mantıksal çekirdek' : 'Bilgi paylaşılmıyor');
+      setText('deviceCPUDetail', 'İşlemci model adı tarayıcıdan okunamaz. Çekirdek sayısı sınırlandırılmış olabilir.');
+
+      if (manualRam) {
+        setText('deviceRAM', manualRam + ' GB');
+        setText('deviceRAMDetail', 'Senin girdiğin değer · otomatik ölçüm değildir.');
+      } else if (autoRam) {
+        setText('deviceRAM', '≈ ' + autoRam + ' GB');
+        setText('deviceRAMDetail', 'Tarayıcının yaklaşık bellek tahmini; kesin takılı RAM miktarı değildir.');
+      } else {
+        setText('deviceRAM', 'Tarayıcı paylaşmıyor');
+        setText('deviceRAMDetail', 'Bu tarayıcı RAM tahmin API’sini sunmuyor. İstersen yukarıdan kendin seç.');
+      }
+
+      setText('deviceBrowser', browser);
+      setText('deviceBrowserDetail', 'Bu sayfayı açtığın tarayıcı.');
+
+      const status = document.getElementById('hardwareStatus');
+      const title = document.getElementById('hardwareStatusTitle');
+      const detail = document.getElementById('hardwareStatusText');
+      const lowRam = ram !== null && ram < 2;
+      const lowCores = cores !== null && cores < 2;
+
+      if (!os.supported) {
+        status.dataset.state = 'warn';
+        title.textContent = 'Masaüstü uygulaması bu sistem için sunulmuyor';
+        detail.textContent = 'CRAMC Lite tarayıcıda çalışıyor. İndirilebilir uygulama Windows 10/11 64-bit ve x86_64 Linux masaüstü sistemleri içindir.';
+      } else if (lowRam || lowCores) {
+        status.dataset.state = 'warn';
+        title.textContent = 'Sınırlı kaynak algılandı';
+        detail.textContent = 'Tarayıcının bildirdiği değerlerden en az biri temel önerinin altında. İşletim sisteminin ve açık uygulamaların bellek ihtiyacını da hesaba kat.';
+      } else if (ram === null || cores === null) {
+        status.dataset.state = 'info';
+        title.textContent = 'Sistem kısmen tanındı';
+        detail.textContent = 'İşletim sistemi algılandı. Tarayıcı tüm donanım bilgilerini paylaşmadığı için RAM veya işlemci bilgisinin bir bölümü doğrulanamadı.';
+      } else {
+        status.dataset.state = 'good';
+        title.textContent = 'Cihazın temel gereksinimlere uygun görünüyor';
+        detail.textContent = 'Tarayıcının bildirdiği işletim sistemi, yaklaşık RAM ve mantıksal işlemci bilgileri başlangıç profiliyle uyumlu. Bu sonuç kesin donanım testi değildir.';
+      }
+    }
+
+    document.getElementById('refreshHardware').addEventListener('click', () => {
+      renderLiteHardware();
+      const button = document.getElementById('refreshHardware');
+      const previous = button.textContent;
+      button.textContent = '✓  Sistem bilgileri yenilendi';
+      setTimeout(() => button.textContent = previous, 1500);
+    });
+    document.getElementById('applyManualRam').addEventListener('click', renderLiteHardware);
+    renderLiteHardware();
+
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
