@@ -65,6 +65,219 @@ IS_LINUX = OS_NAME == "Linux"
 IS_WINDOWS = OS_NAME == "Windows"
 
 
+# --------------------------------------------------------------------------- #
+#  ÇOK DİLLİ ARAYÜZ
+# --------------------------------------------------------------------------- #
+LANGUAGE_ORDER = ("tr", "en", "es", "fr", "de", "pt", "ru", "ar", "zh", "ja", "hi")
+LANGUAGE_NAMES = {
+    "tr": "Türkçe", "en": "English", "es": "Español", "fr": "Français",
+    "de": "Deutsch", "pt": "Português", "ru": "Русский", "ar": "العربية",
+    "zh": "中文", "ja": "日本語", "hi": "हिन्दी",
+}
+ACTIVE_LANGUAGE = "tr"
+
+# Satır sırası: Türkçe, English, Español, Français, Deutsch, Português,
+# Русский, العربية, 中文, 日本語, हिन्दी.
+I18N_ROWS = [
+    ("✦  Hoş Geldin", ("✦  Hoş Geldin", "✦  Welcome", "✦  Bienvenido", "✦  Bienvenue", "✦  Willkommen", "✦  Boas-vindas", "✦  Добро пожаловать", "✦  أهلاً بك", "✦  欢迎", "✦  ようこそ", "✦  स्वागत है")),
+    ("◈  RAM Yönetimi", ("◈  RAM Yönetimi", "◈  RAM Manager", "◈  Gestión de RAM", "◈  Gestion de la RAM", "◈  RAM-Verwaltung", "◈  Gestão de RAM", "◈  Управление RAM", "◈  إدارة الذاكرة", "◈  内存管理", "◈  RAM 管理", "◈  RAM प्रबंधन")),
+    ("▣  Depolama", ("▣  Depolama", "▣  Storage", "▣  Almacenamiento", "▣  Stockage", "▣  Speicher", "▣  Armazenamento", "▣  Хранилище", "▣  التخزين", "▣  存储", "▣  ストレージ", "▣  स्टोरेज")),
+    ("CRAMC'ye hoş geldin!", ("CRAMC'ye hoş geldin!", "Welcome to CRAMC!", "¡Te damos la bienvenida a CRAMC!", "Bienvenue dans CRAMC !", "Willkommen bei CRAMC!", "Boas-vindas ao CRAMC!", "Добро пожаловать в CRAMC!", "مرحباً بك في CRAMC!", "欢迎使用 CRAMC！", "CRAMC へようこそ！", "CRAMC में आपका स्वागत है!")),
+    ("ComputerRAMCleaner; RAM ve sistem önbelleği durumunu izlemenize, işletim sisteminize uygun temizlik işlemlerini seçmenize ve kullanıcı geçici dosyalarını kontrollü biçimde yönetmenize yardımcı olur.", ("ComputerRAMCleaner; RAM ve sistem önbelleği durumunu izlemenize, işletim sisteminize uygun temizlik işlemlerini seçmenize ve kullanıcı geçici dosyalarını kontrollü biçimde yönetmenize yardımcı olur.", "ComputerRAMCleaner helps you monitor RAM and system cache, choose cleanup actions for your operating system, and manage user temporary files safely.", "ComputerRAMCleaner te ayuda a supervisar la RAM y la caché del sistema, elegir acciones de limpieza para tu sistema operativo y administrar de forma segura los archivos temporales del usuario.", "ComputerRAMCleaner vous aide à surveiller la RAM et le cache système, à choisir les opérations adaptées à votre système et à gérer les fichiers temporaires en toute sécurité.", "ComputerRAMCleaner hilft Ihnen, RAM und Systemcache zu überwachen, passende Bereinigungsaktionen auszuwählen und temporäre Benutzerdateien sicher zu verwalten.", "O ComputerRAMCleaner ajuda a monitorar a RAM e o cache do sistema, escolher ações adequadas ao sistema operacional e gerenciar arquivos temporários com segurança.", "ComputerRAMCleaner помогает отслеживать ОЗУ и системный кэш, выбирать подходящую очистку и безопасно управлять временными файлами пользователя.", "يساعدك ComputerRAMCleaner على مراقبة الذاكرة وذاكرة التخزين المؤقت للنظام واختيار عمليات التنظيف المناسبة وإدارة الملفات المؤقتة بأمان.", "ComputerRAMCleaner 可帮助您监控内存和系统缓存，选择适合操作系统的清理操作，并安全管理用户临时文件。", "ComputerRAMCleaner は RAM とシステムキャッシュを監視し、OS に合ったクリーンアップを選択して、一時ファイルを安全に管理できます。", "ComputerRAMCleaner आपको RAM और सिस्टम कैश देखने, OS के अनुसार सफ़ाई चुनने और अस्थायी फ़ाइलों को सुरक्षित रूप से प्रबंधित करने में मदद करता है。")),
+    ("RAM Yönetimine Git  →", ("RAM Yönetimine Git  →", "Go to RAM Manager  →", "Ir a Gestión de RAM  →", "Ouvrir la gestion de la RAM  →", "Zur RAM-Verwaltung  →", "Ir para Gestão de RAM  →", "Перейти к управлению RAM  →", "الانتقال إلى إدارة الذاكرة  ←", "前往内存管理  →", "RAM 管理へ  →", "RAM प्रबंधन पर जाएँ  →")),
+    ("● Yetkili çalışıyor", ("● Yetkili çalışıyor", "● Running with elevated permissions", "● Ejecutándose con permisos elevados", "● Exécution avec des privilèges élevés", "● Mit erweiterten Rechten gestartet", "● Executando com permissões elevadas", "● Запущено с повышенными правами", "● يعمل بصلاحيات مرتفعة", "● 正在以提升的权限运行", "● 管理者権限で実行中", "● उच्च अनुमति के साथ चल रहा है")),
+    ("● Linux: tam temizlik için sudo gerekli", ("● Linux: tam temizlik için sudo gerekli", "● Linux: sudo is required for full cleanup", "● Linux: se necesita sudo para una limpieza completa", "● Linux : sudo est requis pour un nettoyage complet", "● Linux: sudo ist für die vollständige Bereinigung erforderlich", "● Linux: sudo é necessário para a limpeza completa", "● Linux: для полной очистки требуется sudo", "● Linux：完整清理需要 sudo", "● Linux：完全なクリーンアップには sudo が必要", "● Linux: पूरी सफ़ाई के लिए sudo आवश्यक है")),
+    ("● Yönetici izni yok; bazı işlemler atlanabilir", ("● Yönetici izni yok; bazı işlemler atlanabilir", "● No administrator rights; some actions may be skipped", "● Sin permisos de administrador; algunas acciones pueden omitirse", "● Sans droits administrateur ; certaines opérations peuvent être ignorées", "● Keine Administratorrechte; einige Aktionen werden möglicherweise übersprungen", "● Sem privilégios de administrador; algumas ações podem ser ignoradas", "● Нет прав администратора; некоторые действия могут быть пропущены", "● 没有管理员权限；部分操作可能会跳过", "● 管理者権限がありません。一部の処理はスキップされます", "● व्यवस्थापक अनुमति नहीं है; कुछ कार्रवाइयाँ छोड़ी जा सकती हैं")),
+    ("HIZLI BAŞLANGIÇ REHBERİ", ("HIZLI BAŞLANGIÇ REHBERİ", "QUICK START GUIDE", "GUÍA DE INICIO RÁPIDO", "GUIDE DE DÉMARRAGE RAPIDE", "SCHNELLSTART-ANLEITUNG", "GUIA DE INÍCIO RÁPIDO", "КРАТКОЕ РУКОВОДСТВО", "دليل البدء السريع", "快速入门指南", "クイックスタートガイド", "त्वरित प्रारंभ मार्गदर्शिका")),
+    ("Sistemi gözlemle", ("Sistemi gözlemle", "Monitor your system", "Observa tu sistema", "Surveillez votre système", "System überwachen", "Monitore o sistema", "Наблюдайте за системой", "راقب النظام", "监控系统", "システムを確認", "सिस्टम की निगरानी करें")),
+    ("RAM, kullanılabilir bellek, önbellek, swap ve işlem sayısını RAM Yönetimi sekmesinde incele.", ("RAM, kullanılabilir bellek, önbellek, swap ve işlem sayısını RAM Yönetimi sekmesinde incele.", "View RAM, available memory, cache, swap, and process count in the RAM Manager tab.", "Consulta la RAM, memoria disponible, caché, swap y número de procesos en la pestaña Gestión de RAM.", "Consultez la RAM, la mémoire disponible, le cache, le swap et le nombre de processus dans l’onglet Gestion de la RAM.", "RAM, verfügbaren Speicher, Cache, Swap und Prozessanzahl im Tab RAM-Verwaltung anzeigen.", "Veja RAM, memória disponível, cache, swap e número de processos na aba Gestão de RAM.", "Просматривайте ОЗУ, свободную память, кэш, swap и число процессов на вкладке управления RAM.", "اعرض الذاكرة المتاحة وذاكرة التخزين المؤقت وSwap وعدد العمليات في علامة تبويب إدارة الذاكرة.", "在“内存管理”选项卡中查看内存、可用内存、缓存、交换空间和进程数量。", "RAM प्रबंधन टैब में RAM, उपलब्ध मेमोरी, कैश, स्वैप और प्रक्रियाओं की संख्या देखें।")),
+    ("İşlemleri seç", ("İşlemleri seç", "Choose actions", "Elige las acciones", "Choisissez les actions", "Aktionen auswählen", "Escolha as ações", "Выберите действия", "اختر الإجراءات", "选择操作", "処理を選択", "कार्रवाइयाँ चुनें")),
+    ("Linux veya Windows için gösterilen seçenekleri ihtiyacına göre işaretle. Swap sıfırlama isteğe bağlıdır.", ("Linux veya Windows için gösterilen seçenekleri ihtiyacına göre işaretle. Swap sıfırlama isteğe bağlıdır.", "Select the options shown for Linux or Windows as needed. Swap reset is optional.", "Marca las opciones disponibles para Linux o Windows según lo necesites. Restablecer swap es opcional.", "Cochez les options proposées pour Linux ou Windows selon vos besoins. La réinitialisation du swap est facultative.", "Wählen Sie die angezeigten Optionen für Linux oder Windows nach Bedarf aus. Das Zurücksetzen des Swap ist optional.", "Marque as opções exibidas para Linux ou Windows conforme necessário. A redefinição do swap é opcional.", "Выберите нужные параметры для Linux или Windows. Сброс swap необязателен.", "根据需要选择为 Linux 或 Windows 显示的选项。重置 Swap 是可选的。", "必要に応じて Linux または Windows の項目を選択します。Swap のリセットは任意です。", "ज़रूरत के अनुसार Linux या Windows के विकल्प चुनें। Swap रीसेट करना वैकल्पिक है।")),
+    ("Önizle ve uygula", ("Önizle ve uygula", "Preview and apply", "Previsualiza y aplica", "Prévisualisez et appliquez", "Vorschau und anwenden", "Pré-visualize e aplique", "Просмотрите и примените", "عاين ثم نفّذ", "预览并应用", "プレビューして実行", "पूर्वावलोकन करें और लागू करें")),
+    ("Tahmini kazanımı üst sınır olarak değerlendir; ardından RAM TEMİZLE düğmesiyle işlemi başlat.", ("Tahmini kazanımı üst sınır olarak değerlendir; ardından RAM TEMİZLE düğmesiyle işlemi başlat.", "Treat the estimated gain as an upper bound, then start the operation with CLEAN RAM.", "Considera la ganancia estimada como un límite superior y luego inicia la operación con LIMPIAR RAM.", "Considérez le gain estimé comme une limite supérieure, puis lancez l’opération avec NETTOYER LA RAM.", "Betrachten Sie den geschätzten Gewinn als Obergrenze und starten Sie den Vorgang mit RAM BEREINIGEN.", "Considere o ganho estimado como um limite máximo e inicie a operação em LIMPAR RAM.", "اعتبر التحسن المقدّر حداً أقصى، ثم ابدأ العملية باستخدام تنظيف الذاكرة.", "估算的释放量仅为上限，然后点击“清理内存”开始操作。", "推定値は上限として扱い、「RAM をクリーンアップ」を押して実行します。", "अनुमानित लाभ को अधिकतम सीमा मानें, फिर RAM साफ़ करें बटन से प्रक्रिया शुरू करें।")),
+    ("GÜVENLİK NOTU  •  Bellek önbelleklerini temizlemek her zaman performans artışı sağlamaz. Sistemler bu belleği ihtiyaç olduğunda otomatik geri kazanabilir. Depolama sekmesi yalnızca kullanıcının geçici klasörlerinde 24 saatten eski dosyaları listeler; silmeden önce önizleme ve onay ister.", ("GÜVENLİK NOTU  •  Bellek önbelleklerini temizlemek her zaman performans artışı sağlamaz. Sistemler bu belleği ihtiyaç olduğunda otomatik geri kazanabilir. Depolama sekmesi yalnızca kullanıcının geçici klasörlerinde 24 saatten eski dosyaları listeler; silmeden önce önizleme ve onay ister.", "SAFETY NOTE  •  Clearing memory caches does not always improve performance. Systems can reclaim this memory automatically when needed. The Storage tab lists only files older than 24 hours in user temporary folders and asks for preview and confirmation before deletion.", "NOTA DE SEGURIDAD  •  Limpiar las cachés de memoria no siempre mejora el rendimiento. El sistema puede recuperar esta memoria automáticamente cuando la necesite. La pestaña Almacenamiento solo muestra archivos de más de 24 horas en carpetas temporales del usuario y pide una vista previa y confirmación antes de borrarlos.", "SÉCURITÉ  •  Vider les caches mémoire n’améliore pas toujours les performances. Le système peut récupérer cette mémoire automatiquement si nécessaire. L’onglet Stockage liste uniquement les fichiers de plus de 24 heures dans les dossiers temporaires de l’utilisateur et demande un aperçu et une confirmation avant suppression.", "SICHERHEITSHINWEIS  •  Das Leeren von Speichercaches verbessert nicht immer die Leistung. Das System kann diesen Speicher bei Bedarf automatisch zurückgewinnen. Der Speicher-Tab listet nur Dateien in Benutzer-Temp-Ordnern auf, die älter als 24 Stunden sind, und verlangt vor dem Löschen eine Vorschau und Bestätigung.", "NOTA DE SEGURANÇA  •  Limpar caches de memória nem sempre melhora o desempenho. O sistema pode recuperar essa memória automaticamente quando necessário. A aba Armazenamento lista apenas arquivos com mais de 24 horas nas pastas temporárias do usuário e exige pré-visualização e confirmação antes de excluir.", "ПРИМЕЧАНИЕ ПО БЕЗОПАСНОСТИ  •  Очистка кэша памяти не всегда повышает производительность. Система может автоматически освободить эту память при необходимости. Вкладка хранилища показывает только файлы старше 24 часов во временных папках пользователя и требует предварительного просмотра и подтверждения перед удалением.", "ملاحظة أمان  •  لا يؤدي مسح ذاكرة التخزين المؤقت دائماً إلى تحسين الأداء. يمكن للنظام استعادة هذه الذاكرة تلقائياً عند الحاجة. تعرض علامة تبويب التخزين الملفات الأقدم من 24 ساعة في المجلدات المؤقتة للمستخدم فقط، وتطلب المعاينة والتأكيد قبل الحذف.", "安全提示  •  清理内存缓存并不总能提升性能。系统可在需要时自动回收这些内存。“存储”选项卡仅列出用户临时文件夹中超过 24 小时的文件，并在删除前要求预览和确认。", "安全上の注意  •  メモリキャッシュを消去しても、常に性能が向上するわけではありません。必要に応じてシステムが自動的に回収できます。ストレージタブはユーザーの一時フォルダー内にある24時間以上前のファイルのみを表示し、削除前にプレビューと確認を求めます。", "सुरक्षा सूचना  •  मेमोरी कैश साफ़ करने से हमेशा प्रदर्शन बेहतर नहीं होता। सिस्टम ज़रूरत पड़ने पर इस मेमोरी को अपने आप वापस प्राप्त कर सकता है। स्टोरेज टैब केवल उपयोगकर्ता के अस्थायी फ़ोल्डरों में 24 घंटे से पुरानी फ़ाइलें दिखाता है और हटाने से पहले पूर्वावलोकन व पुष्टि माँगता है।")),
+    ("DEPOLAMA YÖNETİMİ", ("DEPOLAMA YÖNETİMİ", "STORAGE MANAGEMENT", "GESTIÓN DE ALMACENAMIENTO", "GESTION DU STOCKAGE", "SPEICHERVERWALTUNG", "GESTÃO DE ARMAZENAMENTO", "УПРАВЛЕНИЕ ХРАНИЛИЩЕМ", "إدارة التخزين", "存储管理", "ストレージ管理", "स्टोरेज प्रबंधन")),
+    ("Geçici dosyaları güvenle gözden geçir", ("Geçici dosyaları güvenle gözden geçir", "Review temporary files safely", "Revisa los archivos temporales de forma segura", "Examinez les fichiers temporaires en toute sécurité", "Temporäre Dateien sicher überprüfen", "Revise arquivos temporários com segurança", "Безопасный просмотр временных файлов", "راجع الملفات المؤقتة بأمان", "安全检查临时文件", "一時ファイルを安全に確認", "अस्थायी फ़ाइलों की सुरक्षित समीक्षा करें")),
+    ("CRAMC yalnızca kullanıcı geçici klasörlerini tarar. Varsayılan olarak 24 saatten eski normal dosyalar listelenir; sistem klasörleri, tarayıcı önbellekleri, İndirilenler klasörü ve sembolik bağlantı hedefleri taranmaz.", ("CRAMC yalnızca kullanıcı geçici klasörlerini tarar. Varsayılan olarak 24 saatten eski normal dosyalar listelenir; sistem klasörleri, tarayıcı önbellekleri, İndirilenler klasörü ve sembolik bağlantı hedefleri taranmaz.", "CRAMC scans only user temporary folders. By default, normal files older than 24 hours are listed; system folders, browser caches, Downloads, and symbolic-link targets are not scanned.", "CRAMC solo analiza las carpetas temporales del usuario. De forma predeterminada, se muestran archivos normales de más de 24 horas; no se analizan carpetas del sistema, cachés del navegador, Descargas ni destinos de enlaces simbólicos.", "CRAMC analyse uniquement les dossiers temporaires de l’utilisateur. Par défaut, les fichiers ordinaires de plus de 24 heures sont listés ; les dossiers système, caches du navigateur, téléchargements et cibles de liens symboliques ne sont pas analysés.", "CRAMC durchsucht nur temporäre Benutzerordner. Standardmäßig werden normale Dateien angezeigt, die älter als 24 Stunden sind; Systemordner, Browser-Caches, Downloads und Ziele symbolischer Links werden nicht durchsucht.", "O CRAMC verifica apenas pastas temporárias do usuário. Por padrão, arquivos comuns com mais de 24 horas são listados; pastas do sistema, caches do navegador, Downloads e destinos de links simbólicos não são verificados.", "CRAMC сканирует только временные папки пользователя. По умолчанию показываются обычные файлы старше 24 часов; системные папки, кэш браузера, загрузки и цели символических ссылок не сканируются.", "يفحص CRAMC المجلدات المؤقتة للمستخدم فقط. تُعرض افتراضياً الملفات العادية الأقدم من 24 ساعة؛ ولا يتم فحص مجلدات النظام أو ذاكرة المتصفح أو التنزيلات أو أهداف الروابط الرمزية.", "CRAMC 仅扫描用户临时文件夹。默认列出超过 24 小时的普通文件；不会扫描系统文件夹、浏览器缓存、下载目录或符号链接目标。", "CRAMC はユーザーの一時フォルダーのみをスキャンします。既定では24時間以上前の通常ファイルを一覧表示し、システムフォルダー、ブラウザーキャッシュ、ダウンロード、シンボリックリンク先は対象外です。", "CRAMC केवल उपयोगकर्ता के अस्थायी फ़ोल्डरों को स्कैन करता है। डिफ़ॉल्ट रूप से 24 घंटे से पुरानी सामान्य फ़ाइलें दिखाई जाती हैं; सिस्टम फ़ोल्डर, ब्राउज़र कैश, डाउनलोड और प्रतीकात्मक लिंक लक्ष्य स्कैन नहीं होते।")),
+    ("Tarama yapılmadı. Önce geçici dosyaları tara.", ("Tarama yapılmadı. Önce geçici dosyaları tara.", "No scan has been run. Scan temporary files first.", "Aún no se ha realizado un análisis. Analiza primero los archivos temporales.", "Aucune analyse effectuée. Analysez d’abord les fichiers temporaires.", "Noch kein Scan durchgeführt. Scannen Sie zuerst temporäre Dateien.", "Nenhuma verificação foi executada. Verifique primeiro os arquivos temporários.", "Сканирование не выполнялось. Сначала просканируйте временные файлы.", "لم يتم الفحص. افحص الملفات المؤقتة أولاً.", "尚未扫描。请先扫描临时文件。", "まだスキャンされていません。先に一時ファイルをスキャンしてください。", "अभी स्कैन नहीं हुआ। पहले अस्थायी फ़ाइलें स्कैन करें।")),
+    ("GEÇİCİ DOSYA", ("GEÇİCİ DOSYA", "TEMPORARY FILE", "ARCHIVO TEMPORAL", "FICHIER TEMPORAIRE", "TEMPORÄRE DATEI", "ARQUIVO TEMPORÁRIO", "ВРЕМЕННЫЙ ФАЙЛ", "ملف مؤقت", "临时文件", "一時ファイル", "अस्थायी फ़ाइल")),
+    ("BOYUT", ("BOYUT", "SIZE", "TAMAÑO", "TAILLE", "GRÖSSE", "TAMANHO", "РАЗМЕР", "الحجم", "大小", "サイズ", "आकार")),
+    ("SON DEĞİŞİKLİK", ("SON DEĞİŞİKLİK", "LAST MODIFIED", "ÚLTIMA MODIFICACIÓN", "DERNIÈRE MODIFICATION", "ZULETZT GEÄNDERT", "ÚLTIMA ALTERAÇÃO", "ПОСЛЕДНЕЕ ИЗМЕНЕНИЕ", "آخر تعديل", "最后修改", "最終更新", "अंतिम संशोधन")),
+    ("GEÇİCİ DOSYALARI TARA", ("GEÇİCİ DOSYALARI TARA", "SCAN TEMPORARY FILES", "ANALIZAR ARCHIVOS TEMPORALES", "ANALYSER LES FICHIERS TEMPORAIRES", "TEMPORÄRE DATEIEN SCANNEN", "VERIFICAR ARQUIVOS TEMPORÁRIOS", "СКАНИРОВАТЬ ВРЕМЕННЫЕ ФАЙЛЫ", "افحص الملفات المؤقتة", "扫描临时文件", "一時ファイルをスキャン", "अस्थायी फ़ाइलें स्कैन करें")),
+    ("ÖNİZLEMEDEKİ DOSYALARI SİL", ("ÖNİZLEMEDEKİ DOSYALARI SİL", "DELETE PREVIEWED FILES", "ELIMINAR ARCHIVOS PREVISUALIZADOS", "SUPPRIMER LES FICHIERS PRÉVISUALISÉS", "ANGEZEIGTE DATEIEN LÖSCHEN", "EXCLUIR ARQUIVOS VISUALIZADOS", "УДАЛИТЬ ФАЙЛЫ ИЗ ПРЕДПРОСМОТРА", "احذف الملفات المعاينة", "删除预览中的文件", "プレビューしたファイルを削除", "पूर्वावलोकित फ़ाइलें हटाएँ")),
+    ("Yalnızca listelenen dosyalar silinir; onay gerekir.", ("Yalnızca listelenen dosyalar silinir; onay gerekir.", "Only listed files are deleted; confirmation is required.", "Solo se eliminan los archivos listados; se requiere confirmación.", "Seuls les fichiers listés sont supprimés ; une confirmation est requise.", "Nur aufgelistete Dateien werden gelöscht; eine Bestätigung ist erforderlich.", "Somente os arquivos listados serão excluídos; é necessária confirmação.", "تُحذف الملفات المدرجة فقط؛ يلزم التأكيد.", "仅删除列表中的文件；需要确认。", "一覧に表示されたファイルのみ削除され、確認が必要です。", "केवल सूचीबद्ध फ़ाइलें हटाई जाएँगी; पुष्टि आवश्यक है।")),
+    ("Geçici klasörler taranıyor…", ("Geçici klasörler taranıyor…", "Scanning temporary folders…", "Analizando carpetas temporales…", "Analyse des dossiers temporaires…", "Temporäre Ordner werden durchsucht…", "Verificando pastas temporárias…", "Сканирование временных папок…", "جارٍ فحص المجلدات المؤقتة…", "正在扫描临时文件夹…", "一時フォルダーをスキャン中…", "अस्थायी फ़ोल्डर स्कैन हो रहे हैं…")),
+    ("Geçici dosyaları sil", ("Geçici dosyaları sil", "Delete temporary files", "Eliminar archivos temporales", "Supprimer les fichiers temporaires", "Temporäre Dateien löschen", "Excluir arquivos temporários", "Удалить временные файлы", "حذف الملفات المؤقتة", "删除临时文件", "一時ファイルを削除", "अस्थायी फ़ाइलें हटाएँ")),
+    ("Devam etmek istiyor musunuz?", ("Devam etmek istiyor musunuz?", "Do you want to continue?", "¿Quieres continuar?", "Voulez-vous continuer ?", "Möchten Sie fortfahren?", "Deseja continuar?", "Продолжить?", "هل تريد المتابعة؟", "是否继续？", "続行しますか？", "क्या आप जारी रखना चाहते हैं?")),
+    ("Önizlemede listelenen dosyalar tekrar doğrulanıyor ve temizleniyor…", ("Önizlemede listelenen dosyalar tekrar doğrulanıyor ve temizleniyor…", "Revalidating and cleaning the files shown in the preview…", "Volviendo a validar y limpiando los archivos de la vista previa…", "Nouvelle vérification et nettoyage des fichiers prévisualisés…", "Die in der Vorschau aufgeführten Dateien werden erneut geprüft und bereinigt…", "Validando novamente e limpando os arquivos da pré-visualização…", "Повторная проверка и очистка файлов из предварительного просмотра…", "جارٍ إعادة التحقق من الملفات المعروضة وتنظيفها…", "正在重新验证并清理预览中的文件…", "プレビューされたファイルを再確認して削除中…", "पूर्वावलोकन में दिखाई गई फ़ाइलों की दोबारा जाँच और सफ़ाई हो रही है…")),
+    ("Bulunan dosya: ", ("Bulunan dosya: ", "Files found: ", "Archivos encontrados: ", "Fichiers trouvés : ", "Gefundene Dateien: ", "Arquivos encontrados: ", "Найдено файлов: ", "الملفات الموجودة: ", "找到的文件：", "見つかったファイル: ", "मिली फ़ाइलें: ")),
+    ("Toplam boyut: ", ("Toplam boyut: ", "Total size: ", "Tamaño total: ", "Taille totale : ", "Gesamtgröße: ", "Tamanho total: ", "Общий размер: ", "الحجم الإجمالي: ", "总大小：", "合計サイズ: ", "कुल आकार: ")),
+    ("Yaş eşiği: 24 saat", ("Yaş eşiği: 24 saat", "Age threshold: 24 hours", "Antigüedad mínima: 24 horas", "Âge minimal : 24 heures", "Altersgrenze: 24 Stunden", "Limite de idade: 24 horas", "Возрастной порог: 24 часа", "حد العمر: 24 ساعة", "时间阈值：24 小时", "経過時間の基準: 24時間", "आयु सीमा: 24 घंटे")),
+    (" dosya gösteriliyor ve yalnızca bunlar silme önizlemesine dahil", (" dosya gösteriliyor ve yalnızca bunlar silme önizlemesine dahil", " files shown; only these are included in the deletion preview", " archivos mostrados; solo estos se incluyen en la vista previa de eliminación", " fichiers affichés ; seuls ceux-ci sont inclus dans l’aperçu de suppression", " Dateien werden angezeigt; nur diese sind in der Löschvorschau enthalten", " arquivos exibidos; somente estes entram na pré-visualização da exclusão", " файлов показано; только они включены в предпросмотр удаления", " ملف معروض؛ وهي فقط ضمن معاينة الحذف", " 个文件已显示；仅这些文件会包含在删除预览中", " 件を表示。削除プレビューに含まれるのはこれらのみ", " फ़ाइलें दिखाई गईं; केवल इन्हें हटाने के पूर्वावलोकन में शामिल किया गया है")),
+    ("Güvenlik sınırı nedeniyle tarama 20.000 dosyada durdu", ("Güvenlik sınırı nedeniyle tarama 20.000 dosyada durdu", "Scan stopped at 20,000 files due to a safety limit", "El análisis se detuvo en 20.000 archivos por seguridad", "L’analyse s’est arrêtée à 20 000 fichiers par sécurité", "Der Scan wurde aus Sicherheitsgründen bei 20.000 Dateien gestoppt", "A verificação parou em 20.000 arquivos por segurança", "Сканирование остановлено на 20 000 файлах из-за ограничения безопасности", "توقف الفحص عند 20,000 ملف بسبب حد الأمان", "安全限制：扫描在 20,000 个文件处停止", "安全制限により20,000ファイルでスキャンを停止しました", "सुरक्षा सीमा के कारण स्कैन 20,000 फ़ाइलों पर रुक गया")),
+    ("Erişim/okuma hatası: ", ("Erişim/okuma hatası: ", "Access/read errors: ", "Errores de acceso/lectura: ", "Erreurs d’accès/lecture : ", "Zugriffs-/Lesefehler: ", "Erros de acesso/leitura: ", "Ошибки доступа/чтения: ", "أخطاء الوصول/القراءة: ", "访问/读取错误：", "アクセス/読み取りエラー: ", "पहुँच/पठन त्रुटियाँ: ")),
+    ("Uygun geçici dosya bulunamadı. Sistem ve kullanıcı klasörleri korunmuştur.", ("Uygun geçici dosya bulunamadı. Sistem ve kullanıcı klasörleri korunmuştur.", "No eligible temporary files found. System and user folders were preserved.", "No se encontraron archivos temporales aptos. Se conservaron las carpetas del sistema y del usuario.", "Aucun fichier temporaire admissible trouvé. Les dossiers système et utilisateur ont été préservés.", "Keine geeigneten temporären Dateien gefunden. System- und Benutzerordner wurden geschützt.", "Nenhum arquivo temporário elegível encontrado. As pastas do sistema e do usuário foram preservadas.", "Подходящие временные файлы не найдены. Системные и пользовательские папки сохранены.", "لم يتم العثور على ملفات مؤقتة مناسبة. تم الحفاظ على مجلدات النظام والمستخدم.", "未找到符合条件的临时文件。系统和用户文件夹已保留。", "対象となる一時ファイルはありません。システムとユーザーフォルダーは保護されています。", "कोई उपयुक्त अस्थायी फ़ाइल नहीं मिली। सिस्टम और उपयोगकर्ता फ़ोल्डर सुरक्षित रखे गए हैं।")),
+    ("Temizlik tamamlandı: ", ("Temizlik tamamlandı: ", "Cleanup complete: ", "Limpieza completada: ", "Nettoyage terminé : ", "Bereinigung abgeschlossen: ", "Limpeza concluída: ", "Очистка завершена: ", "اكتمل التنظيف: ", "清理完成：", "クリーンアップ完了: ", "सफ़ाई पूरी हुई: ")),
+    (" dosya silindi (", (" dosya silindi (", " files deleted (", " archivos eliminados (", " fichiers supprimés (", " Dateien gelöscht (", " arquivos excluídos (", " файлов удалено (", " ملفاً تم حذفه (", " 个文件已删除（", " 件のファイルを削除 (", " फ़ाइलें हटाई गईं (")),
+    ("). Atlanan dosya: ", ("). Atlanan dosya: ", "). Skipped files: ", "). Archivos omitidos: ", "). Fichiers ignorés : ", "). Übersprungene Dateien: ", "). Arquivos ignorados: ", "). Пропущено файлов: ", "). الملفات المتخطاة: ", "）。跳过的文件：", "）。スキップしたファイル: ", ")। छोड़ी गई फ़ाइलें: ")),
+    (". Son durumu görmek için yeniden tarayın.", (". Son durumu görmek için yeniden tarayın.", ". Scan again to see the latest status.", ". Vuelve a analizar para ver el estado más reciente.", ". Relancez l’analyse pour voir le dernier état.", ". Scannen Sie erneut, um den aktuellen Status zu sehen.", ". Verifique novamente para ver o estado atualizado.", ". Просканируйте снова, чтобы увидеть актуальное состояние.", ". أعد الفحص لرؤية الحالة الأخيرة.", "。重新扫描以查看最新状态。", "。最新の状態を確認するには再スキャンしてください。", "। नवीनतम स्थिति देखने के लिए फिर से स्कैन करें।")),
+    ("Depolama işlemi başarısız: ", ("Depolama işlemi başarısız: ", "Storage operation failed: ", "Falló la operación de almacenamiento: ", "Échec de l’opération de stockage : ", "Speichervorgang fehlgeschlagen: ", "Falha na operação de armazenamento: ", "Ошибка операции с хранилищем: ", "فشلت عملية التخزين: ", "存储操作失败：", "ストレージ操作に失敗しました: ", "स्टोरेज प्रक्रिया विफल हुई: ")),
+    ("RAM Temizleme ve Optimizasyon Aracı", ("RAM Temizleme ve Optimizasyon Aracı", "RAM Cleaning and Optimization Tool", "Herramienta de limpieza y optimización de RAM", "Outil de nettoyage et d’optimisation de la RAM", "RAM-Bereinigungs- und Optimierungstool", "Ferramenta de limpeza e otimização de RAM", "Инструмент очистки и оптимизации RAM", "أداة تنظيف وتحسين الذاكرة", "内存清理与优化工具", "RAM クリーニング・最適化ツール", "RAM सफ़ाई और अनुकूलन टूल")),
+    ("●  ROOT YETKİSİ", ("●  ROOT YETKİSİ", "●  ROOT ACCESS", "●  ACCESO ROOT", "●  ACCÈS ROOT", "●  ROOT-ZUGRIFF", "●  ACESSO ROOT", "●  ROOT-ДОСТУП", "●  صلاحيات ROOT", "●  ROOT 权限", "●  ROOT 権限", "●  ROOT एक्सेस")),
+    ("●  YÖNETİCİ", ("●  YÖNETİCİ", "●  ADMINISTRATOR", "●  ADMINISTRADOR", "●  ADMINISTRATEUR", "●  ADMINISTRATOR", "●  ADMINISTRADOR", "●  АДМИНИСТРАТОР", "●  مسؤول النظام", "●  管理员", "●  管理者", "●  व्यवस्थापक")),
+    ("●  SUDO YOK", ("●  SUDO YOK", "●  NO SUDO", "●  SIN SUDO", "●  SANS SUDO", "●  KEIN SUDO", "●  SEM SUDO", "●  НЕТ SUDO", "●  لا يوجد SUDO", "●  无 SUDO", "●  SUDO なし", "●  SUDO नहीं")),
+    ("●  STANDART KULLANICI", ("●  STANDART KULLANICI", "●  STANDARD USER", "●  USUARIO ESTÁNDAR", "●  UTILISATEUR STANDARD", "●  STANDARD-BENUTZER", "●  USUÁRIO PADRÃO", "●  ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ", "●  مستخدم عادي", "●  标准用户", "●  標準ユーザー", "●  सामान्य उपयोगकर्ता")),
+    ("Tam temizlik için sudo ile çalıştırın:  sudo python3 cramc.py", ("Tam temizlik için sudo ile çalıştırın:  sudo python3 cramc.py", "Run with sudo for full cleanup:  sudo python3 cramc.py", "Ejecuta con sudo para una limpieza completa:  sudo python3 cramc.py", "Exécutez avec sudo pour un nettoyage complet :  sudo python3 cramc.py", "Für die vollständige Bereinigung mit sudo starten:  sudo python3 cramc.py", "Execute com sudo para limpeza completa:  sudo python3 cramc.py", "Для полной очистки запустите с sudo:  sudo python3 cramc.py", "شغّله باستخدام sudo لإجراء تنظيف كامل:  sudo python3 cramc.py", "使用 sudo 运行以进行完整清理：sudo python3 cramc.py", "完全にクリーンアップするには sudo で実行: sudo python3 cramc.py", "पूरी सफ़ाई के लिए sudo से चलाएँ: sudo python3 cramc.py")),
+    ("Tam temizlik için programı Yönetici olarak çalıştırın", ("Tam temizlik için programı Yönetici olarak çalıştırın", "Run the app as Administrator for full cleanup", "Ejecuta la aplicación como administrador para una limpieza completa", "Exécutez l’application en tant qu’administrateur pour un nettoyage complet", "Starten Sie die App als Administrator für die vollständige Bereinigung", "Execute o aplicativo como Administrador para uma limpeza completa", "Запустите приложение от имени администратора для полной очистки", "شغّل التطبيق كمسؤول لإجراء تنظيف كامل", "以管理员身份运行应用以进行完整清理", "完全にクリーンアップするには管理者として実行してください", "पूरी सफ़ाई के लिए ऐप को व्यवस्थापक के रूप में चलाएँ")),
+    ("psutil modülü bulunamadı; kaynak kodla çalıştırıyorsanız psutil kurun", ("psutil modülü bulunamadı; kaynak kodla çalıştırıyorsanız psutil kurun", "psutil module not found; install psutil when running from source", "No se encontró el módulo psutil; instálalo si ejecutas desde el código fuente", "Module psutil introuvable ; installez-le si vous exécutez depuis les sources", "psutil-Modul nicht gefunden; installieren Sie psutil bei Ausführung aus dem Quellcode", "Módulo psutil não encontrado; instale-o ao executar do código-fonte", "Модуль psutil не найден; установите psutil при запуске из исходников", "لم يتم العثور على وحدة psutil؛ ثبّتها عند التشغيل من المصدر", "未找到 psutil 模块；从源码运行时请安装 psutil", "psutil モジュールがありません。ソースから実行する場合は psutil をインストールしてください", "psutil मॉड्यूल नहीं मिला; स्रोत कोड से चलाने पर psutil इंस्टॉल करें")),
+    ("ANLIK RAM KULLANIMI", ("ANLIK RAM KULLANIMI", "LIVE RAM USAGE", "USO DE RAM EN VIVO", "UTILISATION DE LA RAM EN DIRECT", "AKTUELLE RAM-NUTZUNG", "USO DE RAM AO VIVO", "ТЕКУЩЕЕ ИСПОЛЬЗОВАНИЕ RAM", "استخدام الذاكرة الآن", "实时内存使用情况", "リアルタイム RAM 使用量", "लाइव RAM उपयोग")),
+    ("●  CANLI", ("●  CANLI", "●  LIVE", "●  EN VIVO", "●  EN DIRECT", "●  LIVE", "●  AO VIVO", "●  В РЕАЛЬНОМ ВРЕМЕНИ", "●  مباشر", "●  实时", "●  ライブ", "●  लाइव")),
+    ("kullanılan", ("kullanılan", "used", "usada", "utilisée", "verwendet", "usada", "использовано", "مستخدمة", "已使用", "使用中", "उपयोग में")),
+    ("TOPLAM", ("TOPLAM", "TOTAL", "TOTAL", "TOTAL", "GESAMT", "TOTAL", "ВСЕГО", "الإجمالي", "总计", "合計", "कुल")),
+    ("KULLANILAN", ("KULLANILAN", "USED", "USADA", "UTILISÉE", "VERWENDET", "USADA", "ИСПОЛЬЗУЕТСЯ", "المستخدم", "已用", "使用量", "उपयोग किया गया")),
+    ("KULLANILABİLİR", ("KULLANILABİLİR", "AVAILABLE", "DISPONIBLE", "DISPONIBLE", "VERFÜGBAR", "DISPONÍVEL", "ДОСТУПНО", "المتاح", "可用", "利用可能", "उपलब्ध")),
+    ("ÖNBELLEK", ("ÖNBELLEK", "CACHE", "CACHÉ", "CACHE", "CACHE", "CACHE", "КЭШ", "ذاكرة التخزين المؤقت", "缓存", "キャッシュ", "कैश")),
+    ("SİSTEM ÖZETİ", ("SİSTEM ÖZETİ", "SYSTEM OVERVIEW", "RESUMEN DEL SISTEMA", "APERÇU DU SYSTÈME", "SYSTEMÜBERSICHT", "VISÃO GERAL DO SISTEMA", "СВЕДЕНИЯ О СИСТЕМЕ", "ملخص النظام", "系统概览", "システム概要", "सिस्टम सारांश")),
+    ("İŞLEM", ("İŞLEM", "PROCESSES", "PROCESOS", "PROCESSUS", "PROZESSE", "PROCESSOS", "ПРОЦЕССЫ", "العمليات", "进程", "プロセス", "प्रक्रियाएँ")),
+    ("SON TEMİZLİK", ("SON TEMİZLİK", "LAST CLEANUP", "ÚLTIMA LIMPIEZA", "DERNIER NETTOYAGE", "LETZTE BEREINIGUNG", "ÚLTIMA LIMPEZA", "ПОСЛЕДНЯЯ ОЧИСТКА", "آخر تنظيف", "上次清理", "前回のクリーンアップ", "अंतिम सफ़ाई")),
+    ("OTURUM", ("OTURUM", "SESSION", "SESIÓN", "SESSION", "SITZUNG", "SESSÃO", "СЕАНС", "الجلسة", "会话", "セッション", "सत्र")),
+    ("TAHMİNİ KAZANÇ", ("TAHMİNİ KAZANÇ", "ESTIMATED GAIN", "GANANCIA ESTIMADA", "GAIN ESTIMÉ", "GESCHÄTZTER GEWINN", "GANHO ESTIMADO", "ОЦЕНКА ВЫИГРЫША", "المكسب المقدر", "预计释放量", "推定解放量", "अनुमानित लाभ")),
+    ("●  CANLI HESAP", ("●  CANLI HESAP", "●  LIVE ESTIMATE", "●  CÁLCULO EN VIVO", "●  ESTIMATION EN DIRECT", "●  LIVE-BERECHNUNG", "●  CÁLCULO AO VIVO", "●  ТЕКУЩИЙ РАСЧЁТ", "●  تقدير مباشر", "●  实时估算", "●  リアルタイム計算", "●  लाइव अनुमान")),
+    ("Kernel/process verilerinden hesaplanan aday havuzu üst sınırıdır; gerçek serbest kalan RAM daha düşük olabilir.", ("Kernel/process verilerinden hesaplanan aday havuzu üst sınırıdır; gerçek serbest kalan RAM daha düşük olabilir.", "This is an upper-bound estimate from kernel/process data; the actual freed RAM may be lower.", "Es un límite superior calculado con datos del kernel y procesos; la RAM realmente liberada puede ser menor.", "Il s’agit d’une estimation maximale basée sur le noyau et les processus ; la RAM réellement libérée peut être inférieure.", "Dies ist eine Obergrenze anhand von Kernel-/Prozessdaten; tatsächlich freigegebener RAM kann geringer sein.", "É um limite máximo calculado com dados do kernel/processos; a RAM realmente liberada pode ser menor.", "هذا تقدير للحد الأعلى بناءً على بيانات النواة والعمليات؛ وقد تكون الذاكرة المحررة فعلياً أقل.", "这是根据内核/进程数据计算的上限；实际释放的内存可能更少。", "カーネル／プロセス情報に基づく上限推定です。実際に解放される RAM は少ない場合があります。", "यह कर्नेल/प्रक्रिया डेटा पर आधारित ऊपरी अनुमान है; वास्तव में मुक्त RAM इससे कम हो सकती है।")),
+    ("RAM TEMİZLE", ("RAM TEMİZLE", "CLEAN RAM", "LIMPIAR RAM", "NETTOYER LA RAM", "RAM BEREINIGEN", "LIMPAR RAM", "ОЧИСТИТЬ RAM", "تنظيف الذاكرة", "清理内存", "RAM をクリーンアップ", "RAM साफ़ करें")),
+    ("⚙  TEMİZLİK SEÇENEKLERİ", ("⚙  TEMİZLİK SEÇENEKLERİ", "⚙  CLEANUP OPTIONS", "⚙  OPCIONES DE LIMPIEZA", "⚙  OPTIONS DE NETTOYAGE", "⚙  BEREINIGUNGSOPTIONEN", "⚙  OPÇÕES DE LIMPEZA", "⚙  ПАРАМЕТРЫ ОЧИСТКИ", "⚙  خيارات التنظيف", "⚙  清理选项", "⚙  クリーンアップ設定", "⚙  सफ़ाई विकल्प")),
+    ("İŞLEM GÜNLÜĞÜ", ("İŞLEM GÜNLÜĞÜ", "ACTIVITY LOG", "REGISTRO DE ACTIVIDAD", "JOURNAL D’ACTIVITÉ", "AKTIVITÄTSPROTOKOLL", "LOG DE ATIVIDADES", "ЖУРНАЛ ОПЕРАЦИЙ", "سجل النشاط", "操作日志", "操作ログ", "गतिविधि लॉग")),
+    ("TEMİZLE", ("TEMİZLE", "CLEAR", "BORRAR", "EFFACER", "LEEREN", "LIMPAR", "ОЧИСТИТЬ", "مسح", "清空", "クリア", "साफ़ करें")),
+    ("Uygulama dili", ("Uygulama dili", "Application language", "Idioma de la aplicación", "Langue de l’application", "Anwendungssprache", "Idioma do aplicativo", "Язык приложения", "لغة التطبيق", "应用语言", "アプリの言語", "ऐप की भाषा")),
+    ("PageCache (Sayfa Önbelleği)", ("PageCache (Sayfa Önbelleği)", "Page cache", "Caché de páginas", "Cache de pages", "Seiten-Cache", "Cache de páginas", "Кэш страниц", "ذاكرة الصفحات", "页面缓存", "ページキャッシュ", "पेज कैश")),
+    ("Dosya içeriği önbelleği  •  drop_caches=1", ("Dosya içeriği önbelleği  •  drop_caches=1", "File content cache  •  drop_caches=1", "Caché del contenido de archivos  •  drop_caches=1", "Cache du contenu des fichiers  •  drop_caches=1", "Dateiinhalt-Cache  •  drop_caches=1", "Cache do conteúdo de arquivos  •  drop_caches=1", "ذاكرة محتوى الملفات  •  drop_caches=1", "文件内容缓存  •  drop_caches=1", "ファイル内容キャッシュ  •  drop_caches=1", "फ़ाइल सामग्री कैश  •  drop_caches=1")),
+    ("Dentries & Inodes", ("Dentries & Inodes", "Dentries & inodes", "Dentries e inodos", "Dentries et inodes", "Dentries & Inodes", "Dentries e inodes", "Dentries и inodes", "Dentries و Inodes", "目录项与 inode", "Dentry と inode", "Dentries और Inodes")),
+    ("Dizin/dosya yapısı önbelleği  •  drop_caches=2", ("Dizin/dosya yapısı önbelleği  •  drop_caches=2", "Directory/metadata cache  •  drop_caches=2", "Caché de directorios/metadatos  •  drop_caches=2", "Cache des répertoires/métadonnées  •  drop_caches=2", "Verzeichnis-/Metadaten-Cache  •  drop_caches=2", "Cache de diretórios/metadados  •  drop_caches=2", "Кэш каталогов/метаданных  •  drop_caches=2", "ذاكرة المجلدات والبيانات الوصفية  •  drop_caches=2", "目录/元数据缓存  •  drop_caches=2", "ディレクトリ／メタデータキャッシュ  •  drop_caches=2", "निर्देशिका/मेटाडेटा कैश  •  drop_caches=2")),
+    ("Swap Sıfırlama", ("Swap Sıfırlama", "Reset swap", "Restablecer swap", "Réinitialiser le swap", "Swap zurücksetzen", "Redefinir swap", "Сбросить swap", "إعادة ضبط Swap", "重置交换空间", "Swap をリセット", "Swap रीसेट करें")),
+    ("Swap'i RAM'e geri alıp yeniden açar  •  yavaş olabilir", ("Swap'i RAM'e geri alıp yeniden açar  •  yavaş olabilir", "Moves swap data back to RAM and re-enables it  •  may be slow", "Devuelve los datos de swap a la RAM y lo reactiva  •  puede tardar", "Ramène les données du swap en RAM et le réactive  •  peut être lent", "Verschiebt Swap-Daten zurück in den RAM und aktiviert ihn erneut  •  kann langsam sein", "Move os dados do swap de volta para a RAM e reativa  •  pode ser lento", "Возвращает данные из swap в RAM и включает его снова  •  может быть медленно", "يعيد بيانات Swap إلى الذاكرة ثم يفعّله مجدداً  •  قد يستغرق وقتاً", "将交换数据移回内存并重新启用  •  可能较慢", "Swap のデータを RAM に戻して再有効化します  •  時間がかかる場合があります", "Swap डेटा को RAM में वापस लाकर फिर सक्षम करता है  •  धीमा हो सकता है")),
+    ("Önce sync çalıştır", ("Önce sync çalıştır", "Run sync first", "Ejecutar sync primero", "Exécuter sync d’abord", "Zuerst sync ausführen", "Executar sync primeiro", "Сначала выполнить sync", "شغّل sync أولاً", "先运行 sync", "先に sync を実行", "पहले sync चलाएँ")),
+    ("Yazılmamış verileri diske yazar (önerilir)", ("Yazılmamış verileri diske yazar (önerilir)", "Writes pending data to disk (recommended)", "Escribe los datos pendientes en el disco (recomendado)", "Écrit les données en attente sur le disque (recommandé)", "Schreibt ausstehende Daten auf die Festplatte (empfohlen)", "Grava dados pendentes no disco (recomendado)", "Записывает ожидающие данные на диск (рекомендуется)", "يكتب البيانات المعلقة على القرص (موصى به)", "将待写入数据写入磁盘（推荐）", "未書き込みデータをディスクへ書き込みます（推奨）", "लंबित डेटा डिस्क पर लिखता है (अनुशंसित)")),
+    ("Arka Plan Working Set", ("Arka Plan Working Set", "Background working set", "Conjunto de trabajo en segundo plano", "Ensemble de travail en arrière-plan", "Hintergrund-Working-Set", "Working set em segundo plano", "Рабочий набор фоновых процессов", "مجموعة العمل في الخلفية", "后台工作集", "バックグラウンド Working Set", "बैकग्राउंड वर्किंग सेट")),
+    ("Süreçlerin kullanılmayan çalışma belleğini boşaltır", ("Süreçlerin kullanılmayan çalışma belleğini boşaltır", "Trims unused working memory from processes", "Libera memoria de trabajo no utilizada de los procesos", "Libère la mémoire de travail inutilisée des processus", "Gibt ungenutzten Arbeitsspeicher von Prozessen frei", "Libera memória de trabalho não utilizada dos processos", "Освобождает неиспользуемую рабочую память процессов", "يحرر ذاكرة العمل غير المستخدمة للعمليات", "释放进程未使用的工作内存", "プロセスの未使用ワーキングメモリを解放します", "प्रक्रियाओं की अप्रयुक्त कार्यशील मेमोरी मुक्त करता है")),
+    ("Sistem Önbelleği", ("Sistem Önbelleği", "System cache", "Caché del sistema", "Cache système", "Systemcache", "Cache do sistema", "Системный кэш", "ذاكرة النظام المؤقتة", "系统缓存", "システムキャッシュ", "सिस्टम कैश")),
+    ("Dosya sistemi önbelleğini küçültür  •  Yönetici gerekir", ("Dosya sistemi önbelleğini küçültür  •  Yönetici gerekir", "Trims the filesystem cache  •  administrator required", "Reduce la caché del sistema de archivos  •  requiere administrador", "Réduit le cache du système de fichiers  •  administrateur requis", "Verkleinert den Dateisystem-Cache  •  Administrator erforderlich", "Reduz o cache do sistema de arquivos  •  requer administrador", "Уменьшает кэш файловой системы  •  нужны права администратора", "缩减文件系统缓存  •  需要管理员权限", "ファイルシステムキャッシュを縮小  •  管理者権限が必要", "फ़ाइल सिस्टम कैश घटाता है  •  व्यवस्थापक आवश्यक")),
+    ("OTOMATİK ZAMANLAYICI", ("OTOMATİK ZAMANLAYICI", "AUTOMATIC SCHEDULER", "PROGRAMADOR AUTOMÁTICO", "PLANIFICATEUR AUTOMATIQUE", "AUTOMATISCHER ZEITPLANER", "AGENDADOR AUTOMÁTICO", "АВТОМАТИЧЕСКИЙ ПЛАНИРОВЩИК", "الجدولة التلقائية", "自动计划", "自動スケジューラー", "स्वचालित शेड्यूलर")),
+    ("Otomatik temizleme", ("Otomatik temizleme", "Automatic cleanup", "Limpieza automática", "Nettoyage automatique", "Automatische Bereinigung", "Limpeza automática", "Автоматическая очистка", "التنظيف التلقائي", "自动清理", "自動クリーンアップ", "स्वचालित सफ़ाई")),
+    ("RAM kullanımı eşiği aşınca kendiliğinden temizler", ("RAM kullanımı eşiği aşınca kendiliğinden temizler", "Automatically cleans when RAM usage exceeds the threshold", "Limpia automáticamente cuando el uso de RAM supera el umbral", "Nettoie automatiquement lorsque l’utilisation de la RAM dépasse le seuil", "Bereinigt automatisch, wenn die RAM-Nutzung den Grenzwert überschreitet", "Limpa automaticamente quando o uso de RAM ultrapassa o limite", "Автоматически очищает, когда использование RAM превышает порог", "ينظف تلقائياً عند تجاوز استخدام الذاكرة الحد المحدد", "RAM 使用量がしきい値を超えると自動的にクリーンアップします", "RAM उपयोग सीमा पार होने पर अपने आप सफ़ाई करता है")),
+    ("Kullanım eşiği", ("Kullanım eşiği", "Usage threshold", "Umbral de uso", "Seuil d’utilisation", "Nutzungsschwelle", "Limite de uso", "Порог использования", "حد الاستخدام", "使用阈值", "使用率のしきい値", "उपयोग सीमा")),
+    ("Bekleme süresi", ("Bekleme süresi", "Cooldown", "Tiempo de espera", "Délai d’attente", "Wartezeit", "Tempo de espera", "Период ожидания", "مدة الانتظار", "冷却时间", "クールダウン", "प्रतीक्षा अवधि")),
+    ("Yok", ("Yok", "None", "Ninguno", "Aucun", "Keine", "Nenhum", "Нет", "لا يوجد", "无", "なし", "कोई नहीं")),
+    ("swap etkin değil", ("swap etkin değil", "swap is not enabled", "swap no está habilitado", "swap n’est pas activé", "Swap ist nicht aktiviert", "swap não está ativado", "swap не включён", "Swap غير مفعّل", "交换空间未启用", "swap は有効ではありません", "swap सक्षम नहीं है")),
+    ("çalışan süreç", ("çalışan süreç", "running processes", "procesos en ejecución", "processus en cours", "laufende Prozesse", "processos em execução", "работающих процессов", "عملية قيد التشغيل", "个运行进程", "実行中のプロセス", "चल रही प्रक्रियाएँ")),
+    ("Henüz yok", ("Henüz yok", "Not yet", "Todavía no", "Pas encore", "Noch nicht", "Ainda não", "Пока нет", "ليس بعد", "尚无", "まだありません", "अभी नहीं")),
+    (" temizlik", (" temizlik", " cleanups", " limpiezas", " nettoyages", " Bereinigungen", " limpezas", " очисток", " عملية تنظيف", " 次清理", " 回クリーンアップ", " सफ़ाई")),
+    ("seçenek seçilmedi", ("seçenek seçilmedi", "no option selected", "no se seleccionó ninguna opción", "aucune option sélectionnée", "keine Option ausgewählt", "nenhuma opção selecionada", "вариант не выбран", "لم يتم اختيار أي خيار", "未选择选项", "オプションが選択されていません", "कोई विकल्प नहीं चुना गया")),
+    ("Sağdaki panelden en az bir temizlik seçeneği işaretleyin.", ("Sağdaki panelden en az bir temizlik seçeneği işaretleyin.", "Select at least one cleanup option in the panel on the right.", "Selecciona al menos una opción de limpieza en el panel de la derecha.", "Sélectionnez au moins une option de nettoyage dans le panneau de droite.", "Wählen Sie im rechten Bereich mindestens eine Bereinigungsoption aus.", "Selecione pelo menos uma opção de limpeza no painel à direita.", "Выберите хотя бы один вариант очистки на панели справа.", "حدد خيار تنظيف واحداً على الأقل في اللوحة اليمنى.", "右側のパネルで少なくとも 1 つのクリーンアップ項目を選択してください。", "दाईं ओर के पैनल में कम से कम एक सफ़ाई विकल्प चुनें。")),
+    ("En az bir temizlik seçeneği seçin.", ("En az bir temizlik seçeneği seçin.", "Select at least one cleanup option.", "Selecciona al menos una opción de limpieza.", "Sélectionnez au moins une option de nettoyage.", "Wählen Sie mindestens eine Bereinigungsoption aus.", "Selecione pelo menos uma opção de limpeza.", "Выберите хотя бы один вариант очистки.", "请至少选择一个清理选项。", "少なくとも 1 つのクリーンアップ項目を選択してください。", "कम से कम एक सफ़ाई विकल्प चुनें。")),
+    ("Temizlik için seçenek seçilmedi", ("Temizlik için seçenek seçilmedi", "No cleanup option selected", "No se seleccionó ninguna opción de limpieza", "Aucune option de nettoyage sélectionnée", "Keine Bereinigungsoption ausgewählt", "Nenhuma opção de limpeza selecionada", "Не выбран вариант очистки", "لم يتم اختيار خيار تنظيف", "未选择清理选项", "クリーンアップ項目が選択されていません", "सफ़ाई का कोई विकल्प नहीं चुना गया")),
+    ("Root yetkisi yok: Tam temizlik için sudo ile çalıştırın", ("Root yetkisi yok: Tam temizlik için sudo ile çalıştırın", "No root access: run with sudo for full cleanup", "Sin acceso root: ejecuta con sudo para una limpieza completa", "Pas d’accès root : exécutez avec sudo pour un nettoyage complet", "Kein Root-Zugriff: für vollständige Bereinigung mit sudo starten", "Sem acesso root: execute com sudo para limpeza completa", "Нет root-доступа: запустите с sudo для полной очистки", "لا توجد صلاحيات root: شغّله باستخدام sudo للتنظيف الكامل", "没有 root 权限：使用 sudo 运行以进行完整清理", "root 権限がありません。完全なクリーンアップには sudo で実行してください", "root एक्सेस नहीं: पूरी सफ़ाई के लिए sudo से चलाएँ")),
+    ("Otomatik temizleme için root yetkisi gerekli", ("Otomatik temizleme için root yetkisi gerekli", "Root access is required for automatic cleanup", "Se requiere acceso root para la limpieza automática", "L’accès root est requis pour le nettoyage automatique", "Für die automatische Bereinigung ist Root-Zugriff erforderlich", "É necessário acesso root para limpeza automática", "Для автоматической очистки требуется root-доступ", "يلزم الوصول إلى root للتنظيف التلقائي", "自动清理需要 root 权限", "自動クリーンアップには root 権限が必要です", "स्वचालित सफ़ाई के लिए root एक्सेस आवश्यक है")),
+    ("TEMİZLENİYOR...", ("TEMİZLENİYOR...", "CLEANING...", "LIMPIANDO...", "NETTOYAGE...", "BEREINIGUNG...", "LIMPANDO...", "ОЧИСТКА...", "جارٍ التنظيف...", "正在清理…", "クリーンアップ中...", "सफ़ाई हो रही है...")),
+    ("Temizlik sürüyor, lütfen bekleyin...", ("Temizlik sürüyor, lütfen bekleyin...", "Cleanup in progress, please wait...", "Limpieza en curso, espera...", "Nettoyage en cours, veuillez patienter...", "Bereinigung läuft, bitte warten...", "Limpeza em andamento, aguarde...", "Идёт очистка, подождите...", "التنظيف جارٍ، يرجى الانتظار...", "正在清理，请稍候…", "クリーンアップ中です。お待ちください...", "सफ़ाई जारी है, कृपया प्रतीक्षा करें...")),
+    ("Temizlik tamamlanamadı", ("Temizlik tamamlanamadı", "Cleanup could not be completed", "No se pudo completar la limpieza", "Le nettoyage n’a pas pu être terminé", "Bereinigung konnte nicht abgeschlossen werden", "Não foi possível concluir a limpeza", "Не удалось завершить очистку", "تعذر إكمال التنظيف", "无法完成清理", "クリーンアップを完了できませんでした", "सफ़ाई पूरी नहीं हो सकी")),
+    ("Beklenmeyen hata: ", ("Beklenmeyen hata: ", "Unexpected error: ", "Error inesperado: ", "Erreur inattendue : ", "Unerwarteter Fehler: ", "Erro inesperado: ", "Непредвиденная ошибка: ", "خطأ غير متوقع: ", "意外错误：", "予期しないエラー: ", "अनपेक्षित त्रुटि: ")),
+    ("Swap sıfırlama sürüyor, bitmesini bekleyin.", ("Swap sıfırlama sürüyor, bitmesini bekleyin.", "Swap reset is in progress; wait for it to finish.", "El restablecimiento de swap está en curso; espera a que termine.", "La réinitialisation du swap est en cours ; attendez la fin.", "Swap wird zurückgesetzt; warten Sie, bis der Vorgang abgeschlossen ist.", "A redefinição do swap está em andamento; aguarde a conclusão.", "Идёт сброс swap; дождитесь завершения.", "إعادة ضبط Swap قيد التنفيذ؛ انتظر حتى تنتهي.", "正在重置交换空间，请等待完成。", "Swap のリセット中です。完了するまでお待ちください。", "Swap रीसेट हो रहा है; पूरा होने तक प्रतीक्षा करें।")),
+    ("Depolama taraması/temizliği sürüyor; işlem bitince kapatın.", ("Depolama taraması/temizliği sürüyor; işlem bitince kapatın.", "Storage scan/cleanup is in progress; close the app when it finishes.", "El análisis/limpieza del almacenamiento está en curso; cierra la aplicación cuando termine.", "Analyse/nettoyage du stockage en cours ; fermez l’application une fois terminé.", "Speicherscan/-bereinigung läuft; schließen Sie die App nach Abschluss.", "A verificação/limpeza do armazenamento está em andamento; feche o app quando terminar.", "Идёт сканирование/очистка хранилища; закройте приложение после завершения.", "فحص/تنظيف التخزين جارٍ؛ أغلق التطبيق بعد الانتهاء.", "存储扫描/清理正在进行；完成后再关闭应用。", "ストレージのスキャン／クリーンアップ中です。完了後にアプリを閉じてください。", "स्टोरेज स्कैन/सफ़ाई जारी है; पूरा होने पर ऐप बंद करें।")),
+    ("sn önce", ("sn önce", "sec ago", "s atrás", "s auparavant", "Sek. zuvor", "s atrás", "сек. назад", "ثانية مضت", "秒前", "秒前", "सेकंड पहले")),
+    ("dk önce", ("dk önce", "min ago", "min atrás", "min auparavant", "Min. zuvor", "min atrás", "мин. назад", "دقيقة مضت", "分钟前", "分前", "मिनट पहले")),
+    ("sa önce", ("sa önce", "hr ago", "h atrás", "h auparavant", "Std. zuvor", "h atrás", "ч назад", "ساعة مضت", "小时前", "時間前", "घंटे पहले")),
+    ("gün önce", ("gün önce", "days ago", "días atrás", "jours auparavant", "Tage zuvor", "dias atrás", "дн. назад", "أيام مضت", "天前", "日前", "दिन पहले")),
+    ("seçenek seçilmedi", ("seçenek seçilmedi", "no option selected", "no se seleccionó ninguna opción", "aucune option sélectionnée", "keine Option ausgewählt", "nenhuma opção selecionada", "вариант не выбран", "لم يتم اختيار أي خيار", "未选择选项", "オプションが選択されていません", "कोई विकल्प नहीं चुना गया")),
+]
+TRANSLATIONS = {language: {} for language in LANGUAGE_ORDER}
+for _source, _values in I18N_ROWS:
+    if len(_values) != len(LANGUAGE_ORDER):
+        raise RuntimeError("Incomplete CRAMC translation row: " + _source)
+    for _language, _translated in zip(LANGUAGE_ORDER, _values):
+        TRANSLATIONS[_language][_source] = _translated
+
+
+def _tr(value):
+    """Translate known interface phrases; unknown diagnostic details stay untouched."""
+    if not isinstance(value, str) or ACTIVE_LANGUAGE == "tr":
+        return value
+    table = TRANSLATIONS.get(ACTIVE_LANGUAGE, TRANSLATIONS["tr"])
+    translated = value
+    for source, target in sorted(table.items(), key=lambda item: len(item[0]), reverse=True):
+        if source and source in translated:
+            translated = translated.replace(source, target)
+    return translated
+
+
+def detect_system_language() -> str:
+    """Use the desktop OS locale on first launch; manual choices are saved separately."""
+    import locale
+    aliases = {
+        "turkish": "tr", "english": "en", "spanish": "es", "french": "fr",
+        "german": "de", "portuguese": "pt", "russian": "ru", "arabic": "ar",
+        "chinese": "zh", "japanese": "ja", "hindi": "hi",
+    }
+    candidates = []
+    try:
+        candidates.append(locale.getlocale()[0])
+    except Exception:
+        pass
+    candidates.extend(os.environ.get(key) for key in ("LC_ALL", "LC_MESSAGES", "LANG"))
+    for candidate in candidates:
+        if not candidate:
+            continue
+        token = candidate.split(".", 1)[0].split("@", 1)[0].replace("-", "_")
+        language = token.split("_", 1)[0].lower()
+        language = aliases.get(language, language)
+        if language in LANGUAGE_NAMES:
+            return language
+    return "tr"
+
+
+def _translate_widget_tree(widget):
+    """Translate existing Tk labels/buttons and special ttk tab/table captions."""
+    if not TK_OK:
+        return
+    try:
+        if isinstance(widget, ttk.Notebook):
+            for tab_id in widget.tabs():
+                caption = widget.tab(tab_id, "text")
+                widget.tab(tab_id, text=_tr(caption))
+        if isinstance(widget, ttk.Treeview):
+            for column in widget["columns"]:
+                caption = widget.heading(column, "text")
+                widget.heading(column, text=_tr(caption))
+        if "text" in widget.keys():
+            caption = widget.cget("text")
+            if caption:
+                widget.configure(text=_tr(caption))
+        if ACTIVE_LANGUAGE == "ar" and widget.winfo_class() == "Label":
+            widget.configure(anchor="e", justify="right")
+    except Exception:
+        pass
+    try:
+        for child in widget.winfo_children():
+            _translate_widget_tree(child)
+    except Exception:
+        pass
+
+
+if TK_OK:
+    # Dynamic label/button updates also pass through the same translator.
+    _original_tk_configure = tk.Misc.configure
+    if not getattr(_original_tk_configure, "_cramc_i18n", False):
+        def _localized_tk_configure(self, cnf=None, **kwargs):
+            if isinstance(cnf, dict) and "text" in cnf:
+                cnf = dict(cnf)
+                cnf["text"] = _tr(cnf["text"])
+            if "text" in kwargs:
+                kwargs["text"] = _tr(kwargs["text"])
+            return _original_tk_configure(self, cnf, **kwargs)
+        _localized_tk_configure._cramc_i18n = True
+        tk.Misc.configure = _localized_tk_configure
+
+
+
 
 # =========================================================================== #
 #  YARDIMCILAR
@@ -1118,6 +1331,7 @@ if TK_OK:
 # =========================================================================== #
 class CramcApp:
     def __init__(self, root):
+        global ACTIVE_LANGUAGE
         self.root = root
         self.busy = False
         self.q = queue.Queue()
@@ -1138,6 +1352,9 @@ class CramcApp:
         self.logo_img = None
 
         s = load_settings()
+        saved_language = s.get("language")
+        self.language = saved_language if saved_language in LANGUAGE_NAMES else detect_system_language()
+        ACTIVE_LANGUAGE = self.language
         o = s.get("opts", {}) if isinstance(s.get("opts"), dict) else {}
         defaults = CleanOptions()
 
@@ -1243,6 +1460,7 @@ class CramcApp:
         self._build_welcome_tab(self.welcome_tab)
         self._build_dashboard_tab(self.ram_tab)
         self._build_storage_tab(self.storage_tab)
+        _translate_widget_tree(self.root)
 
     def _build_welcome_tab(self, parent):
         outer = tk.Frame(parent, bg=BG)
@@ -1430,11 +1648,11 @@ class CramcApp:
         count = len(self.storage_candidates)
         total_bytes = sum(item.size for item in self.storage_candidates)
         answer = messagebox.askyesno(
-            "Geçici dosyaları sil",
-            f"{count} adet, toplam {fmt_size(total_bytes)} boyutunda geçici dosya silinecek.\n\n"
+            _tr("Geçici dosyaları sil"),
+            _tr(f"{count} adet, toplam {fmt_size(total_bytes)} boyutunda geçici dosya silinecek.\n\n"
             "Yalnızca kullanıcı geçici klasörlerinde bulunan ve en az 24 saat önce değiştirilmiş "
             "normal dosyalar hedeflenir. Açık/kilitli veya artık uygun olmayan dosyalar atlanır.\n\n"
-            "Devam etmek istiyor musunuz?",
+            "Devam etmek istiyor musunuz?"),
             parent=self.root)
         if not answer:
             return
@@ -1686,6 +1904,19 @@ class CramcApp:
             self.log_text.tag_configure(tag, foreground=color)
 
     def _build_settings_body(self, parent):
+        language_row = tk.Frame(parent, bg=CARD)
+        language_row.pack(fill="x", pady=(0, 8))
+        tk.Label(language_row, text="Uygulama dili", bg=CARD, fg=FG,
+                 font=(FONT, 9, "bold")).pack(side="left")
+        self.language_var = tk.StringVar(value=LANGUAGE_NAMES[self.language])
+        self.language_combo = ttk.Combobox(
+            language_row, textvariable=self.language_var,
+            values=tuple(LANGUAGE_NAMES[code] for code in LANGUAGE_ORDER),
+            state="readonly", width=14)
+        self.language_combo.pack(side="right")
+        self.language_combo.bind("<<ComboboxSelected>>", self._change_language)
+        tk.Frame(parent, bg=CARD_BORDER, height=1).pack(fill="x", pady=(0, 8))
+
         def row(text, desc, var):
             CheckRow(parent, text, desc, var).pack(fill="x", pady=3)
 
@@ -1714,6 +1945,43 @@ class CramcApp:
                          lambda v: f"%{v}")
         self._slider_row(parent, "Bekleme süresi", self.v_cd, 1, 60, 1,
                          lambda v: f"{v} dk")
+
+    def _change_language(self, event=None):
+        global ACTIVE_LANGUAGE
+        selected_name = self.language_var.get()
+        new_language = next(
+            (code for code, name in LANGUAGE_NAMES.items() if name == selected_name),
+            self.language)
+        if new_language == self.language:
+            return
+        try:
+            selected_tab = self.notebook.index(self.notebook.select())
+        except Exception:
+            selected_tab = 0
+
+        self.language = new_language
+        ACTIVE_LANGUAGE = new_language
+        self._save_now()
+
+        # Rebuild only the widgets; monitoring and background workers keep running.
+        for child in self.root.winfo_children():
+            child.destroy()
+        self._build_ui()
+        tabs = self.notebook.tabs()
+        if tabs:
+            self.notebook.select(tabs[min(selected_tab, len(tabs) - 1)])
+        self._fit_window()
+        if self._last_snap is not None:
+            self._render_stats(self._last_snap)
+            self._update_estimate()
+        if self.busy:
+            self.button.configure(text="TEMİZLENİYOR...", state="disabled", bg=GREEN_DARK)
+            self.busy_bar.start(12)
+        if self.storage_busy:
+            self.storage_scan_button.configure(state="disabled")
+            self.storage_clean_button.configure(state="disabled")
+            self.storage_status.configure(text="Önizlemede listelenen dosyalar tekrar doğrulanıyor ve temizleniyor…",
+                                          fg=AMBER)
 
     def _slider_row(self, parent, title, var, lo, hi, step, fmt):
         f = tk.Frame(parent, bg=CARD)
@@ -1757,6 +2025,7 @@ class CramcApp:
 
     # ---------------------------------------------------------- günlük/bildirim
     def log(self, level, msg):
+        msg = _tr(msg)
         icon = {"ok": "✓", "warn": "!", "err": "✗"}.get(level, "•")
         t = self.log_text
         t.configure(state="normal")
@@ -1789,6 +2058,7 @@ class CramcApp:
             self.log("warn", "Yönetici yetkisi yok: temizlik sınırlı olabilir")
 
     def _show_notice(self, text, color, seconds=10):
+        text = _tr(text)
         if self._notice_job is not None:
             self.root.after_cancel(self._notice_job)
         self.notice.configure(text=text, fg=color)
@@ -1834,6 +2104,7 @@ class CramcApp:
             "auto_cooldown": int(self.v_cd.get()),
             "settings_open": self.settings_open,
             "last_clean_ts": self.last_clean_ts,
+            "language": self.language,
         })
 
     # ------------------------------------------------------- canlı güncelleme
