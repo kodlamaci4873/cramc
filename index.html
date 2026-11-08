@@ -1855,16 +1855,38 @@
       toggle.textContent = "☰";
     }
 
+    // Country codes map to the closest available site language.
+    // Countries with several common languages can still use the manual picker.
     const countryLanguage = {
-      TR:"tr", US:"en", GB:"en", IE:"en", AU:"en", NZ:"en", ZA:"en", NG:"en", GH:"en", KE:"en",
-      ES:"es", MX:"es", AR:"es", CL:"es", CO:"es", PE:"es", VE:"es", UY:"es", PY:"es", BO:"es",
-      EC:"es", GT:"es", HN:"es", SV:"es", NI:"es", CR:"es", PA:"es", DO:"es", CU:"es",
-      FR:"fr", MC:"fr", SN:"fr", CI:"fr", CM:"fr", BE:"fr", CA:"fr",
+      TR:"tr",
+
+      US:"en", GB:"en", IE:"en", AU:"en", NZ:"en", CA:"en",
+      ZA:"en", NG:"en", GH:"en", KE:"en", UG:"en", TZ:"en",
+      ZM:"en", ZW:"en", BW:"en", MW:"en", SL:"en", LR:"en",
+      GM:"en", SS:"en", FJ:"en", SG:"en",
+
+      ES:"es", MX:"es", AR:"es", CL:"es", CO:"es", PE:"es",
+      VE:"es", UY:"es", PY:"es", BO:"es", EC:"es", GT:"es",
+      HN:"es", SV:"es", NI:"es", CR:"es", PA:"es", DO:"es", CU:"es",
+
+      FR:"fr", MC:"fr", BE:"fr", SN:"fr", CI:"fr", CM:"fr",
+      CD:"fr", CG:"fr", GA:"fr", GN:"fr", BF:"fr", ML:"fr",
+      NE:"fr", TG:"fr", BJ:"fr", CF:"fr", TD:"fr", DJ:"fr",
+      MG:"fr", RW:"fr", BI:"fr", HT:"fr",
+
       DE:"de", AT:"de", CH:"de", LI:"de",
-      PT:"pt", BR:"pt", AO:"pt", MZ:"pt",
+
+      PT:"pt", BR:"pt", AO:"pt", MZ:"pt", CV:"pt", GW:"pt", ST:"pt",
+
       RU:"ru", BY:"ru", KZ:"ru", KG:"ru",
-      SA:"ar", AE:"ar", QA:"ar", KW:"ar", BH:"ar", OM:"ar", EG:"ar", JO:"ar", LB:"ar", IQ:"ar", MA:"ar", DZ:"ar", TN:"ar",
-      CN:"zh", TW:"zh", HK:"zh", MO:"zh", JP:"ja", IN:"hi"
+
+      SA:"ar", AE:"ar", QA:"ar", KW:"ar", BH:"ar", OM:"ar",
+      EG:"ar", JO:"ar", LB:"ar", IQ:"ar", MA:"ar", DZ:"ar",
+      TN:"ar", YE:"ar", SD:"ar", LY:"ar", PS:"ar", SY:"ar", MR:"ar",
+
+      CN:"zh", TW:"zh", HK:"zh", MO:"zh",
+      JP:"ja",
+      IN:"hi"
     };
 
     function browserLocale() {
@@ -1907,6 +1929,9 @@
     }
 
     async function detectLanguageByCountry() {
+      if (detectedCountryExpiryTimer) clearTimeout(detectedCountryExpiryTimer);
+      localStorage.removeItem(geoCacheKey);
+      detectedCountryName = null;
       setWelcomeStatus(translate("Ülke kodu için IPAPI hizmetine güvenli bir istek gönderiliyor…"));
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 4500);
@@ -1951,19 +1976,24 @@
       localStorage.setItem(manualLocaleKey, event.target.value);
       localStorage.removeItem(geoCacheKey);
       detectedCountryName = null;
+      if (detectedCountryExpiryTimer) clearTimeout(detectedCountryExpiryTimer);
       setLocale(event.target.value, true);
     });
 
     document.getElementById("welcomeLanguage").addEventListener("change", event => {
       localStorage.setItem(manualLocaleKey, event.target.value);
       localStorage.removeItem(geoCacheKey);
-      sessionStorage.removeItem("cramc_country_name");
+      detectedCountryName = null;
+      if (detectedCountryExpiryTimer) clearTimeout(detectedCountryExpiryTimer);
       setLocale(event.target.value, true);
       setWelcomeStatus(translate("Dil seçimin kaydedildi. Siteye devam edebilirsin."));
     });
 
     document.getElementById("welcomeAuto").addEventListener("click", async () => {
       localStorage.removeItem(manualLocaleKey);
+      localStorage.removeItem(geoCacheKey);
+      detectedCountryName = null;
+      if (detectedCountryExpiryTimer) clearTimeout(detectedCountryExpiryTimer);
       const button = document.getElementById("welcomeAuto");
       button.disabled = true;
       button.textContent = translate("Ülke algılanıyor…");
