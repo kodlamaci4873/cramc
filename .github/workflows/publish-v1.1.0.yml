@@ -33,7 +33,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          release_json="$(gh api "repos/$REPOSITORY/releases/tags/$TAG_NAME")"
+          release_json="$(gh api "repos/$REPOSITORY/releases?per_page=100" --jq '.[] | select(.tag_name == "'"$TAG_NAME"'" )')"
+          if [[ -z "$release_json" ]]; then
+            echo "A draft or published release with tag $TAG_NAME was not found."
+            exit 1
+          fi
           release_id="$(jq -r '.id' <<< "$release_json")"
           draft="$(jq -r '.draft' <<< "$release_json")"
 
