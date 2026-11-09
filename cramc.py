@@ -2026,6 +2026,8 @@ class CramcApp:
             self._choose_custom_background()
             return
         if selected_theme == self.theme_id:
+            # Persist the default choice on first launch as well.
+            self._save_now()
             return
         self.theme_id = selected_theme
         self.custom_background = "#121212"
