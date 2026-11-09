@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#080d16">
+  <meta name="theme-color" content="#080d16">\n  <link rel="icon" type="image/svg+xml" href="assets/cramc-logo.svg">
   <meta name="description" content="ComputerRAMCleaner (CRAMC) v1.1.1 Bugfix; Windows ve Linux için kurulum gerektirmeyen RAM izleme, önbellek yönetimi ve güvenli geçici dosya temizleme aracı.">
   <meta property="og:title" content="ComputerRAMCleaner — Belleğini kontrol altına al">
   <meta property="og:description" content="Windows ve Linux için tek dosyalık RAM izleme, önbellek yönetimi ve onaylı geçici dosya temizliği.">
@@ -63,7 +63,7 @@
     }
     .nav { height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
     .brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 760; letter-spacing: -.035em; }
-    .brand-mark { width: 42px; height: 46px; flex: none; filter: drop-shadow(0 6px 16px rgba(67, 154, 255, .24)); }
+    .brand-mark { width: 48px; height: 48px; flex: none; object-fit: contain; filter: drop-shadow(0 6px 16px rgba(67, 154, 255, .24)); }
     .brand-name { font-size: 16px; }
     .brand-name small { display: block; margin-top: -3px; color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .19em; }
     .nav-links { display: flex; align-items: center; gap: 30px; color: #b5c3d8; font-size: 13px; font-weight: 600; }
@@ -264,7 +264,7 @@
     }
     @media (max-width: 480px) {
       .brand-name { font-size: 14px; }
-      .brand-mark { width: 37px; height: 41px; }
+      .brand-mark { width: 42px; height: 42px; }
       .hero-actions { flex-direction: column; }
       .hero-actions .button { width: 100%; }
       .memory-value { font-size: 37px; }
@@ -502,13 +502,7 @@
   <header class="topbar">
     <div class="container nav">
       <a class="brand" href="#top" aria-label="CRAMC ana sayfa">
-        <svg class="brand-mark" viewBox="0 0 64 72" role="img" aria-label="CRAMC kalkan ve işlemci logosu">
-          <defs><linearGradient id="shieldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#398bff"/><stop offset="1" stop-color="#35db91"/></linearGradient></defs>
-          <path d="M32 3 57 12v20c0 17-10 29-25 37C17 61 7 49 7 32V12L32 3Z" fill="url(#shieldGrad)"/>
-          <rect x="20" y="22" width="24" height="24" rx="5" fill="#0b1421" stroke="#e4fff2" stroke-width="1.8"/>
-          <rect x="26" y="28" width="12" height="12" rx="2" fill="#e4fff2"/>
-          <g stroke="#0b1421" stroke-width="2.5" stroke-linecap="round"><path d="M25 17v5M32 17v5M39 17v5M25 46v6M32 46v6M39 46v6M14 29h6M14 36h6M44 29h6M44 36h6"/></g>
-        </svg>
+        <img class="brand-mark" src="assets/cramc-logo.svg" alt="CRAMC logo" width="48" height="48" decoding="async">
         <span class="brand-name">ComputerRAMCleaner<small>CRAMC · VERSION 1.1.1</small></span>
       </a>
       <nav class="nav-links" id="navLinks" aria-label="Ana menü">
