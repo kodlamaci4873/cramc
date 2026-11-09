@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Create or find the v1.1.1-bugfix draft release
+      - name: Find or create the v1.1.1 Bugfix draft
         id: release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -32,20 +32,40 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          release_json="$(gh api "repos/$REPOSITORY/releases?per_page=100" --jq '.[] | select(.tag_name == "'"$TAG_NAME"'")' || true)"
-          if [[ -z "$release_json" ]]; then
-            gh release create "$TAG_NAME" --draft --title "CRAMC v1.1.1 Bugfix" --generate-notes --repo "$REPOSITORY"
-            release_json="$(gh api "repos/$REPOSITORY/releases?per_page=100" --jq '.[] | select(.tag_name == "'"$TAG_NAME"'")')"
+
+          # gh release list includes drafts unless --exclude-drafts is requested.
+          existing="$(gh release list --repo "$REPOSITORY" --limit 100 \
+            --json tagName,isDraft,name \
+            | jq -c --arg tag "$TAG_NAME" '.[] | select(.tagName == $tag)' || true)"
+
+          if [[ -z "$existing" ]]; then
+            gh release create "$TAG_NAME" \
+              --draft \
+              --title "CRAMC v1.1.1 Bugfix" \
+              --generate-notes \
+              --repo "$REPOSITORY"
           fi
-          release_id="$(jq -r '.id' <<< "$release_json")"
-          draft="$(jq -r '.draft' <<< "$release_json")"
+
+          release_json="$(gh release view "$TAG_NAME" --repo "$REPOSITORY" \
+            --json databaseId,isDraft,tagName,name)"
+          actual_tag="$(jq -r '.tagName' <<< "$release_json")"
+          release_id="$(jq -r '.databaseId' <<< "$release_json")"
+          draft="$(jq -r '.isDraft' <<< "$release_json")"
+
+          if [[ "$actual_tag" != "$TAG_NAME" || -z "$release_id" || "$release_id" == "null" ]]; then
+            echo "Could not verify the intended release; refusing to publish."
+            exit 1
+          fi
+
           if [[ "$draft" != "true" ]]; then
             echo "publish=false" >> "$GITHUB_OUTPUT"
-            echo "v1.1.1-bugfix is already published; preserving existing release."
+            echo "$TAG_NAME is already published; preserving the existing release."
             exit 0
           fi
+
           echo "release_id=$release_id" >> "$GITHUB_OUTPUT"
           echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "Found draft release $TAG_NAME (ID $release_id)."
 
       - name: Download tested Windows build
         if: steps.release.outputs.publish == 'true'
@@ -76,21 +96,32 @@ jobs:
           test -s release-assets/CRAMC-Linux.AppImage
           chmod 0755 release-assets/CRAMC-Linux.AppImage
           (cd release-assets && sha256sum CRAMC-Windows.exe CRAMC-Linux.AppImage > SHA256SUMS.txt)
+          ls -lh release-assets
+          cat release-assets/SHA256SUMS.txt
 
       - name: Upload release assets
         if: steps.release.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
+        shell: bash
         run: |
-          gh release upload v1.1.1-bugfix release-assets/CRAMC-Windows.exe release-assets/CRAMC-Linux.AppImage release-assets/SHA256SUMS.txt --clobber --repo "$REPOSITORY"
+          set -euo pipefail
+          gh release upload v1.1.1-bugfix \
+            release-assets/CRAMC-Windows.exe \
+            release-assets/CRAMC-Linux.AppImage \
+            release-assets/SHA256SUMS.txt \
+            --clobber \
+            --repo "$REPOSITORY"
 
-      - name: Publish release
+      - name: Publish verified release
         if: steps.release.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          RELEASE_ID: ${{ steps.release.outputs.release_id }}
+        shell: bash
         run: |
-          gh api --method PATCH "repos/$REPOSITORY/releases/$RELEASE_ID" -F draft=false -F prerelease=false
+          set -euo pipefail
+          gh release edit v1.1.1-bugfix --draft=false --prerelease=false --repo "$REPOSITORY"
+          gh release view v1.1.1-bugfix --json tagName,isDraft,assets --repo "$REPOSITORY"
           echo "CRAMC v1.1.1 Bugfix published."
