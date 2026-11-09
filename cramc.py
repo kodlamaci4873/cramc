@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ComputerRAMCleaner (CRAMC) v1.1.0 - Masaüstü uygulaması
+ComputerRAMCleaner (CRAMC) v1.1.1 - Masaüstü uygulaması
 
 Linux (Lubuntu/LXQt) : sync + /proc/sys/vm/drop_caches (PageCache, Dentries & Inodes)
                        isteğe bağlı güvenli swap sıfırlama
@@ -55,7 +55,7 @@ except ImportError:
 
 APP_NAME = "ComputerRAMCleaner"
 APP_SHORT = "CRAMC"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.1.1"
 
 MB = 1024 * 1024
 GB = 1024 * MB
