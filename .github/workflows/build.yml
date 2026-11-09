@@ -42,6 +42,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pyinstaller psutil
 
+      - name: Run appearance and monitor regression tests
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python -m unittest discover -s tests -v
+          if ($LASTEXITCODE -ne 0) {
+            throw "CRAMC regression tests failed with exit code $LASTEXITCODE"
+          }
+
       - name: Run non-destructive application self-test
         shell: pwsh
         env:

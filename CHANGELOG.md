@@ -1,5 +1,15 @@
 # CRAMC sürüm geçmişi
 
+## v1.1.1 Bugfix — 9 Kasım 2026
+- Ayarlara beş hazır renk teması ve özel arka plan rengi seçimi eklendi.
+- Tema tercihi cihazda saklanır; koyu/açık özel renklerde metin kontrastı otomatik ayarlanır.
+- Dil değiştirme ve tema değiştirme aynı güvenli arayüz yenileme yolunu kullanır.
+- Web sitesindeki sürüm arşivinin çağrılmama hatası düzeltildi.
+- Sürüm arşivi sayfalama ile tüm yayımlanmış sürümleri ve ön sürümleri sıralar.
+- Her sürüm kartında yayımlanmış dosyalar, kaynak ZIP/TAR.GZ arşivleri ve sürüm notları gösterilir.
+- Tema renkleri ve mevcut gelişmiş izleme modülü için regresyon testleri genişletildi.
+
+
 ## v1.1.1 — 9 Kasım 2026
 - Canlı CPU/RAM/disk/swap/ağ izleme ve kaynak geçmişi grafiği.
 - Süreç arama, sıralama, ayrıntı görüntüleme ve onaylı güvenli kapatma.

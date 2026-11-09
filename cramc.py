@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ComputerRAMCleaner (CRAMC) v1.1.1 - Masaüstü uygulaması
+ComputerRAMCleaner (CRAMC) v1.1.1 Bugfix - Masaüstü uygulaması
 
 Linux (Lubuntu/LXQt) : sync + /proc/sys/vm/drop_caches (PageCache, Dentries & Inodes)
                        isteğe bağlı güvenli swap sıfırlama
@@ -38,16 +38,18 @@ import zlib
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 
+from cramc_theme import THEME_IDS, THEME_LABELS, normalize_color, palette_for
 from cramc_advanced import ProcessMonitorFrame, SystemProbe, HistoryBuffer, analyze_health
 
 try:
     import tkinter as tk
-    from tkinter import ttk, messagebox
+    from tkinter import ttk, messagebox, colorchooser
     TK_OK = True
 except ImportError:
     tk = None
     ttk = None
     messagebox = None
+    colorchooser = None
     TK_OK = False
 
 try:
@@ -57,7 +59,7 @@ except ImportError:
 
 APP_NAME = "ComputerRAMCleaner"
 APP_SHORT = "CRAMC"
-APP_VERSION = "1.1.1"
+APP_VERSION = "1.1.1 Bugfix"
 
 MB = 1024 * 1024
 GB = 1024 * MB
@@ -191,6 +193,18 @@ I18N_ROWS = [
     ("gün önce", ("gün önce", "days ago", "días atrás", "jours auparavant", "Tage zuvor", "dias atrás", "дн. назад", "أيام مضت", "天前", "日前", "दिन पहले")),
     ("seçenek seçilmedi", ("seçenek seçilmedi", "no option selected", "no se seleccionó ninguna opción", "aucune option sélectionnée", "keine Option ausgewählt", "nenhuma opção selecionada", "вариант не выбран", "لم يتم اختيار أي خيار", "未选择选项", "オプションが選択されていません", "कोई विकल्प नहीं चुना गया")),
     ("▤  Sistem İzleme", ("▤  Sistem İzleme", "▤  System Monitor", "▤  Monitor del sistema", "▤  Moniteur système", "▤  Systemmonitor", "▤  Monitor do sistema", "▤  Монитор системы", "▤  مراقبة النظام", "▤  系统监控", "▤  システムモニター", "▤  सिस्टम मॉनिटर")),
+    ("🎨  ARKA PLAN KİŞİSELLEŞTİRME", ("🎨  ARKA PLAN KİŞİSELLEŞTİRME", "🎨  APPEARANCE & BACKGROUND", "🎨  PERSONALIZACIÓN DEL FONDO", "🎨  PERSONNALISATION DE L’ARRIÈRE-PLAN", "🎨  HINTERGRUND ANPASSEN", "🎨  PERSONALIZAR O FUNDO", "🎨  НАСТРОЙКА ФОНА", "🎨  تخصيص الخلفية", "🎨  背景个性化", "🎨  背景のカスタマイズ", "🎨  बैकग्राउंड अनुकूलन")),
+    ("Arka plan teması", ("Arka plan teması", "Background theme", "Tema de fondo", "Thème d’arrière-plan", "Hintergrunddesign", "Tema de fundo", "Тема фона", "سمة الخلفية", "背景主题", "背景テーマ", "बैकग्राउंड थीम")),
+    ("Varsayılan", ("Varsayılan", "Default", "Predeterminado", "Par défaut", "Standard", "Predefinido", "По умолчанию", "افتراضي", "默认", "標準", "डिफ़ॉल्ट")),
+    ("Okyanus", ("Okyanus", "Ocean", "Océano", "Océan", "Ozean", "Oceano", "Океан", "المحيط", "海洋", "オーシャン", "महासागर")),
+    ("Orman", ("Orman", "Forest", "Bosque", "Forêt", "Wald", "Floresta", "Лес", "الغابة", "森林", "森", "वन")),
+    ("Mor", ("Mor", "Purple", "Púrpura", "Violet", "Lila", "Roxo", "Фиолетовый", "بنفسجي", "紫色", "紫", "बैंगनी")),
+    ("AMOLED siyahı", ("AMOLED siyahı", "AMOLED Black", "Negro AMOLED", "Noir AMOLED", "AMOLED-Schwarz", "Preto AMOLED", "Чёрный AMOLED", "أسود AMOLED", "AMOLED 黑色", "AMOLED ブラック", "AMOLED काला")),
+    ("Özel renk", ("Özel renk", "Custom color", "Color personalizado", "Couleur personnalisée", "Benutzerdefinierte Farbe", "Cor personalizada", "Пользовательский цвет", "لون مخصص", "自定义颜色", "カスタムカラー", "कस्टम रंग")),
+    ("Renk seç", ("Renk seç", "Choose color", "Elegir color", "Choisir une couleur", "Farbe wählen", "Escolher cor", "Выбрать цвет", "اختر اللون", "选择颜色", "色を選択", "रंग चुनें")),
+    ("Arka plan rengi seç", ("Arka plan rengi seç", "Choose background color", "Elegir color de fondo", "Choisir la couleur d’arrière-plan", "Hintergrundfarbe wählen", "Escolher cor de fundo", "Выбрать цвет фона", "اختر لون الخلفية", "选择背景颜色", "背景色を選択", "बैकग्राउंड रंग चुनें")),
+    ("Renk seçici kullanılamıyor.", ("Renk seçici kullanılamıyor.", "The colour picker is unavailable.", "El selector de color no está disponible.", "Le sélecteur de couleurs est indisponible.", "Der Farbwähler ist nicht verfügbar.", "O seletor de cores não está disponível.", "Выбор цвета недоступен.", "منتقي الألوان غير متاح.", "颜色选择器不可用。", "カラーピッカーを利用できません。", "रंग चयनकर्ता उपलब्ध नहीं है।")),
+    ("Geçersiz renk seçildi.", ("Geçersiz renk seçildi.", "An invalid colour was selected.", "Se seleccionó un color no válido.", "Une couleur non valide a été choisie.", "Eine ungültige Farbe wurde ausgewählt.", "Uma cor inválida foi selecionada.", "Выбран недопустимый цвет.", "تم اختيار لون غير صالح.", "选择了无效颜色。", "無効な色が選択されました。", "अमान्य रंग चुना गया।")),
 ]
 TRANSLATIONS = {language: {} for language in LANGUAGE_ORDER}
 for _source, _values in I18N_ROWS:
@@ -1213,12 +1227,24 @@ CARD2 = "#232328"
 CARD_BORDER = "#2a2a2f"
 FG = "#e8e8ea"
 FG_DIM = "#8b8b93"
+PANEL_BG = "#0d0d0f"
+PANEL_FG = "#b7b7c0"
+WARNING_BG = "#2b2418"
+WARNING_BORDER = "#5a4528"
+NOTICE_BG = "#3a2a0a"
+MUTED_FG = "#777783"
+SUBTLE_FG = "#4a4a52"
 BLUE = "#3b9cff"
 GREEN = "#2ecc71"
 GREEN_DARK = "#25a85c"
 AMBER = "#f5a524"
 RED = "#ef4444"
 CYAN = "#22d3ee"
+
+
+def _apply_theme_palette(theme_id="default", custom_background=None):
+    """Update the module palette before rebuilding Tk widgets."""
+    globals().update(palette_for(theme_id, custom_background))
 
 FONT = "DejaVu Sans" if IS_LINUX else "Segoe UI"
 MONO = "DejaVu Sans Mono" if IS_LINUX else "Consolas"
@@ -1247,7 +1273,8 @@ if TK_OK:
     class CheckRow(tk.Frame):
         """Koyu tema uyumlu, özel çizimli onay kutusu satırı."""
 
-        def __init__(self, parent, text, desc, var, bg=CARD):
+        def __init__(self, parent, text, desc, var, bg=None):
+            bg = CARD if bg is None else bg
             super().__init__(parent, bg=bg, cursor="hand2")
             self.var = var
             self.box = tk.Canvas(self, width=20, height=20, bg=bg,
@@ -1275,8 +1302,8 @@ if TK_OK:
             c.delete("all")
             on = bool(self.var.get())
             _round_rect(c, 1, 1, 19, 19, 5,
-                        fill=BLUE if on else "#0d0d0f",
-                        outline=BLUE if on else "#4a4a55")
+                        fill=BLUE if on else PANEL_BG,
+                        outline=BLUE if on else CARD_BORDER)
             if on:
                 c.create_line(5, 10, 9, 14, 15, 6, fill="#ffffff", width=2,
                               capstyle="round", joinstyle="round")
@@ -1284,7 +1311,8 @@ if TK_OK:
     class FlatSlider(tk.Canvas):
         """Koyu tema uyumlu yatay kaydırıcı (tamsayı değişkenine bağlı)."""
 
-        def __init__(self, parent, var, lo, hi, step=1, bg=CARD):
+        def __init__(self, parent, var, lo, hi, step=1, bg=None):
+            bg = CARD if bg is None else bg
             super().__init__(parent, height=22, bg=bg, highlightthickness=0,
                              bd=0, cursor="hand2")
             self.var, self.lo, self.hi, self.step = var, lo, hi, step
@@ -1356,6 +1384,14 @@ class CramcApp:
         self._slider_trace_ids = []
 
         s = load_settings()
+        self.theme_id = s.get("theme_id", "default")
+        if self.theme_id not in THEME_IDS:
+            self.theme_id = "default"
+        try:
+            self.custom_background = normalize_color(s.get("custom_background", "#121212"))
+        except ValueError:
+            self.custom_background = "#121212"
+        _apply_theme_palette(self.theme_id, self.custom_background)
         saved_language = s.get("language")
         self.language = (saved_language if isinstance(saved_language, str) and saved_language in LANGUAGE_NAMES
                          else detect_system_language())
@@ -1421,17 +1457,17 @@ class CramcApp:
             st.theme_use("clam")
         except tk.TclError:
             pass
-        st.configure("Ram.Horizontal.TProgressbar", troughcolor="#2a2a2f",
+        st.configure("Ram.Horizontal.TProgressbar", troughcolor=CARD_BORDER,
                      background=BLUE, bordercolor=CARD, lightcolor=BLUE,
                      darkcolor=BLUE, thickness=16)
-        st.configure("Swap.Horizontal.TProgressbar", troughcolor="#33333a",
+        st.configure("Swap.Horizontal.TProgressbar", troughcolor=CARD_BORDER,
                      background=CYAN, bordercolor=CARD2, lightcolor=CYAN,
                      darkcolor=CYAN, thickness=6)
         st.configure("Busy.Horizontal.TProgressbar", troughcolor=BG,
                      background=GREEN, bordercolor=BG, lightcolor=GREEN,
                      darkcolor=GREEN, thickness=4)
-        st.configure("Dark.Vertical.TScrollbar", background="#2f2f36",
-                     troughcolor="#0d0d0f", bordercolor="#0d0d0f",
+        st.configure("Dark.Vertical.TScrollbar", background=CARD2,
+                     troughcolor=PANEL_BG, bordercolor=PANEL_BG,
                      arrowcolor=FG_DIM, lightcolor="#2f2f36", darkcolor="#2f2f36",
                      relief="flat")
         st.map("Dark.Vertical.TScrollbar", background=[("active", "#3d3d46")])
@@ -1441,8 +1477,8 @@ class CramcApp:
         st.map("CRAMC.TNotebook.Tab",
                background=[("selected", CARD)],
                foreground=[("selected", FG), ("active", FG)])
-        st.configure("Storage.Treeview", background="#0d0d0f", foreground=FG,
-                     fieldbackground="#0d0d0f", rowheight=26, borderwidth=0)
+        st.configure("Storage.Treeview", background=PANEL_BG, foreground=FG,
+                     fieldbackground=PANEL_BG, rowheight=26, borderwidth=0)
         st.configure("Storage.Treeview.Heading", background=CARD2,
                      foreground=FG_DIM, relief="flat")
         st.map("Storage.Treeview", background=[("selected", "#21436a")],
@@ -1546,7 +1582,7 @@ class CramcApp:
                      anchor="nw", wraplength=260, font=(FONT, 8)).pack(
                          fill="both", expand=True, padx=16, pady=(7, 16))
 
-        note = tk.Frame(outer, bg="#2b2418", highlightbackground="#5a4528",
+        note = tk.Frame(outer, bg=WARNING_BG, highlightbackground=WARNING_BORDER,
                         highlightthickness=1)
         note.pack(fill="x", pady=(16, 0))
         tk.Label(note,
@@ -1554,7 +1590,7 @@ class CramcApp:
                       "Sistemler bu belleği ihtiyaç olduğunda otomatik geri kazanabilir. Depolama sekmesi "
                       "yalnızca kullanıcının geçici klasörlerinde 24 saatten eski dosyaları listeler; "
                       "silmeden önce önizleme ve onay ister.",
-                 bg="#2b2418", fg=AMBER, justify="left", anchor="w",
+                 bg=WARNING_BG, fg=AMBER, justify="left", anchor="w",
                  wraplength=920, font=(FONT, 8), padx=15, pady=11).pack(fill="x")
 
     def _build_dashboard_tab(self, tab):
@@ -1757,7 +1793,7 @@ class CramcApp:
                  padx=12, pady=5).pack(side="right")
 
     def _build_banner(self, main):
-        self.banner = tk.Label(main, text="", bg="#3a2a0a", fg=AMBER, anchor="w",
+        self.banner = tk.Label(main, text="", bg=NOTICE_BG, fg=AMBER, anchor="w",
                                justify="left", font=(FONT, 10, "bold"),
                                padx=12, pady=7, wraplength=800)
         self.banner.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 10))
@@ -1905,8 +1941,8 @@ class CramcApp:
         card, head, body = make_card(parent, "İŞLEM GÜNLÜĞÜ")
         card.pack(fill="both", expand=True)
         GhostButton(head, "TEMİZLE", self._clear_log).pack(side="right")
-        self.log_text = tk.Text(body, height=6, width=40, wrap="word", bg="#0d0d0f",
-                                fg="#b7b7c0", insertbackground="#0d0d0f", bd=0,
+        self.log_text = tk.Text(body, height=6, width=40, wrap="word", bg=PANEL_BG,
+                                fg=PANEL_FG, insertbackground=FG, bd=0,
                                 highlightthickness=0, padx=8, pady=6,
                                 font=(MONO, 8), state="disabled", cursor="arrow")
         sb = ttk.Scrollbar(body, orient="vertical", style="Dark.Vertical.TScrollbar",
@@ -1919,9 +1955,28 @@ class CramcApp:
             self.log_text.tag_configure(tag, foreground=color)
 
     def _build_settings_body(self, parent):
+        tk.Label(parent, text=_tr("🎨  ARKA PLAN KİŞİSELLEŞTİRME"), bg=CARD, fg=FG_DIM,
+                 font=(FONT, 8, "bold")).pack(anchor="w", pady=(0, 5))
+        appearance_row = tk.Frame(parent, bg=CARD)
+        appearance_row.pack(fill="x", pady=(0, 9))
+        tk.Label(appearance_row, text=_tr("Arka plan teması"), bg=CARD, fg=FG,
+                 font=(FONT, 9, "bold")).pack(side="left")
+        self.theme_labels = {theme: _tr(THEME_LABELS[theme]) for theme in THEME_IDS}
+        self.theme_var = tk.StringVar(value=self.theme_labels.get(self.theme_id,
+                                                                  self.theme_labels["default"]))
+        self.theme_combo = ttk.Combobox(
+            appearance_row, textvariable=self.theme_var,
+            values=tuple(self.theme_labels[theme] for theme in THEME_IDS),
+            state="readonly", width=15)
+        self.theme_combo.pack(side="right", padx=(8, 0))
+        self.theme_combo.bind("<<ComboboxSelected>>", self._change_theme)
+        ttk.Button(appearance_row, text=_tr("Renk seç"),
+                   command=self._choose_custom_background).pack(side="right")
+
+        tk.Frame(parent, bg=CARD_BORDER, height=1).pack(fill="x", pady=(0, 8))
         language_row = tk.Frame(parent, bg=CARD)
         language_row.pack(fill="x", pady=(0, 8))
-        tk.Label(language_row, text="Uygulama dili", bg=CARD, fg=FG,
+        tk.Label(language_row, text=_tr("Uygulama dili"), bg=CARD, fg=FG,
                  font=(FONT, 9, "bold")).pack(side="left")
         self.language_var = tk.StringVar(value=LANGUAGE_NAMES[self.language])
         self.language_combo = ttk.Combobox(
@@ -1961,6 +2016,85 @@ class CramcApp:
         self._slider_row(parent, "Bekleme süresi", self.v_cd, 1, 60, 1,
                          lambda v: f"{v} dk")
 
+    def _change_theme(self, event=None):
+        selected_label = self.theme_var.get()
+        selected_theme = next((key for key, label in self.theme_labels.items()
+                               if label == selected_label), None)
+        if selected_theme is None:
+            return
+        if selected_theme == "custom":
+            self._choose_custom_background()
+            return
+        if selected_theme == self.theme_id:
+            return
+        self.theme_id = selected_theme
+        self.custom_background = "#121212"
+        self._apply_appearance_change()
+
+    def _choose_custom_background(self):
+        if colorchooser is None:
+            self._show_notice(_tr("Renk seçici kullanılamıyor."), AMBER)
+            return
+        try:
+            _rgb, chosen = colorchooser.askcolor(
+                color=self.custom_background if self.theme_id == "custom" else BG,
+                title=_tr("Arka plan rengi seç"), parent=self.root)
+        except Exception as exc:
+            self.log("warn", f"Renk seçici açılamadı: {exc}")
+            return
+        if not chosen:
+            self.theme_var.set(self.theme_labels.get(self.theme_id,
+                                                     self.theme_labels["default"]))
+            return
+        try:
+            self.custom_background = normalize_color(chosen)
+        except ValueError:
+            self._show_notice(_tr("Geçersiz renk seçildi."), RED)
+            return
+        self.theme_id = "custom"
+        self._apply_appearance_change()
+
+    def _apply_appearance_change(self):
+        _apply_theme_palette(self.theme_id, self.custom_background)
+        self.root.configure(bg=BG)
+        self._save_now()
+        self._rebuild_interface()
+
+    def _rebuild_interface(self, selected_tab=None):
+        """Recreate themed widgets while preserving app settings and active jobs."""
+        if selected_tab is None:
+            try:
+                selected_tab = self.notebook.index(self.notebook.select())
+            except Exception:
+                selected_tab = 0
+        for variable, trace_id in self._slider_trace_ids:
+            try:
+                variable.trace_remove("write", trace_id)
+            except Exception:
+                pass
+        self._slider_trace_ids.clear()
+        for child in self.root.winfo_children():
+            child.destroy()
+        self.root.configure(bg=BG)
+        self._build_style()
+        self._build_ui()
+        tabs = self.notebook.tabs()
+        if tabs:
+            self.notebook.select(tabs[min(selected_tab, len(tabs) - 1)])
+        self._fit_window()
+        if self._last_snap is not None:
+            self._render_stats(self._last_snap)
+            self._update_estimate()
+        if self.busy:
+            self.button.configure(text="TEMİZLENİYOR...", state="disabled", bg=GREEN_DARK)
+            self.busy_bar.start(12)
+        if self.storage_busy:
+            self.storage_scan_button.configure(state="disabled")
+            self.storage_clean_button.configure(state="disabled")
+            self.storage_status.configure(
+                text="Önizlemede listelenen dosyalar tekrar doğrulanıyor ve temizleniyor…",
+                fg=AMBER)
+
     def _change_language(self, event=None):
         global ACTIVE_LANGUAGE
         selected_name = self.language_var.get()
@@ -1977,34 +2111,7 @@ class CramcApp:
         self.language = new_language
         ACTIVE_LANGUAGE = new_language
         self._save_now()
-
-        # Remove callbacks attached to labels that are about to be destroyed.
-        for variable, trace_id in self._slider_trace_ids:
-            try:
-                variable.trace_remove("write", trace_id)
-            except Exception:
-                pass
-        self._slider_trace_ids.clear()
-
-        # Rebuild only the widgets; monitoring and background workers keep running.
-        for child in self.root.winfo_children():
-            child.destroy()
-        self._build_ui()
-        tabs = self.notebook.tabs()
-        if tabs:
-            self.notebook.select(tabs[min(selected_tab, len(tabs) - 1)])
-        self._fit_window()
-        if self._last_snap is not None:
-            self._render_stats(self._last_snap)
-            self._update_estimate()
-        if self.busy:
-            self.button.configure(text="TEMİZLENİYOR...", state="disabled", bg=GREEN_DARK)
-            self.busy_bar.start(12)
-        if self.storage_busy:
-            self.storage_scan_button.configure(state="disabled")
-            self.storage_clean_button.configure(state="disabled")
-            self.storage_status.configure(text="Önizlemede listelenen dosyalar tekrar doğrulanıyor ve temizleniyor…",
-                                          fg=AMBER)
+        self._rebuild_interface(selected_tab)
 
     def _slider_row(self, parent, title, var, lo, hi, step, fmt):
         f = tk.Frame(parent, bg=CARD)
@@ -2129,6 +2236,8 @@ class CramcApp:
             "settings_open": self.settings_open,
             "last_clean_ts": self.last_clean_ts,
             "language": self.language,
+            "theme_id": self.theme_id,
+            "custom_background": self.custom_background,
         })
 
     # ------------------------------------------------------- canlı güncelleme
@@ -2420,6 +2529,25 @@ def ui_selftest() -> int:
         root.withdraw()
         app = CramcApp(root)
         checked = 0
+        expected_backgrounds = {
+            "default": "#121212",
+            "ocean": "#081827",
+            "forest": "#101d18",
+            "violet": "#191326",
+            "amoled": "#000000",
+        }
+        for theme_id, expected_background in expected_backgrounds.items():
+            app.theme_var.set(app.theme_labels[theme_id])
+            app._change_theme()
+            if BG != expected_background:
+                raise AssertionError(f"Theme background mismatch for {theme_id}: {BG}")
+            if load_settings().get("theme_id") != theme_id:
+                raise AssertionError(f"Theme preference was not saved for {theme_id}")
+            if app.theme_combo.get() != _tr(THEME_LABELS[theme_id]):
+                raise AssertionError(f"Theme selector mismatch for {theme_id}")
+        app.theme_var.set(app.theme_labels["default"])
+        app._change_theme()
+
         for language in LANGUAGE_ORDER:
             app.language_var.set(LANGUAGE_NAMES[language])
             app._change_language()
@@ -2428,6 +2556,7 @@ def ui_selftest() -> int:
             expected_button = _tr("RAM TEMİZLE")
             expected_heading = _tr("GEÇİCİ DOSYA")
             expected_monitor_tab = _tr("▤  Sistem İzleme")
+            expected_theme_label = _tr(THEME_LABELS[app.theme_id])
             if app.language != language:
                 raise AssertionError(f"Language state mismatch for {language}")
             if app.language_var.get() != LANGUAGE_NAMES[language]:
@@ -2440,6 +2569,8 @@ def ui_selftest() -> int:
                 raise AssertionError(f"Storage table heading did not update for {language}")
             if app.notebook.tab(app.monitor_tab, "text") != expected_monitor_tab:
                 raise AssertionError(f"Monitor tab did not update for {language}")
+            if app.theme_combo.get() != expected_theme_label:
+                raise AssertionError(f"Theme selector did not update for {language}")
             if not isinstance(app.monitor_frame.probe, SystemProbe):
                 raise AssertionError("Advanced monitor was not initialized")
             if load_settings().get("language") != language:
