@@ -1,6 +1,10 @@
 # CRAMC sürüm geçmişi
 
 ## v1.1.1 — 9 Kasım 2026
+- Canlı CPU/RAM/disk/swap/ağ izleme ve kaynak geçmişi grafiği.
+- Süreç arama, sıralama, ayrıntı görüntüleme ve onaylı güvenli kapatma.
+- Sistem sağlık uyarıları ve JSON/CSV rapor dışa aktarma.
+- Gelişmiş izleme modülü için otomatik regresyon testleri.
 - Masaüstü uygulamasına 11 dilde arayüz seçimi eklendi.
 - Dil tercihi cihazda saklanır ve arayüz yeniden başlatmadan güncellenir.
 - Arapça arayüzde sağdan sağa metin hizalaması iyileştirildi.

@@ -38,6 +38,8 @@ import zlib
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 
+from cramc_advanced import ProcessMonitorFrame, SystemProbe, HistoryBuffer, analyze_health
+
 try:
     import tkinter as tk
     from tkinter import ttk, messagebox
@@ -188,6 +190,7 @@ I18N_ROWS = [
     ("sa önce", ("sa önce", "hr ago", "h atrás", "h auparavant", "Std. zuvor", "h atrás", "ч назад", "ساعة مضت", "小时前", "時間前", "घंटे पहले")),
     ("gün önce", ("gün önce", "days ago", "días atrás", "jours auparavant", "Tage zuvor", "dias atrás", "дн. назад", "أيام مضت", "天前", "日前", "दिन पहले")),
     ("seçenek seçilmedi", ("seçenek seçilmedi", "no option selected", "no se seleccionó ninguna opción", "aucune option sélectionnée", "keine Option ausgewählt", "nenhuma opção selecionada", "вариант не выбран", "لم يتم اختيار أي خيار", "未选择选项", "オプションが選択されていません", "कोई विकल्प नहीं चुना गया")),
+    ("▤  Sistem İzleme", ("▤  Sistem İzleme", "▤  System Monitor", "▤  Monitor del sistema", "▤  Moniteur système", "▤  Systemmonitor", "▤  Monitor do sistema", "▤  Монитор системы", "▤  مراقبة النظام", "▤  系统监控", "▤  システムモニター", "▤  सिस्टम मॉनिटर")),
 ]
 TRANSLATIONS = {language: {} for language in LANGUAGE_ORDER}
 for _source, _values in I18N_ROWS:
@@ -1454,15 +1457,25 @@ class CramcApp:
         self.welcome_tab = tk.Frame(self.notebook, bg=BG)
         self.ram_tab = tk.Frame(self.notebook, bg=BG)
         self.storage_tab = tk.Frame(self.notebook, bg=BG)
+        self.monitor_tab = tk.Frame(self.notebook, bg=BG)
 
         self.notebook.add(self.welcome_tab, text="✦  Hoş Geldin")
         self.notebook.add(self.ram_tab, text="◈  RAM Yönetimi")
         self.notebook.add(self.storage_tab, text="▣  Depolama")
+        self.notebook.add(self.monitor_tab, text="▤  Sistem İzleme")
 
         self._build_welcome_tab(self.welcome_tab)
         self._build_dashboard_tab(self.ram_tab)
         self._build_storage_tab(self.storage_tab)
+        self._build_monitor_tab(self.monitor_tab)
         _translate_widget_tree(self.root)
+
+    def _build_monitor_tab(self, parent):
+        """Attach the advanced telemetry dashboard without coupling it to cleanup."""
+        self.monitor_frame = ProcessMonitorFrame(
+            parent, translator=_tr,
+            on_log=lambda level, message: self.log(level, message))
+        self.monitor_frame.pack(fill="both", expand=True)
 
     def _build_welcome_tab(self, parent):
         outer = tk.Frame(parent, bg=BG)
@@ -2414,6 +2427,7 @@ def ui_selftest() -> int:
             expected_tab = _tr("✦  Hoş Geldin")
             expected_button = _tr("RAM TEMİZLE")
             expected_heading = _tr("GEÇİCİ DOSYA")
+            expected_monitor_tab = _tr("▤  Sistem İzleme")
             if app.language != language:
                 raise AssertionError(f"Language state mismatch for {language}")
             if app.language_var.get() != LANGUAGE_NAMES[language]:
@@ -2424,6 +2438,10 @@ def ui_selftest() -> int:
                 raise AssertionError(f"Main action button did not update for {language}")
             if app.storage_tree.heading("path", "text") != expected_heading:
                 raise AssertionError(f"Storage table heading did not update for {language}")
+            if app.notebook.tab(app.monitor_tab, "text") != expected_monitor_tab:
+                raise AssertionError(f"Monitor tab did not update for {language}")
+            if not isinstance(app.monitor_frame.probe, SystemProbe):
+                raise AssertionError("Advanced monitor was not initialized")
             if load_settings().get("language") != language:
                 raise AssertionError(f"Language preference was not saved for {language}")
             checked += 1
